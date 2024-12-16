@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
+
+body {
+    height: 100vh;
+}
+
+h1 {
+  font-weight: 800;
+  margin-top: 2%;
+  margin-bottom: 1%;
+  color: #d31919;
+  font-size: 40px;
+}
+
+.dashboard {
+  text-align: left;
+}
+
+td {
+  font-size: 18px;
+}
+
+h2 {
+  margin-top: 2%;
+}
+
+.form-control {
+  border: 0;
+}
+
+.alert {
+  height: 100px;
+}
+
+#dropdownMenu {
+  color: black;
+  border: none;
+  background-color: transparent;
+}
+
+.buttons {
+  display: flex;
+  width: 100%;
+  justify-content: end;
+  gap: 1rem;
+}
+
+.searchBar {
+  display: flex; 
+  justify-content: end;
+}
+
+#searchInput {
+  width: 700px;
+}
+
+.options {
+  align-items: center;
+  display: flex;
+  justify-content: start;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+.content {
+  padding: 7rem 0; 
+}
+
+.navbar {
+  background-color: #ac1414;
+  z-index: 2;
+}
+
+/* NAVBAR */
+
+.container-fluid {
+  margin-left: 4rem;
+  margin-right: 4rem;
+}
+
+.navbar-brand {
+  margin-right: 50px;
+}
+
+.nav-item {
+  padding: 15px;
+}
+
+/* Sidebar */
+
+#sidebarMenu {
+  background-color: #ac1414;
+}
+
+.h1-sidebar {
+  color: #f0f0f0;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  padding: 18px 0 0; /* Height of navbar */
+  box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+  width: 240px;
+  z-index: 1;
+}
+
+.sidebar a {
+  padding: 16px;
+  font-size: 17px;
+  background-color: #ac1414;
+  text-decoration: none;
+  color: #f0f0f0;
+  display: block;
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: 0.5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar a:hover,
+.sidebar a:active {
+  color: #ac1414;
+  background-color: #f0f0f0;
+}
+
+.content {
+  margin-left: 200px;
+  padding: 1px 30px;
+}

@@ -1,0 +1,172 @@
+* {
+	box-sizing: border-box;
+  }
+
+  
+body {
+	margin: 0;
+	padding: 0;
+	background: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	
+}
+
+
+nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5px;
+	background-color: #FFDE59;
+	font-size: 20px;
+
+}
+
+nav h1 {
+	color: #ff0000;
+	margin-left: 40px;
+}
+
+.nav-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-text:hover {
+    color: #463f00 !important;
+    transition: color 0.3s ease;
+}
+
+.logo img {
+	width: 90px;
+	margin-left: 40px;
+	
+}
+
+nav ul {
+	width: 100%;
+	text-align: center;
+	list-style: none;
+	margin-right: 50px;
+	
+}
+
+nav ul li {
+	display: inline-block;
+	margin: 15px 20px;
+	
+}
+
+nav button {
+	background-color: #000000;
+	border: none;
+	color: #FFDE59;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 12px;
+  }
+
+nav ul li a {
+	text-decoration: none;
+	color: #000000;
+}
+
+.content {
+	margin-top: 5%;
+	margin-left: 80px;
+	color: #FFDE59;
+}
+
+.content h1 {
+	font-size: 70px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 600;
+	
+}
+
+.content button {
+	background-color: #FFDE59;
+	border: none;
+	color: rgb(0, 0, 0);
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 12px;
+  }
+ 
+ .Follow i{
+	margin: 20px 10px;
+	width: 10px;
+	height: 30px;
+	cursor: pointer;
+	color:#ffffff;
+	font-size: 50px;
+	margin-left: 70px;
+	margin-top: 40px;
+	padding-left: -100px;
+  }
+  
+
+  @media (max-width: 920px) {
+	.main-page{
+	  
+	  .row {
+		display: flex;
+		flex-direction: column;
+	  }
+	  
+	}
+  }
+
+  /* Dropdown Button */
+.dropbtn {
+	background-color: #3498DB;
+	color: white;
+	padding: 16px;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+  }
+  
+  /* Dropdown button on hover & focus */
+  .dropbtn:hover, .dropbtn:focus {
+	background-color: #2980B9;
+  }
+  
+  /* The container <div> - needed to position the dropdown content */
+  .dropdown {
+	position: relative;
+	display: inline-block;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #f1f1f1;
+	min-width: 160px;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+  }
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color: #ddd;}
+  
+  /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+  .show {display:block;}

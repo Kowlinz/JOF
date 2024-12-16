@@ -1,0 +1,902 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Navigation Bar */
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5px;
+    background-color: #FFDE59;
+    font-size: 20px;
+}
+
+nav h1 {
+    color: #ff0000;
+    margin-left: 40px;
+}
+
+.nav-text {
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.nav-text:hover {
+    color: #463f00 !important;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.logo img {
+    width: 90px;
+    margin-left: 40px;
+}
+
+nav ul {
+    width: 100%;
+    text-align: center;
+    list-style: none;
+    margin-right: 50px;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    margin: 15px 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #000000;
+}
+
+nav button {
+    background-color: #000000;
+    border: none;
+    color: #FFDE59;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 12px;
+}
+
+/* Content Section */
+.content {
+    margin-top: 5rem;
+    color: #FFDE59;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: calc(100vh - 300px);
+    max-width: 800px;
+    margin-left: 80px;
+    margin-right: auto;
+    animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.content h1 {
+    font-size: 3.5rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.content h4 {
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+.content button {
+    background-color: #FFDE59;
+    border: none;
+    color: #000000;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.content button:hover {
+    background-color: #FFB800;
+}
+
+/* Social Media Follow Section */
+.Follow {
+    display: flex;
+    gap: 20px;
+}
+
+.Follow i {
+    color: #ffffff;
+    font-size: 45px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.Follow i:hover {
+    color: #FFDE59;
+}
+
+/* Responsive Design */
+@media (max-width: 920px) {
+    .main-page .row {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Dropdown Menu */
+.dropbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #2980B9;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block;
+}
+
+/* Time Slot Dropdown Styles */
+.time-slot-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.time-slot-dropdown .form-control {
+    cursor: pointer;
+    background-color: #fff;
+    color: #000;
+}
+
+.time-slot-options {
+    display: none;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.time-slot-options .time-slot {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.time-slot-options .time-slot:hover {
+    background-color: #f8f9fa;
+}
+
+.time-slot-options.show {
+    display: block;
+}
+
+/* Style for the Add-ons List inside the dropdown */
+#addonsList {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+/* Optional: Style for the checkboxes */
+.add-on-checkbox {
+    margin-right: 10px;
+}
+
+/* Ensure Add-ons Option looks integrated with the Service options */
+#addonsOption {
+    background-color: #F1C40F;
+    color: black;
+    text-align: center;
+}
+
+.dropdown-menu {
+    display: none;
+}
+
+.dropdown.show .dropdown-menu {
+    display: block;
+}
+
+.gallery-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.gallery-item {
+    flex: 0 0 calc(25% - 12px); 
+    overflow: hidden;
+    text-align: center;
+    color: #FFDE59;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gallery-item img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #FFDE59;
+    padding: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Make it responsive */
+@media (max-width: 768px) {
+    .gallery-item {
+        flex: 0 0 calc(50% - 8px);
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-item {
+        flex: 0 0 100%;
+    }
+}
+
+/* Make the styles more specific to override Bootstrap */
+.content .card {
+    border: none !important;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #FFDE59 !important;
+}
+
+.content .card-img-top {
+    aspect-ratio: 1/1;  /* Forces 1:1 ratio */
+    object-fit: cover;  /* Ensures image fills the square without distortion */
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.content .card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.content .card-body {
+    padding: 0.8rem;
+    text-align: center;
+    background-color: #FFDE59 !important;
+}
+
+.content .card-title {
+    margin: 0;
+    font-size: 1rem;
+    color: #000;
+    font-weight: 500;
+}
+
+.content .card:hover {
+    background-color: #ffd93d !important;
+}
+
+.content .card:hover .card-body {
+    background-color: #ffd93d !important;
+}
+
+.haircut-nav {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.haircut-nav .nav-item {
+    position: relative;
+    padding: 10px 20px;
+}
+
+.haircut-nav .nav-item a {
+    color: #FFDE59;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.haircut-nav .nav-item:hover a {
+    color: #ffd93d;
+}
+
+/* Active state styling */
+.haircut-nav .nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #FFB800;
+    border-radius: 2px;
+}
+
+.haircut-nav .nav-item.active a {
+    color: #FFB800;
+}
+
+.haircut-header {
+    color: #FFDE59;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+/* Footer adjustments */
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding: 20px 0;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.main-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.content {
+    flex: 1;
+}
+
+footer {
+    margin-bottom: 20px;  /* Add some bottom spacing */
+}
+
+/* Make social media icons slightly larger */
+.Follow i {
+    font-size: 40px;
+}
+
+/* Add specific styling for haircuts page content */
+.content[style*="text-align: center"] {
+    margin: 5rem auto 0;  /* Center with auto margins */
+    padding: 0 20px;      /* Add some padding on the sides */
+    max-width: 1200px;
+    align-items: center;  /* Center flex items */
+    text-align: center;   /* Center text content */
+}
+
+/* Ensure the container is properly centered */
+.container.py-4 {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 15px;
+}
+
+/* Center the haircut cards */
+.row.g-3 {
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Center the haircut header and navigation */
+.haircut-header {
+    width: 100%;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.haircut-nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 2rem;
+}
+
+/* Style the navigation bar for haircuts page */
+.header nav {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.header nav ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.header nav ul li {
+    margin: 0;
+}
+
+/* Center the logo */
+.header nav a.navbar-brand {
+    margin: 0 2rem;
+}
+
+/* Navigation Bar for Haircuts Page */
+.navbar {
+    background-color: #FFDE59;
+    padding: 1rem 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    position: relative;
+}
+
+.navbar-brand {
+    position: absolute;
+    left: 15px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #000000;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-links a:hover {
+    color: #463f00;
+}
+
+.haircuts-header {
+    color: #FFDE59;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.category-btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    background: none;
+    color: #FFDE59;
+    position: relative;
+    cursor: pointer;
+}
+
+.category-btn.active {
+    color: #FFDE59;
+}
+
+.category-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 40px;
+    height: 2px;
+    background-color: #FFDE59;
+    transform: translateX(-50%);
+}
+
+.category-btn.inactive {
+    color: #808080;
+}
+
+.category-btn.inactive:hover {
+    color: #FFDE59;
+}
+
+.d-flex.justify-content-center.mb-4.gap-3 {
+    margin-bottom: 3rem !important;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.text-content {
+    flex: 1;
+}
+
+.barber-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 50px;
+}
+
+.barber-image img {
+    max-width: 100%;
+    height: auto;
+    max-height: 600px;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .barber-image {
+        padding-left: 0;
+        margin-top: 30px;
+    }
+}
+
+.barber-image-fixed {
+    position: absolute;
+    right: -50px;
+    top: 60%;
+    transform: translateY(-50%);
+    max-width: 1050px;
+    z-index: -1;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.barber-image-fixed img {
+    max-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    position: relative;
+}
+
+@media (max-width: 1200px) {
+    .barber-image-fixed {
+        opacity: 0.3;
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 768px) {
+    .barber-image-fixed {
+        display: none;
+    }
+}
+
+/* Services Modal Styling */
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none;
+    position: relative;
+    z-index: 1;
+}
+
+.service-item:hover {
+    background-color: #f8f9fa;
+}
+
+.service-name {
+    font-size: 16px;
+}
+
+.service-price {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Highlight selected service */
+.service-item.selected {
+    background-color: #FFDE59;
+}
+
+/* Style the service button */
+#service-button {
+    background-color: white;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+}
+
+#service-button:hover {
+    background-color: #f8f9fa;
+}
+
+.modal-content {
+    position: relative;
+    z-index: 1050;
+}
+
+.modal-dialog {
+    pointer-events: all;
+}
+
+/* Additional styles for haircut modal */
+#haircut-button {
+    background-color: white;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+}
+
+#haircut-button:hover {
+    background-color: #f8f9fa;
+}
+
+/* Use existing service-item styles for consistency */
+#haircutsModal .service-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+#haircutsModal .service-item:last-child {
+    border-bottom: none;
+}
+
+/* Additional styles for addon modal */
+#addon-button {
+    background-color: white;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+}
+
+#addon-button:hover {
+    background-color: #f8f9fa;
+}
+
+/* Use existing service-item styles for consistency */
+#addonsModal .service-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+#addonsModal .service-item:last-child {
+    border-bottom: none;
+}
+
+/* Add these styles for the confirmation modal */
+#confirmationModal .modal-content {
+    border-radius: 15px;
+    border: none;
+}
+
+#confirmationModal .modal-header {
+    border-bottom: none;
+    padding: 20px;
+}
+
+#confirmationModal .modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+}
+
+#confirmationModal .modal-body {
+    padding: 20px 30px;
+}
+
+#confirmationModal .modal-body p {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+#confirmationModal .modal-footer {
+    border-top: none;
+    justify-content: center;
+    padding: 20px;
+}
+
+#confirmationModal .btn-confirm {
+    background-color: #4CD964;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 30px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#confirmationModal .btn-confirm:hover {
+    background-color: #3cb371;
+}
+
+/* Add these styles to your existing CSS file */
+
+.dropdown {
+    position: relative;
+}
+
+.user-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 8px 16px;
+    background: #000000;
+    border-radius: 12px;
+    color: white;
+}
+
+.user-icon {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-icon i {
+    color: #000000;
+    font-size: 20px;
+}
+
+.user-greeting {
+    display: flex;
+    align-items: center;
+    line-height: 1.2;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: none;
+    min-width: 150px;
+    padding: 8px 0;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 8px 16px;
+    color: #000000;
+    text-decoration: none;
+}
+
+.dropdown-item:hover {
+    background: #f5f5f5;
+}
+
+/* Update styles for the Book Appointment button */
+.btn-book-appointment {
+    background-color: #F3CD32;
+    transition: background-color 0.3s ease;
+    border-radius: 12px;  /* Increased roundness */
+    padding: 10px 20px;   /* Larger padding */
+    font-size: 18px;      /* Larger font size */
+    font-family: Arial, sans-serif;
+}
+
+.btn-book-appointment:hover {
+    background-color: #FFDE59 !important;
+}

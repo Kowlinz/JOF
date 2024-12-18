@@ -87,9 +87,6 @@ if (!$previousResult) {
 
 // Query for Total Barber Earnings (Income)
 $incomeQuery = "
-    SELECT SUM(barberEarnings) AS total_income
-    FROM earnings_tbl
-    WHERE barberID = '$barberID'
 ";
 $incomeResult = mysqli_query($conn, $incomeQuery);
 if (!$incomeResult) {

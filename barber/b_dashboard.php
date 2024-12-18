@@ -87,6 +87,10 @@ if (!$previousResult) {
 
 // Query for Total Barber Earnings (Income)
 $incomeQuery = "
+    SELECT SUM(e.barberEarnings) AS total_income
+    FROM earnings_tbl e
+    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+    WHERE DATE(a.date) = CURDATE() AND e.barberID = '$barberID'
 ";
 $incomeResult = mysqli_query($conn, $incomeQuery);
 if (!$incomeResult) {

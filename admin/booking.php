@@ -50,6 +50,7 @@ $addonsResult = $conn->query($addonsQuery);
             <div class="text-center mb-4">
                 <img src="css/images/JOF-Logo.png" alt="logo-1" width="90" height="120" class="mt-3">
             </div>
+            <h2 class="text-center mb-5" style="color: #FFDF60;">Walk-In Customer</h2>
 
             <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5">
                 <div class="row justify-content-center">

@@ -13,9 +13,9 @@ include 'db_connect.php';
 // Get the logged-in customer's ID from the session
 $customerID = $_SESSION["customerID"];
 
-// Verify if the admin exists (optional check)
-$sql_admin = "SELECT customerID FROM customer_tbl WHERE customerID = '$customerID'";
-$result_admin = $conn->query($sql_admin);
+// Verify if the customer exists (optional check)
+$sql_customer = "SELECT customerID FROM customer_tbl WHERE customerID = '$customerID'";
+$result_customer = $conn->query($sql_customer);
 
 // Check if form is submitted via POST method
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -27,23 +27,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hcID = isset($_POST['haircut']) && !empty($_POST['haircut']) ? $_POST['haircut'] : null;
     $remarks = isset($_POST['remarks']) ? $_POST['remarks'] : null;
 
-    // Validate required fields (Date, Time, Service, Haircut)
+    // Validate required fields (Date, Time, Service)
     if (!$date || !$timeSlot || !$serviceID) {
-        die("Error: Missing required fields.");
+        echo "<script>alert('Error: Missing required fields.'); window.history.back();</script>";
+        exit();
     }
 
-    // Check if the selected time slot for the selected date is already booked
-    $sql_check = "SELECT * FROM appointment_tbl WHERE date = '$date' AND timeSlot = '$timeSlot'";
+    // Check if the selected time slot for the selected date is already booked and not canceled
+    $sql_check = "SELECT * FROM appointment_tbl WHERE date = '$date' AND timeSlot = '$timeSlot' AND status != 'Cancelled'";
     $result_check = $conn->query($sql_check);
 
     if ($result_check->num_rows > 0) {
-        die("Error: This time slot is already booked.");
+        echo "<script>alert('Error: This time slot is already booked.'); window.history.back();</script>";
+        exit();
     }
 
     // Default status for the appointment is "Pending"
     $status = "Pending";
 
-    // Insert into the appointment_tbl (excluding customerID)
+    // Insert into the appointment_tbl
     $sql = "INSERT INTO appointment_tbl (customerID, date, timeSlot, serviceID, addonID, hcID, remarks, status) 
     VALUES ('$customerID', '$date', '$timeSlot', '$serviceID', " . ($addonID !== null ? "'$addonID'" : "NULL") . ", " . ($hcID !== null ? "'$hcID'" : "NULL") . ", '$remarks', '$status')";
 

@@ -117,26 +117,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                                $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
-                                                   FROM appointment_tbl a
-                                                   JOIN admin_tbl c ON a.adminID = c.adminID
-                                                   WHERE a.status = 'Cancelled' AND a.date = CURDATE()";
-                                $cancelledResult = mysqli_query($conn, $cancelledQuery);
-
-                                if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
-                                    while ($row = mysqli_fetch_assoc($cancelledResult)) {
-                                        echo "<tr>
-                                                <td>{$row['firstName']} {$row['lastName']}</td>
-                                                <td>{$row['date']}</td>
-                                                <td>{$row['timeSlot']}</td>
-                                                <td>{$row['reason']}</td>
-                                              </tr>";
                                     }
-                                } else {
-                                    echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found.</td></tr>";
-                                }
-                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -203,8 +184,6 @@
                         ";
                         $upcomingResult = mysqli_query($conn, $upcomingQuery);
 
-                        // Query to fetch all barbers
-                        $barbersQuery = "SELECT * FROM barbers_tbl";
                         $barbersResult = mysqli_query($conn, $barbersQuery);
                         $barbers = [];
                         if ($barbersResult && mysqli_num_rows($barbersResult) > 0) {
@@ -216,8 +195,6 @@
                         // Check if there are any upcoming appointments
                         if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
                             while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                                echo "<tr>
-                                        <td>{$row['appointmentID']}</td>
                                         <td>{$row['fullName']}</td>
                                         <td>{$row['timeSlot']}</td>
                                         <td>{$row['serviceName']}</td>
@@ -232,7 +209,6 @@
                                                         $selected = ($row['barberID'] == $barber['barberID']) ? "selected" : "";
                                                         echo "<option value='{$barber['barberID']}' $selected>{$barber['firstName']} {$barber['lastName']}</option>";
                                                     }
-                                echo "</select>
                                             </form>
                                         </td>
                                         <td>

@@ -1,8 +1,5 @@
 <?php
 session_start();
-    if (!isset($_SESSION["user"])) {
-        header("Location: ../login-staff.php");
-    }
 if (!isset($_SESSION["user"])) {
     header("Location: ../login-staff.php");
     exit();
@@ -30,18 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validate required fields (Date, Time, Service, Haircut)
     if (!$date || !$timeSlot || !$serviceID) {
-        die("Error: Missing required fields.");
         echo "<script>alert('Error: Missing required fields.'); window.history.back();</script>";
         exit();
     }
 
     // Check if the selected time slot for the selected date is already booked
-    $sql_check = "SELECT * FROM appointment_tbl WHERE date = '$date' AND timeSlot = '$timeSlot'";
     $sql_check = "SELECT * FROM appointment_tbl WHERE date = '$date' AND timeSlot = '$timeSlot' AND status != 'Cancelled'";
     $result_check = $conn->query($sql_check);
 
     if ($result_check->num_rows > 0) {
-        die("Error: This time slot is already booked.");
         echo "<script>alert('Error: This time slot is already booked.'); window.history.back();</script>";
         exit();
     }
@@ -58,12 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: appointments.php");
         exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
         echo "<script>alert('Error: Unable to book appointment.'); window.history.back();</script>";
         exit();
     }
 
     $conn->close();
 }
-?>?>
 ?>

@@ -117,7 +117,33 @@
                             </tr>
                         </thead>
                         <tbody>
+                                <?php
+                                    // Modify the query to select only cancelled appointments for the current date
+                                    $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
+                                    FROM appointment_tbl a
+                                    LEFT JOIN customer_tbl c ON a.customerID = c.customerID
+                                    WHERE a.status = 'Cancelled' 
+                                    AND a.date = CURDATE()";
+                                    
+                                    $cancelledResult = mysqli_query($conn, $cancelledQuery);
+                                    
+                                    if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
+                                        while ($row = mysqli_fetch_assoc($cancelledResult)) {
+                                            // Check if firstName or lastName is null (for admin bookings)
+                                            $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
+                                            $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
+                                    
+                                            echo "<tr>
+                                                    <td>{$firstName} {$lastName}</td>
+                                                    <td>{$row['date']}</td>
+                                                    <td>{$row['timeSlot']}</td>
+                                                    <td>{$row['reason']}</td>
+                                                </tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
                                     }
+                                ?>
                         </tbody>
                     </table>
                 </div>
@@ -184,6 +210,8 @@
                         ";
                         $upcomingResult = mysqli_query($conn, $upcomingQuery);
 
+                        // Modified query to fetch only available barbers
+                        $barbersQuery = "SELECT * FROM barbers_tbl WHERE availability = 'available'";
                         $barbersResult = mysqli_query($conn, $barbersQuery);
                         $barbers = [];
                         if ($barbersResult && mysqli_num_rows($barbersResult) > 0) {
@@ -192,9 +220,13 @@
                             }
                         }
 
+                        $counter = 1;
+
                         // Check if there are any upcoming appointments
                         if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
                             while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                echo "  <tr>
+                                        <td>{$counter}</td>
                                         <td>{$row['fullName']}</td>
                                         <td>{$row['timeSlot']}</td>
                                         <td>{$row['serviceName']}</td>
@@ -209,6 +241,7 @@
                                                         $selected = ($row['barberID'] == $barber['barberID']) ? "selected" : "";
                                                         echo "<option value='{$barber['barberID']}' $selected>{$barber['firstName']} {$barber['lastName']}</option>";
                                                     }
+                                                echo "</select>
                                             </form>
                                         </td>
                                         <td>
@@ -237,6 +270,7 @@
                                             </div>
                                         </td>
                                     </tr>";
+                                    $counter++;
                             }
                         } else {
                             echo "<tr><td colspan='7' class='text-center'>No upcoming appointments found.</td></tr>";

@@ -300,6 +300,8 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php
+                                    $counter = 1;
 
                                     if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
                                         while ($row = mysqli_fetch_assoc($upcomingResult)) {

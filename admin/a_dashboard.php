@@ -300,22 +300,20 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php
-$counter = 1;
 
-if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
-    while ($row = mysqli_fetch_assoc($upcomingResult)) {
-        echo "<tr>";
-        echo "<td>{$counter}</td>";
-        echo "<td>{$row['fullName']}</td>";
-        echo "<td>{$row['timeSlot']}</td>";
-        echo "</tr>";
-        $counter++;
-    }
-} else {
-    echo "<tr><td colspan='3' class='text-center'>No upcoming appointments found.</td></tr>";
-}
-?>
+                                    if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
+                                        while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                            echo "<tr>";
+                                            echo "<td>{$counter}</td>";
+                                            echo "<td>{$row['fullName']}</td>";
+                                            echo "<td>{$row['timeSlot']}</td>";
+                                            echo "</tr>";
+                                            $counter++;
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='3' class='text-center'>No upcoming appointments found.</td></tr>";
+                                    }
+                                ?>
                             </tbody>
                         </table>
                     </div>

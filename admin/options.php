@@ -6,6 +6,77 @@ if (!isset($_SESSION["user"])) {
 
 include 'db_connect.php';
 
+// Handle haircut deletion request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_haircut') {
+    if (!isset($_POST['haircut_id'])) {
+        die(json_encode(['success' => false, 'message' => 'No haircut ID provided']));
+    }
+
+    $haircut_id = $_POST['haircut_id'];
+
+    $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM appointment_tbl WHERE hcID = ?");
+    $check_stmt->bind_param("i", $haircut_id);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    if ($row['count'] > 0) {
+        $check_stmt->close();
+        die(json_encode([
+            'success' => false, 
+            'message' => 'This haircut cannot be deleted because it is being used in existing appointments.'
+        ]));
+    }
+
+    $check_stmt->close();
+
+    $delete_stmt = $conn->prepare("DELETE FROM haircut_tbl WHERE hcID = ?");
+    $delete_stmt->bind_param("i", $haircut_id);
+
+    try {
+        if ($delete_stmt->execute()) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to delete haircut']);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+
+    $delete_stmt->close();
+    exit();
+}
+
+// Handle get haircuts request
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'get_haircuts') {
+    $category = $_GET['category'] ?? 'Basic';
+    $sql = "SELECT * FROM haircut_tbl WHERE hcCategory = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    ob_start();
+    while($row = $result->fetch_assoc()) {
+        ?>
+        <div class="haircut-item" data-category="<?php echo $row['hcCategory']; ?>" data-id="<?php echo $row['hcID']; ?>">
+            <div class="position-relative">
+                <img src="data:image/jpeg;base64,<?php echo base64_encode($row['hcImage']); ?>" 
+                     alt="<?php echo $row['hcName']; ?>">
+                <button class="delete-btn btn btn-danger" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p class="text-center mt-2"><?php echo $row['hcName']; ?></p>
+        </div>
+        <?php
+    }
+    $html = ob_get_clean();
+    $stmt->close();
+    echo $html;
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -545,7 +616,7 @@ include 'db_connect.php';
                 this.classList.add('active');
                 const category = this.getAttribute('href').replace('#', '');
                 
-                fetch(`get_haircuts.php?category=${category}`)
+                fetch(`options.php?action=get_haircuts&category=${category}`)
                     .then(response => response.text())
                     .then(html => {
                         document.querySelector('.gallery-grid').innerHTML = html;
@@ -589,17 +660,18 @@ include 'db_connect.php';
                         const haircut = this.closest('.haircut-item');
                         const haircut_id = haircut.dataset.id;
 
-                        fetch('delete_haircut.php', {
+                        const formData = new FormData();
+                        formData.append('action', 'delete_haircut');
+                        formData.append('haircut_id', haircut_id);
+
+                        fetch('options.php', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: `haircut_id=${haircut_id}`
+                            body: formData
                         })
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                haircut.remove(); // Remove from DOM
+                                haircut.remove();
                             } else {
                                 document.getElementById('errorModalBody').textContent = data.message;
                                 errorModal.show();
@@ -652,7 +724,7 @@ include 'db_connect.php';
                     // Refresh the gallery grid
                     const activeTab = document.querySelector('.nav-link.active');
                     const category = activeTab.getAttribute('href').replace('#', '');
-                    fetch(`get_haircuts.php?category=${category}`)
+                    fetch(`options.php?action=get_haircuts&category=${category}`)
                         .then(response => response.text())
                         .then(html => {
                             document.querySelector('.gallery-grid').innerHTML = html;

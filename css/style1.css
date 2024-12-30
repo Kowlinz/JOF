@@ -900,3 +900,237 @@ footer {
 .btn-book-appointment:hover {
     background-color: #FFDE59 !important;
 }
+
+/* Add these styles for the mobile menu */
+.menu-btn {
+    display: none;  /* Hidden by default */
+}
+
+.menu-dropdown {
+    display: none;  /* Hidden by default */
+}
+
+/* Media query for mobile screens */
+@media (max-width: 991.98px) {
+    /* Update navbar background for mobile */
+    nav {
+        background-color: transparent !important;
+    }
+    
+    .navbar {
+        background-color: transparent !important;
+        padding: 40px 0 20px 0 !important;  /* Increased top padding */
+    }
+
+    .navbar .container {
+        padding-left: 40px !important;
+        position: relative;  /* For absolute positioning of menu button */
+    }
+    
+    .navbar-brand {
+        padding: 0;
+        margin: 0;
+    }
+
+    .navbar-brand img {
+        width: 35px;  /* Slightly smaller logo for mobile */
+        height: 35px;
+    }
+    
+    .menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: #FFDE59;
+        font-size: 28px;  /* Slightly larger menu icon */
+        cursor: pointer;
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* Hide desktop navigation */
+    .navbar-nav.mx-auto,
+    .navbar-nav.pe-5.me-4 {
+        display: none !important;
+    }
+
+    /* Mobile dropdown menu */
+    .menu-dropdown {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #000000;
+        z-index: 1000;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .menu-dropdown.show {
+        display: block;
+        opacity: 1;
+    }
+    
+    .menu-header {
+        padding: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .menu-close {
+        background: none;
+        border: none;
+        color: #FFDE59;
+        font-size: 32px;
+        cursor: pointer;
+    }
+    
+    .menu-links {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 40px;
+    }
+    
+    .menu-link {
+        color: #FFDE59;
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: 500;
+        margin: 15px 0;
+        transition: color 0.3s ease;
+    }
+    
+    .menu-link:hover {
+        color: #FFB800;
+    }
+
+    /* Content area styling for mobile */
+    .content {
+        margin: 2rem 0 0;
+        padding: 20px 40px;  /* Increased padding */
+        text-align: left;    /* Align text to left */
+        align-items: flex-start;  /* Align items to left */
+        max-width: 100%;
+        margin-left: 0;
+    }
+
+    .content h4 {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+
+    .content h1 {
+        font-size: 3rem;
+        line-height: 1.2;
+        margin-bottom: 2rem;
+        text-align: left;
+        padding-right: 20px;  /* Add some padding on the right */
+    }
+
+    .content button {
+        margin-top: 2rem;
+        padding: 1rem 2rem;
+        font-size: 1.25rem;
+        width: 200px;
+        align-self: flex-start;  /* Align button to left */
+    }
+
+    /* Social media icons - keep these centered */
+    .Follow {
+        justify-content: flex-start;  /* Align icons to left */
+        margin-top: 3rem;
+        padding-left: 0;  /* Remove any left padding */
+    }
+
+    .Follow i {
+        font-size: 2rem;
+        margin: 0 2rem 0 0;  /* Add right margin only */
+    }
+}
+
+/* Additional mobile-specific adjustments */
+@media (max-width: 576px) {
+    .content h1 {
+        font-size: 2.5rem;
+    }
+
+    .content {
+        padding: 20px 30px;  /* Slightly less padding for very small screens */
+    }
+
+    .navbar .container {
+        padding-left: 30px !important;  /* Match smaller content padding */
+    }
+    
+    .menu-btn {
+        right: 30px;  /* Match smaller content padding */
+    }
+}
+
+/* Add these base styles for logos */
+.mobile-logo {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    .navbar {
+        background-color: transparent !important;
+        padding: 40px 0 20px 0 !important;
+    }
+
+    .navbar .container {
+        padding-left: 40px !important;
+        position: relative;
+        display: flex;
+        justify-content: center;  /* Center the logo container */
+    }
+    
+    .navbar-brand {
+        padding: 0;
+        margin: 0;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);  /* Center the logo */
+    }
+
+    /* Hide desktop logo and show mobile logo */
+    .desktop-logo {
+        display: none;
+    }
+
+    .mobile-logo {
+        display: block;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: #FFDE59;
+        font-size: 28px;
+        cursor: pointer;
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;  /* Ensure button stays above logo */
+    }
+
+    /* Rest of your mobile styles remain the same... */
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 576px) {
+    .mobile-logo {
+        width: 40px;
+        height: 40px;
+    }
+}

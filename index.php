@@ -55,8 +55,14 @@ if ($customerID) {
 						</div>
 						<div class="menu-links">
 							<a href="index.php" class="menu-link">HOME</a>
-							<a href="haircuts.php" class="menu-link">HAIRCUTS</a>
-							<a href="login.php" class="menu-link">LOGIN</a>
+							<?php if ($customerID): ?>
+								<a href="haircuts.php" class="menu-link">HAIRCUTS</a>
+								<a href="customer/appointment.php" class="menu-link">MY APPOINTMENT</a>
+								<a href="logout.php" class="menu-link">LOGOUT</a>
+							<?php else: ?>
+								<a href="haircuts.php" class="menu-link">HAIRCUTS</a>
+								<a href="login.php" class="menu-link">LOGIN</a>
+							<?php endif; ?>
 						</div>
 					</div>
 

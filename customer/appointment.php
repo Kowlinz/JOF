@@ -104,8 +104,26 @@ $result = $conn->query($sql);
             <nav class="navbar navbar-expand-lg py-4">
                 <div class="container ps-5">
                     <a class="navbar-brand ms-0" href="../index.php">
-                        <img src="../css/images/jof_logo_black.png" alt="logo" width="45" height="45">
+                        <img src="../css/images/jof_logo_black.png" alt="logo" width="45" height="45" class="desktop-logo">
+                        <img src="../css/images/jof_logo_yellow.png" alt="logo" width="45" height="45" class="mobile-logo">
                     </a>
+
+                    <button class="menu-btn d-lg-none" type="button" id="menuBtn">
+                        <i class='bx bx-menu'></i>
+                    </button>
+
+                    <div class="menu-dropdown" id="menuDropdown">
+                        <div class="menu-header">
+                            <button class="menu-close" id="menuClose">&times;</button>
+                        </div>
+                        <div class="menu-links">
+                            <a href="../index.php" class="menu-link">HOME</a>
+                            <a href="../haircuts.php" class="menu-link">HAIRCUTS</a>
+                            <a href="appointment.php" class="menu-link">MY APPOINTMENT</a>
+                            <a href="../logout.php" class="menu-link">LOGOUT</a>
+                        </div>
+                    </div>
+
                     <div class="navbar-nav mx-auto ps-5">
                         <a class="nav-link mx-4 nav-text fs-5" href="../index.php">Home</a>
                         <a class="nav-link mx-4 nav-text fs-5" href="../haircuts.php">Haircuts</a>
@@ -153,92 +171,128 @@ $result = $conn->query($sql);
             </nav>
         </div>
 
-    <h1 style="text-align: center; margin: 50px 0 20px; color: #F3CD32; font-size: 32px; font-weight: bold;">My Appointments</h1>
+        <div class="appointments-header-wrapper">
+            <h1 class="appointments-header">My Appointments</h1>
+        </div>
 
-    <div class="appointments-container">
-        <table class="appointments-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php
-    if ($result->num_rows > 0) {
-        // Output each row
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>" . $row['date'] . "</td>";
-            echo "<td>" . $row['timeSlot'] . "</td>";
-            echo "<td>" . $row['status'] . "</td>";
-            
-            // Only show the Cancel button if the status is not "Cancelled"
-            if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed") {
-                echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
-                $row['appointmentID'] . ", `" . 
-                $row['date'] . "`, `" . 
-                $row['timeSlot'] . "`)'>Cancel</button></td>";
-            } else {
-                // If the status is "Cancelled", do not display the Cancel button
-                echo "<td></td>";
+        <div class="appointments-container">
+            <table class="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $statusClass = '';
+                switch($row['status']) {
+                    case 'Completed':
+                        $statusClass = 'status-completed';
+                        break;
+                    case 'Cancelled':
+                        $statusClass = 'status-cancelled';
+                        break;
+                    case 'Pending':
+                        $statusClass = 'status-pending';
+                        break;
+                }
+                
+                echo "<tr>";
+                echo "<td>" . $row['date'] . "</td>";
+                echo "<td>" . $row['timeSlot'] . "</td>";
+                echo "<td class='" . $statusClass . "'>" . $row['status'] . "</td>";
+                
+                if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed") {
+                    echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
+                    "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
+                    $row['appointmentID'] . ", `" . 
+                    $row['date'] . "`, `" . 
+                    $row['timeSlot'] . "`)'>Cancel</button></td>";
+                } else {
+                    echo "<td>-</td>";
+                }
+                echo "</tr>";
             }
-            echo "</tr>";
+        } else {
+            echo "<tr><td colspan='4'>No appointments found.</td></tr>";
         }
-    } else {
-        echo "<tr><td colspan='4'>No appointments found.</td></tr>";
-    }
-?>
-            </tbody>
-        </table>
-    </div>
+    ?>
+                </tbody>
+            </table>
+        </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelModalLabel">Cancel Appointment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Service: <span id="serviceName"></span></p>
-                    <p>Date: <span id="appointmentDate"></span></p>
-                    <p>Time: <span id="appointmentTime"></span></p>
-                    <div class="mb-3">
+        <!-- Modal -->
+        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelModalLabel">Cancel Appointment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Service: <span id="serviceName"></span></p>
+                        <p>Date: <span id="appointmentDate"></span></p>
+                        <p>Time: <span id="appointmentTime"></span></p>
+                        <div class="mb-3">
     <label for="cancelReason" class="form-label">Reason for Cancellation</label>
     <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (optional)">
 </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
-                    <button type="button" class="btn btn-danger" id="confirmCancelButton">Confirm</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                        <button type="button" class="btn btn-danger" id="confirmCancelButton">Confirm</button>
+                    </div>
                 </div>
             </div>
         </div>
+
+
+        <script>
+    // Function to handle appointment cancellation
+    function openCancelModal(appointmentID, date, time) {
+        document.getElementById('appointmentDate').textContent = date;
+        document.getElementById('appointmentTime').textContent = time;
+
+        // Set up the Confirm button to handle the cancellation
+        const confirmButton = document.getElementById('confirmCancelButton');
+        confirmButton.onclick = function () {
+            const reason = document.getElementById('cancelReason').value;
+
+            // No validation needed anymore for the reason (allow empty reason)
+            // Redirect to cancellation PHP script with parameters
+            window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
+        };
+    }
+        </script>
+
+        <script>
+    // JavaScript to toggle mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const menuDropdown = document.getElementById('menuDropdown');
+    const menuClose = document.getElementById('menuClose');
+
+    menuBtn.addEventListener('click', function () {
+        menuDropdown.classList.toggle('show');
+    });
+
+    menuClose.addEventListener('click', function () {
+        menuDropdown.classList.remove('show');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function (event) {
+        if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
+            menuDropdown.classList.remove('show');
+        }
+    });
+</script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </div>
-
-
-    <script>
-// Function to handle appointment cancellation
-function openCancelModal(appointmentID, date, time) {
-    document.getElementById('appointmentDate').textContent = date;
-    document.getElementById('appointmentTime').textContent = time;
-
-    // Set up the Confirm button to handle the cancellation
-    const confirmButton = document.getElementById('confirmCancelButton');
-    confirmButton.onclick = function () {
-        const reason = document.getElementById('cancelReason').value;
-
-        // No validation needed anymore for the reason (allow empty reason)
-        // Redirect to cancellation PHP script with parameters
-        window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
-    };
-}
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

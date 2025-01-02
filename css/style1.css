@@ -1175,3 +1175,276 @@ footer {
         justify-content: center;
     }
 }
+
+/* Mobile styles */
+@media (max-width: 991.98px) {
+    /* Hide desktop navigation */
+    .navbar-nav.mx-auto,
+    .navbar-nav.pe-5.me-4 {
+        display: none !important;
+    }
+
+    /* Show mobile menu button */
+    .menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 28px;
+        cursor: pointer;
+        margin-left: auto;
+        z-index: 1001;
+    }
+
+    /* Mobile logo */
+    .desktop-logo {
+        display: none !important;
+    }
+
+    .mobile-logo {
+        display: block;
+    }
+
+    /* Appointments page styles */
+    .appointments-container {
+        margin: 0 10px;
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 12px;
+    }
+
+    .appointments-table th {
+        color: #666;
+        font-weight: normal;
+    }
+
+    .cancel-button {
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 991.98px) {
+        h1.appointments-header {
+            padding-top: 60px !important;
+            margin: 0 0 20px !important;
+            font-size: 28px !important;
+            color: #F3CD32;
+            text-align: center;
+        }
+
+        .appointments-container {
+            margin: 15px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .appointments-table {
+            width: 100%;
+        }
+
+        .appointments-table th {
+            padding: 15px;
+            color: #666;
+            font-weight: normal;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointments-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointments-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cancel-button {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Status colors */
+        .status-completed {
+            color: #28a745;
+        }
+
+        .status-cancelled {
+            color: #dc3545;
+        }
+
+        .status-pending {
+            color: #ffc107;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar .container {
+        padding: 0 15px !important;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .cancel-button {
+        padding: 4px 8px;
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 24px !important;
+        margin: 30px 0 15px !important;
+    }
+}
+
+/* Appointments header styling for all screen sizes */
+.appointments-header {
+    color: var(--primary-color);
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 50px 0 20px;
+}
+
+/* Mobile specific styles */
+@media (max-width: 991.98px) {
+    .appointments-header {
+        font-size: 24px !important;
+        margin: 120px 0 20px !important;
+        padding-top: 30px !important;
+    }
+
+    /* Ensure navbar has enough height */
+    .navbar {
+        min-height: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .appointments-header {
+        margin: 110px 0 20px !important;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 991.98px) {
+    /* ... existing mobile styles ... */
+
+    /* Appointments page header */
+    .appointments-header-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 120px;
+        margin-top: 80px;
+    }
+
+    .appointments-header {
+        font-size: 24px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* ... rest of the mobile styles ... */
+}
+
+@media (max-width: 576px) {
+    .appointments-header-wrapper {
+        min-height: 100px;
+        margin-top: 70px;
+    }
+}
+
+/* Mobile styles for appointments page */
+@media (max-width: 991.98px) {
+    /* ... existing mobile styles ... */
+
+    .appointments-container {
+        margin: 0 10px;
+        background-color: white;
+        border-radius: 15px;
+        overflow-x: auto;
+    }
+
+    .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 10px;
+        white-space: nowrap;
+    }
+
+    /* ... rest of the mobile styles ... */
+}
+
+@media (max-width: 620px) {
+    .appointments-container {
+        margin: 0;
+        border-radius: 0;
+        overflow-x: auto;
+        padding: 0 10px;
+    }
+
+    .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .cancel-button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .appointments-header-wrapper {
+        min-height: 100px;
+        margin-top: 70px;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .cancel-button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}

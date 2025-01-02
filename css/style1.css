@@ -1,12 +1,27 @@
+/* Variables */
+:root {
+    --primary-color: #FFDE59;
+    --secondary-color: #000000;
+    --hover-color: #FFB800;
+    --text-color: #000000;
+    --font-family: Arial, Helvetica, sans-serif;
+    --font-size-base: 16px;
+    --font-size-large: 20px;
+    --font-size-xlarge: 24px;
+    --font-size-xxlarge: 2.5rem;
+    --transition-duration: 0.3s;
+}
+
+/* Reset and General Styles */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background: #000000;
-    font-family: Arial, Helvetica, sans-serif;
+    background: var(--secondary-color);
+    font-family: var(--font-family);
 }
 
 /* Navigation Bar */
@@ -15,8 +30,8 @@ nav {
     align-items: center;
     justify-content: space-between;
     padding: 0.5px;
-    background-color: #FFDE59;
-    font-size: 20px;
+    background-color: var(--primary-color);
+    font-size: var(--font-size-large);
 }
 
 nav h1 {
@@ -25,18 +40,17 @@ nav h1 {
 }
 
 .nav-text {
-    font-family: Arial, sans-serif;
+    font-family: var(--font-family);
     font-size: 18px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: all 0.3s ease;
+    transition: all var(--transition-duration) ease;
 }
 
 .nav-text:hover {
     color: #463f00 !important;
     transform: scale(1.1);
-    transition: all 0.3s ease;
 }
 
 .logo img {
@@ -59,25 +73,25 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: #000000;
+    color: var(--text-color);
 }
 
 nav button {
-    background-color: #000000;
+    background-color: var(--secondary-color);
     border: none;
-    color: #FFDE59;
+    color: var(--primary-color);
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     border-radius: 12px;
 }
 
 /* Content Section */
 .content {
     margin-top: 5rem;
-    color: #FFDE59;
+    color: var(--primary-color);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -110,20 +124,20 @@ nav button {
 }
 
 .content button {
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
     border: none;
-    color: #000000;
+    color: var(--text-color);
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     border-radius: 12px;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-duration) ease;
 }
 
 .content button:hover {
-    background-color: #FFB800;
+    background-color: var(--hover-color);
 }
 
 /* Social Media Follow Section */
@@ -136,11 +150,11 @@ nav button {
     color: #ffffff;
     font-size: 45px;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: color var(--transition-duration) ease;
 }
 
 .Follow i:hover {
-    color: #FFDE59;
+    color: var(--primary-color);
 }
 
 /* Responsive Design */
@@ -156,7 +170,7 @@ nav button {
     background-color: #3498DB;
     color: white;
     padding: 16px;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     border: none;
     cursor: pointer;
 }
@@ -277,10 +291,10 @@ nav button {
 }
 
 .gallery-item {
-    flex: 0 0 calc(25% - 12px); 
+    flex: 0 0 calc(25% - 12px);
     overflow: hidden;
     text-align: center;
-    color: #FFDE59;
+    color: var(--primary-color);
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -292,7 +306,7 @@ nav button {
     aspect-ratio: 1/1;
     object-fit: cover;
     border-radius: 8px;
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-duration) ease;
 }
 
 .gallery-item:hover img {
@@ -302,39 +316,70 @@ nav button {
 .gallery-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #FFDE59;
+    color: var(--primary-color);
     padding: 8px;
     position: relative;
     z-index: 1;
 }
 
-/* Make it responsive */
-@media (max-width: 768px) {
+/* Responsive Layouts */
+@media (max-width: 1199px) {
     .gallery-item {
-        flex: 0 0 calc(50% - 8px);
+        flex: 0 0 calc(33.333% - 20px);
+        margin: 0 10px 20px 10px;
+    }
+}
+
+@media (max-width: 919px) {
+    .gallery-item {
+        flex: 0 0 calc(50% - 30px);
+        margin: 0 15px 20px 15px;
+    }
+
+    .gallery-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .gallery-item {
+        flex: 0 0 100%;
+        margin: 0 40px 20px 40px;
     }
 }
 
 @media (max-width: 480px) {
     .gallery-item {
-        flex: 0 0 100%;
+        margin: 0 30px 20px 30px;
     }
 }
 
-/* Make the styles more specific to override Bootstrap */
+@media (max-width: 425px) {
+    .gallery-item {
+        margin: 0 20px 20px 20px;
+    }
+
+    .gallery-item img {
+        width: 85%;
+        margin: 0 auto;
+        display: block;
+    }
+}
+
+/* Additional Styles */
 .content .card {
     border: none !important;
     border-radius: 8px;
     overflow: hidden;
-    background-color: #FFDE59 !important;
+    background-color: var(--primary-color) !important;
 }
 
 .content .card-img-top {
-    aspect-ratio: 1/1;  /* Forces 1:1 ratio */
-    object-fit: cover;  /* Ensures image fills the square without distortion */
+    aspect-ratio: 1/1;
+    object-fit: cover;
     width: 100%;
     height: 100%;
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-duration) ease;
 }
 
 .content .card:hover .card-img-top {
@@ -344,13 +389,13 @@ nav button {
 .content .card-body {
     padding: 0.8rem;
     text-align: center;
-    background-color: #FFDE59 !important;
+    background-color: var(--primary-color) !important;
 }
 
 .content .card-title {
     margin: 0;
     font-size: 1rem;
-    color: #000;
+    color: var(--text-color);
     font-weight: 500;
 }
 
@@ -375,7 +420,7 @@ nav button {
 }
 
 .haircut-nav .nav-item a {
-    color: #FFDE59;
+    color: var(--primary-color);
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: 500;
@@ -385,7 +430,6 @@ nav button {
     color: #ffd93d;
 }
 
-/* Active state styling */
 .haircut-nav .nav-item.active::after {
     content: '';
     position: absolute;
@@ -393,23 +437,22 @@ nav button {
     left: 0;
     width: 100%;
     height: 4px;
-    background-color: #FFB800;
+    background-color: var(--hover-color);
     border-radius: 2px;
 }
 
 .haircut-nav .nav-item.active a {
-    color: #FFB800;
+    color: var(--hover-color);
 }
 
 .haircut-header {
-    color: #FFDE59;
-    font-size: 2.5rem;
+    color: var(--primary-color);
+    font-size: var(--font-size-xxlarge);
     font-weight: bold;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
 }
 
-/* Footer adjustments */
 footer {
     position: relative;
     bottom: 0;
@@ -435,37 +478,32 @@ footer {
 }
 
 footer {
-    margin-bottom: 20px;  /* Add some bottom spacing */
+    margin-bottom: 20px;
 }
 
-/* Make social media icons slightly larger */
 .Follow i {
     font-size: 40px;
 }
 
-/* Add specific styling for haircuts page content */
 .content[style*="text-align: center"] {
-    margin: 5rem auto 0;  /* Center with auto margins */
-    padding: 0 20px;      /* Add some padding on the sides */
+    margin: 5rem auto 0;
+    padding: 0 20px;
     max-width: 1200px;
-    align-items: center;  /* Center flex items */
-    text-align: center;   /* Center text content */
+    align-items: center;
+    text-align: center;
 }
 
-/* Ensure the container is properly centered */
 .container.py-4 {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 15px;
 }
 
-/* Center the haircut cards */
 .row.g-3 {
     justify-content: center;
     margin: 0 auto;
 }
 
-/* Center the haircut header and navigation */
 .haircut-header {
     width: 100%;
     text-align: center;
@@ -480,7 +518,6 @@ footer {
     margin-bottom: 2rem;
 }
 
-/* Style the navigation bar for haircuts page */
 .header nav {
     padding: 1rem;
     display: flex;
@@ -500,14 +537,12 @@ footer {
     margin: 0;
 }
 
-/* Center the logo */
 .header nav a.navbar-brand {
     margin: 0 2rem;
 }
 
-/* Navigation Bar for Haircuts Page */
 .navbar {
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
     padding: 1rem 0;
 }
 
@@ -534,7 +569,7 @@ footer {
 }
 
 .nav-links a {
-    color: #000000;
+    color: var(--text-color);
     text-decoration: none;
     font-size: 18px;
     font-weight: 500;
@@ -547,9 +582,9 @@ footer {
 }
 
 .haircuts-header {
-    color: #FFDE59;
+    color: var(--primary-color);
     text-align: center;
-    font-size: 2.5rem;
+    font-size: var(--font-size-xxlarge);
     font-weight: bold;
     margin-top: 2rem;
     margin-bottom: 1.5rem;
@@ -560,16 +595,16 @@ footer {
     padding: 0.5rem 1.5rem;
     font-size: 1.25rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all var(--transition-duration) ease;
     border: none;
     background: none;
-    color: #FFDE59;
+    color: var(--primary-color);
     position: relative;
     cursor: pointer;
 }
 
 .category-btn.active {
-    color: #FFDE59;
+    color: var(--primary-color);
 }
 
 .category-btn.active::after {
@@ -579,7 +614,7 @@ footer {
     left: 50%;
     width: 40px;
     height: 2px;
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
     transform: translateX(-50%);
 }
 
@@ -588,7 +623,7 @@ footer {
 }
 
 .category-btn.inactive:hover {
-    color: #FFDE59;
+    color: var(--primary-color);
 }
 
 .d-flex.justify-content-center.mb-4.gap-3 {
@@ -694,20 +729,18 @@ footer {
 }
 
 .service-name {
-    font-size: 16px;
+    font-size: var(--font-size-base);
 }
 
 .service-price {
-    font-size: 16px;
+    font-size: var(--font-size-base);
     font-weight: bold;
 }
 
-/* Highlight selected service */
 .service-item.selected {
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
 }
 
-/* Style the service button */
 #service-button {
     background-color: white;
     border: 1px solid #ced4da;
@@ -727,7 +760,6 @@ footer {
     pointer-events: all;
 }
 
-/* Additional styles for haircut modal */
 #haircut-button {
     background-color: white;
     border: 1px solid #ced4da;
@@ -738,7 +770,6 @@ footer {
     background-color: #f8f9fa;
 }
 
-/* Use existing service-item styles for consistency */
 #haircutsModal .service-item {
     padding: 15px;
     border-bottom: 1px solid #eee;
@@ -748,7 +779,6 @@ footer {
     border-bottom: none;
 }
 
-/* Additional styles for addon modal */
 #addon-button {
     background-color: white;
     border: 1px solid #ced4da;
@@ -759,7 +789,6 @@ footer {
     background-color: #f8f9fa;
 }
 
-/* Use existing service-item styles for consistency */
 #addonsModal .service-item {
     padding: 15px;
     border-bottom: 1px solid #eee;
@@ -769,7 +798,6 @@ footer {
     border-bottom: none;
 }
 
-/* Add these styles for the confirmation modal */
 #confirmationModal .modal-content {
     border-radius: 15px;
     border: none;
@@ -781,7 +809,7 @@ footer {
 }
 
 #confirmationModal .modal-title {
-    font-size: 24px;
+    font-size: var(--font-size-xlarge);
     font-weight: bold;
     width: 100%;
     text-align: center;
@@ -793,7 +821,7 @@ footer {
 
 #confirmationModal .modal-body p {
     margin-bottom: 10px;
-    font-size: 16px;
+    font-size: var(--font-size-base);
 }
 
 #confirmationModal .modal-footer {
@@ -808,15 +836,13 @@ footer {
     border: none;
     border-radius: 8px;
     padding: 10px 30px;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     font-weight: 500;
 }
 
 #confirmationModal .btn-confirm:hover {
     background-color: #3cb371;
 }
-
-/* Add these styles to your existing CSS file */
 
 .dropdown {
     position: relative;
@@ -828,7 +854,7 @@ footer {
     gap: 10px;
     cursor: pointer;
     padding: 8px 16px;
-    background: #000000;
+    background: var(--secondary-color);
     border-radius: 12px;
     color: white;
 }
@@ -844,7 +870,7 @@ footer {
 }
 
 .user-icon i {
-    color: #000000;
+    color: var(--secondary-color);
     font-size: 20px;
 }
 
@@ -856,7 +882,7 @@ footer {
 
 .user-name {
     font-weight: 500;
-    font-size: 16px;
+    font-size: var(--font-size-base);
 }
 
 .dropdown-menu {
@@ -879,7 +905,7 @@ footer {
 .dropdown-item {
     display: block;
     padding: 8px 16px;
-    color: #000000;
+    color: var(--text-color);
     text-decoration: none;
 }
 
@@ -887,44 +913,40 @@ footer {
     background: #f5f5f5;
 }
 
-/* Update styles for the Book Appointment button */
 .btn-book-appointment {
     background-color: #F3CD32;
-    transition: background-color 0.3s ease;
-    border-radius: 12px;  /* Increased roundness */
-    padding: 10px 20px;   /* Larger padding */
-    font-size: 18px;      /* Larger font size */
-    font-family: Arial, sans-serif;
+    transition: background-color var(--transition-duration) ease;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-family: var(--font-family);
 }
 
 .btn-book-appointment:hover {
-    background-color: #FFDE59 !important;
+    background-color: var(--primary-color) !important;
 }
 
-/* Add these styles for the mobile menu */
 .menu-btn {
-    display: none;  /* Hidden by default */
+    display: none;
 }
 
 .menu-dropdown {
-    display: none;  /* Hidden by default */
+    display: none;
 }
 
-/* Media query for mobile screens */
 @media (max-width: 991.98px) {
-    /* Update navbar background for mobile */
     nav {
         background-color: transparent !important;
     }
     
     .navbar {
         background-color: transparent !important;
-        padding: 40px 0 20px 0 !important;  /* Increased top padding */
+        padding: 40px 0 20px 0 !important;
     }
 
     .navbar .container {
         padding-left: 40px !important;
-        position: relative;  /* For absolute positioning of menu button */
+        position: relative;
     }
     
     .navbar-brand {
@@ -933,7 +955,7 @@ footer {
     }
 
     .navbar-brand img {
-        width: 35px;  /* Slightly smaller logo for mobile */
+        width: 35px;
         height: 35px;
     }
     
@@ -941,8 +963,8 @@ footer {
         display: block;
         background: none;
         border: none;
-        color: #FFDE59;
-        font-size: 28px;  /* Slightly larger menu icon */
+        color: var(--primary-color);
+        font-size: 28px;
         cursor: pointer;
         position: absolute;
         right: 40px;
@@ -950,24 +972,22 @@ footer {
         transform: translateY(-50%);
     }
 
-    /* Hide desktop navigation */
     .navbar-nav.mx-auto,
     .navbar-nav.pe-5.me-4 {
         display: none !important;
     }
 
-    /* Mobile dropdown menu */
     .menu-dropdown {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100vh;
-        background-color: #000000;
+        background-color: var(--secondary-color);
         z-index: 1000;
         display: none;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity var(--transition-duration) ease;
     }
     
     .menu-dropdown.show {
@@ -984,7 +1004,7 @@ footer {
     .menu-close {
         background: none;
         border: none;
-        color: #FFDE59;
+        color: var(--primary-color);
         font-size: 32px;
         cursor: pointer;
     }
@@ -997,24 +1017,23 @@ footer {
     }
     
     .menu-link {
-        color: #FFDE59;
+        color: var(--primary-color);
         text-decoration: none;
         font-size: 24px;
         font-weight: 500;
         margin: 15px 0;
-        transition: color 0.3s ease;
+        transition: color var(--transition-duration) ease;
     }
     
     .menu-link:hover {
-        color: #FFB800;
+        color: var(--hover-color);
     }
 
-    /* Content area styling for mobile */
     .content {
         margin: 2rem 0 0;
-        padding: 20px 40px;  /* Increased padding */
-        text-align: left;    /* Align text to left */
-        align-items: flex-start;  /* Align items to left */
+        padding: 20px 40px;
+        text-align: left;
+        align-items: flex-start;
         max-width: 100%;
         margin-left: 0;
     }
@@ -1030,7 +1049,7 @@ footer {
         line-height: 1.2;
         margin-bottom: 2rem;
         text-align: left;
-        padding-right: 20px;  /* Add some padding on the right */
+        padding-right: 20px;
     }
 
     .content button {
@@ -1038,42 +1057,39 @@ footer {
         padding: 1rem 2rem;
         font-size: 1.25rem;
         width: 200px;
-        align-self: flex-start;  /* Align button to left */
+        align-self: flex-start;
     }
 
-    /* Social media icons - keep these centered */
     .Follow {
-        justify-content: flex-start;  /* Align icons to left */
+        justify-content: flex-start;
         margin-top: 3rem;
-        padding-left: 0;  /* Remove any left padding */
+        padding-left: 0;
     }
 
     .Follow i {
         font-size: 2rem;
-        margin: 0 2rem 0 0;  /* Add right margin only */
+        margin: 0 2rem 0 0;
     }
 }
 
-/* Additional mobile-specific adjustments */
 @media (max-width: 576px) {
     .content h1 {
         font-size: 2.5rem;
     }
 
     .content {
-        padding: 20px 30px;  /* Slightly less padding for very small screens */
+        padding: 20px 30px;
     }
 
     .navbar .container {
-        padding-left: 30px !important;  /* Match smaller content padding */
+        padding-left: 30px !important;
     }
     
     .menu-btn {
-        right: 30px;  /* Match smaller content padding */
+        right: 30px;
     }
 }
 
-/* Add these base styles for logos */
 .mobile-logo {
     display: none;
 }
@@ -1088,7 +1104,7 @@ footer {
         padding-left: 40px !important;
         position: relative;
         display: flex;
-        justify-content: center;  /* Center the logo container */
+        justify-content: center;
     }
     
     .navbar-brand {
@@ -1096,10 +1112,9 @@ footer {
         margin: 0;
         position: absolute;
         left: 50%;
-        transform: translateX(-50%);  /* Center the logo */
+        transform: translateX(-50%);
     }
 
-    /* Hide desktop logo and show mobile logo */
     .desktop-logo {
         display: none;
     }
@@ -1114,23 +1129,35 @@ footer {
         display: block;
         background: none;
         border: none;
-        color: #FFDE59;
+        color: var(--primary-color);
         font-size: 28px;
         cursor: pointer;
         position: absolute;
         right: 40px;
         top: 50%;
         transform: translateY(-50%);
-        z-index: 1;  /* Ensure button stays above logo */
+        z-index: 1;
     }
-
-    /* Rest of your mobile styles remain the same... */
 }
 
-/* Adjust for smaller screens */
 @media (max-width: 576px) {
     .mobile-logo {
         width: 40px;
         height: 40px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 919px) {
+    .gallery-item {
+        flex: 0 0 calc(50% - 20px);
+        margin: 0 10px 20px 10px;
+    }
+
+    .gallery-title {
+        font-size: 1.5rem;
+    }
+
+    .gallery {
+        justify-content: center;
     }
 }

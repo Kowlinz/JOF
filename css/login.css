@@ -1,0 +1,241 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 50px;
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.login-background {
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 767.98px) {
+    .login-background {
+        background-image: none !important;
+        background-color: #000;
+    }
+}
+
+.login-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 2rem 0;
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-btn {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-control::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.form-control:focus::placeholder {
+    opacity: 0.7;
+}
+
+.btn-primary {
+    background-color: #F3CD32;  /* Bootstrap's yellow color */
+    border-color: #F3CD32;
+    color: #000;
+    width: 100%;
+    padding: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #ffca2c;  /* Slightly darker yellow on hover */
+    border-color: #ffca2c;
+    color: #000;
+}
+
+/* To prevent Bootstrap's default blue color on focus/active states */
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:active:focus {
+    background-color: #ffca2c;
+    border-color: #ffca2c;
+    color: #000;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.5);
+}
+
+.login-container div p {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+/* Style the register link to match the design */
+.login-container div p a {
+    text-decoration: underline;
+    margin-left: 5px;
+    color: #000;
+}
+
+/* When hovering over the link */
+.login-container div p a:hover {
+    color: #666;
+}
+
+.forgot-password {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.forgot-password a {
+    color: #000;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+.forgot-password a:hover {
+    color: #666;
+}
+
+.login-header {
+    color: #ffca2c;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+/* Add these mobile menu styles */
+.mobile-logo {
+    display: none;
+}
+
+.menu-btn {
+    display: none;
+}
+
+.menu-dropdown {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #000000;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-dropdown.show {
+    display: block;
+    opacity: 1;
+}
+
+.menu-header {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.menu-close {
+    background: none;
+    border: none;
+    color: #FFDE59;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+.menu-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 40px;
+}
+
+.menu-link {
+    color: #FFDE59;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: 500;
+    margin: 15px 0;
+    transition: color 0.3s ease;
+}
+
+.menu-link:hover {
+    color: #FFB800;
+}
+
+@media (max-width: 991.98px) {
+    .navbar {
+        background-color: transparent !important;
+        padding: 40px 0 20px 0 !important;
+    }
+
+    .navbar .container {
+        padding-left: 40px !important;
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .navbar-brand {
+        padding: 0;
+        margin: 0;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .desktop-logo {
+        display: none;
+    }
+
+    .mobile-logo {
+        display: block;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: #FFDE59;
+        font-size: 28px;
+        cursor: pointer;
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    .mobile-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .navbar .container {
+        padding-left: 30px !important;
+    }
+    
+    .menu-btn {
+        right: 30px;
+    }
+}

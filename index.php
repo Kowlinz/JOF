@@ -42,7 +42,7 @@ if ($customerID) {
 				<div class="container ps-5">
 					<a class="navbar-brand ms-0" href="#">
 						<img src="css/images/jof_logo_black.png" alt="logo" width="45" height="45" class="desktop-logo">
-						<img src="css/images/JOF-Logo.png" alt="logo" width="80" height="80" class="mobile-logo">
+						<img src="css/images/jof_logo_yellow.png" alt="logo" width="45" height="45" class="mobile-logo">
 					</a>
 
 					<button class="menu-btn d-lg-none" type="button">

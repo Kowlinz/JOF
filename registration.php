@@ -11,12 +11,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jack of Fades | Registration</title>
-
-    <!-- Link to Bootstrap CSS for styling -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    
-    <!-- Link to custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
     <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
@@ -87,10 +83,7 @@
                         }
                     }
                     ?>
-
                     <h2 class="login-header">Register</h2>
-
-                    <!-- Registration form -->
                     <form action="registration.php" method="post">
 
                         <div class="form-group">
@@ -128,11 +121,8 @@
                         <div class="form-btn">
                             <input type="submit" class="btn btn-primary" value="Register" name="Register">
                         </div>
-                    
                     </form>
-                    
                     <div>
-                    <!-- Link to registration page for new users -->
                      <p>Already registered? <a href="login.php">Login</a></p>
                     </div>
             </div>

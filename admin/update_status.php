@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $stmtInsert->execute();
                         $stmtInsert->close();
                     } else {
-                        throw new Exception("Missing barber or service price for this appointment.");
+                        throw new Exception("Missing barber for this appointment.");
                     }
                 } else {
                     throw new Exception("Error fetching appointment details.");
@@ -69,18 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Commit transaction if all steps succeed
             $conn->commit();
-            header('Location: appointments.php?success=1');
+            header('Location: appointments.php?status=success&message=Appointment status updated successfully.');
             exit();
         } catch (Exception $e) {
             // Rollback transaction on failure
             $conn->rollback();
-            echo "Error: " . $e->getMessage();
+            header('Location: appointments.php?status=error&message=' . urlencode($e->getMessage()));
+            exit();
         }
     } else {
-        echo "Invalid input.";
+        header('Location: appointments.php?status=error&message=Invalid input.');
+        exit();
     }
 } else {
-    echo "Invalid request method.";
+    header('Location: appointments.php?status=error&message=Invalid request method.');
+    exit();
 }
 
 $conn->close();

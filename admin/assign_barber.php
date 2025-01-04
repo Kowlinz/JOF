@@ -1,8 +1,8 @@
 <?php
 session_start();
-    if (!isset($_SESSION["user"])) {
-        header("Location: ../login-staff.php");
-    }
+if (!isset($_SESSION["user"])) {
+    header("Location: ../login-staff.php");
+}
 
 // Include database connection
 include 'db_connect.php';
@@ -28,10 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $updateStmt->execute();
 
             if ($updateStmt->affected_rows > 0) {
-                header("Location: appointments.php?success=Barber+assignment+updated+successfully");
+                header("Location: appointments.php?status=success&message=Barber+assignment+updated+successfully");
                 exit();
             } else {
-                header("Location: appointments.php?error=No+changes+were+made");
+                header("Location: appointments.php?status=error&message=No+changes+were+made");
                 exit();
             }
         } else {
@@ -42,15 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $insertStmt->execute();
 
             if ($insertStmt->affected_rows > 0) {
-                header("Location: appointments.php?success=Barber+assigned+successfully");
+                header("Location: appointments.php?status=success&message=Barber+assigned+successfully");
                 exit();
             } else {
-                header("Location: appointments.php?error=Failed+to+assign+barber");
+                header("Location: appointments.php?status=error&message=Failed+to+assign+barber");
                 exit();
             }
         }
     } catch (Exception $e) {
-        header("Location: appointments.php?error=" . urlencode("Error: " . $e->getMessage()));
+        header("Location: appointments.php?status=error&message=" . urlencode("Error: " . $e->getMessage()));
         exit();
     }
 }

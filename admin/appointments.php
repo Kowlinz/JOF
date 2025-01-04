@@ -3,6 +3,7 @@
     if (!isset($_SESSION["user"])) {
         header("Location: ../login-staff.php");
     }
+    
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +73,21 @@
 <body>
     <?php include 'db_connect.php'; ?>
 
+    <?php
+    if (isset($_GET['status']) && isset($_GET['message'])) {
+        $status = $_GET['status'];
+        $message = $_GET['message'];
+
+        // JavaScript alert for success or error messages
+        echo "
+        <script>
+            window.onload = function() {
+                alert('$message'); // Show the message in the alert box
+            }
+        </script>";
+    }
+    ?>
+<div class="body d-flex py-3 mt-5">
     <div class="container-xxl">
         <h1 class="dashboard mb-5 ms-0">Appointments</h1>
 
@@ -81,7 +97,7 @@
             <div class="col-md-5">
                 <div class="calendar-container card p-3">
                     <header class="calendar-header d-flex justify-content-between align-items-center">
-                        <p class="calendar-current-date fw-bold">June 2024</p>
+                        <p class="calendar-current-date fw-bold"></p>
                         <div class="calendar-navigation">
                             <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
                             <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
@@ -102,55 +118,26 @@
                     <script src="js/calendar.js"></script>
                 </div>
             </div>
-
-            <!-- Canceled Appointments Section -->
-            <div class="col-md-6">
-                <div class="card p-3">
-                    <h4 class="fw-bold mb-8">Cancelled</h4>
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Reason</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                <?php
-                                    // Modify the query to select only cancelled appointments for the current date
-                                    $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
-                                    FROM appointment_tbl a
-                                    LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                                    WHERE a.status = 'Cancelled' 
-                                    AND a.date = CURDATE()";
-                                    
-                                    $cancelledResult = mysqli_query($conn, $cancelledQuery);
-                                    
-                                    if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
-                                        while ($row = mysqli_fetch_assoc($cancelledResult)) {
-                                            // Check if firstName or lastName is null (for admin bookings)
-                                            $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
-                                            $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
-                                    
-                                            echo "<tr>
-                                                    <td>{$firstName} {$lastName}</td>
-                                                    <td>{$row['date']}</td>
-                                                    <td>{$row['timeSlot']}</td>
-                                                    <td>{$row['reason']}</td>
-                                                </tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
-                                    }
-                                ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
 
         <button button class="btn btn-warning" onclick="window.location.href='booking.php';">Add Customer +</button>
+        
+        <?php
+
+        // Check if there is a status or message in the query string
+        if (isset($_GET['status']) && isset($_GET['message'])) {
+            $status = $_GET['status']; // success or error
+            $message = $_GET['message']; // Message to display in the popup
+
+            // Display a JavaScript alert with the message
+            echo "
+            <script>
+                window.onload = function() {
+                    alert('$message'); // Display the alert with the message
+                }
+            </script>";
+        }
+        ?>
 
         <!-- Bottom Section: Upcoming Customers -->
         <div class="card p-3">
@@ -280,7 +267,7 @@
             </table>
         </div>
     </div>
-
+</div>
     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse">
         <div class="position-sticky">
             <div class="list-group list-group-flush mx-3 mt-5">

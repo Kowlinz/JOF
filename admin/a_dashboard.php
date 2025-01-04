@@ -341,18 +341,18 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
                             </thead>
                             <tbody>
                             <?php
-if ($previousResult && mysqli_num_rows($previousResult) > 0) {
-    while ($row = mysqli_fetch_assoc($previousResult)) {
-        echo "<tr>";
-        echo "<td>{$row['fullName']}</td>";
-        echo "<td>{$row['timeSlot']}</td>";
-        echo "<td>{$row['date']}</td>";
-        echo "</tr>";
-    }
-} else {
-    echo "<tr><td colspan='3' class='text-center'>No completed appointments found.</td></tr>";
-}
-?>
+                            if ($previousResult && mysqli_num_rows($previousResult) > 0) {
+                                while ($row = mysqli_fetch_assoc($previousResult)) {
+                                    echo "<tr>";
+                                    echo "<td>{$row['fullName']}</td>";
+                                    echo "<td>{$row['timeSlot']}</td>";
+                                    echo "<td>{$row['date']}</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='3' class='text-center'>No completed appointments found.</td></tr>";
+                            }
+                            ?>
 
                             </tbody>
                         </table>

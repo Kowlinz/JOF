@@ -71,35 +71,86 @@
 </head>
 <body>
     <?php include 'db_connect.php'; ?>
+
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
             <h1 class="dashboard mb-5 ms-0">Appointments History</h1>
-            <div class="calendar-container">
-                <header class="calendar-header">
-                    <p class="calendar-current-date"></p>
-                    <div class="calendar-navigation">
-                        <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
-                        <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
+            <div class="row mb-4">
+            <div class="col-md-5">
+                <div class="calendar-container card p-3">
+                    <header class="calendar-header d-flex justify-content-between align-items-center">
+                        <p class="calendar-current-date fw-bold"></p>
+                        <div class="calendar-navigation">
+                            <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
+                            <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
+                        </div>
+                    </header>
+                    <div class="calendar-body">
+                        <ul class="calendar-weekdays">
+                            <li>Sun</li>
+                            <li>Mon</li>
+                            <li>Tue</li>
+                            <li>Wed</li>
+                            <li>Thu</li>
+                            <li>Fri</li>
+                            <li>Sat</li>
+                        </ul>
+                        <ul class="calendar-dates"></ul>
                     </div>
-                </header>
-                <div class="calendar-body">
-                    <ul class="calendar-weekdays">
-                        <li>Sun</li>
-                        <li>Mon</li>
-                        <li>Tue</li>
-                        <li>Wed</li>
-                        <li>Thu</li>
-                        <li>Fri</li>
-                        <li>Sat</li>
-                    </ul>
-                    <ul class="calendar-dates"></ul>
                 </div>
             </div>
             <script src="js/calendar.js"></script>
+            
+            <!-- Canceled Appointments Section -->
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h4 class="fw-bold mb-8">Cancelled</h4>
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <?php
+                                    // Modify the query to select only cancelled appointments for the current date
+                                    $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
+                                    FROM appointment_tbl a
+                                    LEFT JOIN customer_tbl c ON a.customerID = c.customerID
+                                    WHERE a.status = 'Cancelled' 
+                                    AND a.date = CURDATE()";
+                                    
+                                    $cancelledResult = mysqli_query($conn, $cancelledQuery);
+                                    
+                                    if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
+                                        while ($row = mysqli_fetch_assoc($cancelledResult)) {
+                                            // Check if firstName or lastName is null (for admin bookings)
+                                            $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
+                                            $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
+                                    
+                                            echo "<tr>
+                                                    <td>{$firstName} {$lastName}</td>
+                                                    <td>{$row['date']}</td>
+                                                    <td>{$row['timeSlot']}</td>
+                                                    <td>{$row['reason']}</td>
+                                                </tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
+                                    }
+                                ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
             <div class="col-md-12">
-                <div class="card border-danger">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
-                        <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Previous Customers</h4>
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="fw-bold">Previous Customers</h4>
                         <h4>
                             Total: 
                             <?php

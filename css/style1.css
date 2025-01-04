@@ -1,12 +1,27 @@
+/* Variables */
+:root {
+    --primary-color: #FFDE59;
+    --secondary-color: #000000;
+    --hover-color: #FFB800;
+    --text-color: #000000;
+    --font-family: Arial, Helvetica, sans-serif;
+    --font-size-base: 16px;
+    --font-size-large: 20px;
+    --font-size-xlarge: 24px;
+    --font-size-xxlarge: 2.5rem;
+    --transition-duration: 0.3s;
+}
+
+/* Reset and General Styles */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background: #000000;
-    font-family: Arial, Helvetica, sans-serif;
+    background: var(--secondary-color);
+    font-family: var(--font-family);
 }
 
 /* Navigation Bar */
@@ -15,8 +30,8 @@ nav {
     align-items: center;
     justify-content: space-between;
     padding: 0.5px;
-    background-color: #FFDE59;
-    font-size: 20px;
+    background-color: var(--primary-color);
+    font-size: var(--font-size-large);
 }
 
 nav h1 {
@@ -25,18 +40,17 @@ nav h1 {
 }
 
 .nav-text {
-    font-family: Arial, sans-serif;
+    font-family: var(--font-family);
     font-size: 18px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: all 0.3s ease;
+    transition: all var(--transition-duration) ease;
 }
 
 .nav-text:hover {
     color: #463f00 !important;
     transform: scale(1.1);
-    transition: all 0.3s ease;
 }
 
 .logo img {
@@ -59,25 +73,25 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: #000000;
+    color: var(--text-color);
 }
 
 nav button {
-    background-color: #000000;
+    background-color: var(--secondary-color);
     border: none;
-    color: #FFDE59;
+    color: var(--primary-color);
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     border-radius: 12px;
 }
 
 /* Content Section */
 .content {
     margin-top: 5rem;
-    color: #FFDE59;
+    color: var(--primary-color);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -110,20 +124,20 @@ nav button {
 }
 
 .content button {
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
     border: none;
-    color: #000000;
+    color: var(--text-color);
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     border-radius: 12px;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-duration) ease;
 }
 
 .content button:hover {
-    background-color: #FFB800;
+    background-color: var(--hover-color);
 }
 
 /* Social Media Follow Section */
@@ -136,11 +150,11 @@ nav button {
     color: #ffffff;
     font-size: 45px;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: color var(--transition-duration) ease;
 }
 
 .Follow i:hover {
-    color: #FFDE59;
+    color: var(--primary-color);
 }
 
 /* Responsive Design */
@@ -156,7 +170,7 @@ nav button {
     background-color: #3498DB;
     color: white;
     padding: 16px;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     border: none;
     cursor: pointer;
 }
@@ -277,10 +291,10 @@ nav button {
 }
 
 .gallery-item {
-    flex: 0 0 calc(25% - 12px); 
+    flex: 0 0 calc(25% - 12px);
     overflow: hidden;
     text-align: center;
-    color: #FFDE59;
+    color: var(--primary-color);
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -292,7 +306,7 @@ nav button {
     aspect-ratio: 1/1;
     object-fit: cover;
     border-radius: 8px;
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-duration) ease;
 }
 
 .gallery-item:hover img {
@@ -302,39 +316,70 @@ nav button {
 .gallery-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #FFDE59;
+    color: var(--primary-color);
     padding: 8px;
     position: relative;
     z-index: 1;
 }
 
-/* Make it responsive */
-@media (max-width: 768px) {
+/* Responsive Layouts */
+@media (max-width: 1199px) {
     .gallery-item {
-        flex: 0 0 calc(50% - 8px);
+        flex: 0 0 calc(33.333% - 20px);
+        margin: 0 10px 20px 10px;
+    }
+}
+
+@media (max-width: 919px) {
+    .gallery-item {
+        flex: 0 0 calc(50% - 30px);
+        margin: 0 15px 20px 15px;
+    }
+
+    .gallery-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .gallery-item {
+        flex: 0 0 100%;
+        margin: 0 40px 20px 40px;
     }
 }
 
 @media (max-width: 480px) {
     .gallery-item {
-        flex: 0 0 100%;
+        margin: 0 30px 20px 30px;
     }
 }
 
-/* Make the styles more specific to override Bootstrap */
+@media (max-width: 425px) {
+    .gallery-item {
+        margin: 0 20px 20px 20px;
+    }
+
+    .gallery-item img {
+        width: 85%;
+        margin: 0 auto;
+        display: block;
+    }
+}
+
+/* Additional Styles */
 .content .card {
     border: none !important;
     border-radius: 8px;
     overflow: hidden;
-    background-color: #FFDE59 !important;
+    background-color: var(--primary-color) !important;
 }
 
 .content .card-img-top {
-    aspect-ratio: 1/1;  /* Forces 1:1 ratio */
-    object-fit: cover;  /* Ensures image fills the square without distortion */
+    aspect-ratio: 1/1;
+    object-fit: cover;
     width: 100%;
     height: 100%;
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-duration) ease;
 }
 
 .content .card:hover .card-img-top {
@@ -344,13 +389,13 @@ nav button {
 .content .card-body {
     padding: 0.8rem;
     text-align: center;
-    background-color: #FFDE59 !important;
+    background-color: var(--primary-color) !important;
 }
 
 .content .card-title {
     margin: 0;
     font-size: 1rem;
-    color: #000;
+    color: var(--text-color);
     font-weight: 500;
 }
 
@@ -375,7 +420,7 @@ nav button {
 }
 
 .haircut-nav .nav-item a {
-    color: #FFDE59;
+    color: var(--primary-color);
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: 500;
@@ -385,7 +430,6 @@ nav button {
     color: #ffd93d;
 }
 
-/* Active state styling */
 .haircut-nav .nav-item.active::after {
     content: '';
     position: absolute;
@@ -393,23 +437,22 @@ nav button {
     left: 0;
     width: 100%;
     height: 4px;
-    background-color: #FFB800;
+    background-color: var(--hover-color);
     border-radius: 2px;
 }
 
 .haircut-nav .nav-item.active a {
-    color: #FFB800;
+    color: var(--hover-color);
 }
 
 .haircut-header {
-    color: #FFDE59;
-    font-size: 2.5rem;
+    color: var(--primary-color);
+    font-size: var(--font-size-xxlarge);
     font-weight: bold;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
 }
 
-/* Footer adjustments */
 footer {
     position: relative;
     bottom: 0;
@@ -435,37 +478,32 @@ footer {
 }
 
 footer {
-    margin-bottom: 20px;  /* Add some bottom spacing */
+    margin-bottom: 20px;
 }
 
-/* Make social media icons slightly larger */
 .Follow i {
     font-size: 40px;
 }
 
-/* Add specific styling for haircuts page content */
 .content[style*="text-align: center"] {
-    margin: 5rem auto 0;  /* Center with auto margins */
-    padding: 0 20px;      /* Add some padding on the sides */
+    margin: 5rem auto 0;
+    padding: 0 20px;
     max-width: 1200px;
-    align-items: center;  /* Center flex items */
-    text-align: center;   /* Center text content */
+    align-items: center;
+    text-align: center;
 }
 
-/* Ensure the container is properly centered */
 .container.py-4 {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 15px;
 }
 
-/* Center the haircut cards */
 .row.g-3 {
     justify-content: center;
     margin: 0 auto;
 }
 
-/* Center the haircut header and navigation */
 .haircut-header {
     width: 100%;
     text-align: center;
@@ -480,7 +518,6 @@ footer {
     margin-bottom: 2rem;
 }
 
-/* Style the navigation bar for haircuts page */
 .header nav {
     padding: 1rem;
     display: flex;
@@ -500,14 +537,12 @@ footer {
     margin: 0;
 }
 
-/* Center the logo */
 .header nav a.navbar-brand {
     margin: 0 2rem;
 }
 
-/* Navigation Bar for Haircuts Page */
 .navbar {
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
     padding: 1rem 0;
 }
 
@@ -534,7 +569,7 @@ footer {
 }
 
 .nav-links a {
-    color: #000000;
+    color: var(--text-color);
     text-decoration: none;
     font-size: 18px;
     font-weight: 500;
@@ -547,9 +582,9 @@ footer {
 }
 
 .haircuts-header {
-    color: #FFDE59;
+    color: var(--primary-color);
     text-align: center;
-    font-size: 2.5rem;
+    font-size: var(--font-size-xxlarge);
     font-weight: bold;
     margin-top: 2rem;
     margin-bottom: 1.5rem;
@@ -560,16 +595,16 @@ footer {
     padding: 0.5rem 1.5rem;
     font-size: 1.25rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all var(--transition-duration) ease;
     border: none;
     background: none;
-    color: #FFDE59;
+    color: var(--primary-color);
     position: relative;
     cursor: pointer;
 }
 
 .category-btn.active {
-    color: #FFDE59;
+    color: var(--primary-color);
 }
 
 .category-btn.active::after {
@@ -579,7 +614,7 @@ footer {
     left: 50%;
     width: 40px;
     height: 2px;
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
     transform: translateX(-50%);
 }
 
@@ -588,7 +623,7 @@ footer {
 }
 
 .category-btn.inactive:hover {
-    color: #FFDE59;
+    color: var(--primary-color);
 }
 
 .d-flex.justify-content-center.mb-4.gap-3 {
@@ -694,20 +729,18 @@ footer {
 }
 
 .service-name {
-    font-size: 16px;
+    font-size: var(--font-size-base);
 }
 
 .service-price {
-    font-size: 16px;
+    font-size: var(--font-size-base);
     font-weight: bold;
 }
 
-/* Highlight selected service */
 .service-item.selected {
-    background-color: #FFDE59;
+    background-color: var(--primary-color);
 }
 
-/* Style the service button */
 #service-button {
     background-color: white;
     border: 1px solid #ced4da;
@@ -727,7 +760,6 @@ footer {
     pointer-events: all;
 }
 
-/* Additional styles for haircut modal */
 #haircut-button {
     background-color: white;
     border: 1px solid #ced4da;
@@ -738,7 +770,6 @@ footer {
     background-color: #f8f9fa;
 }
 
-/* Use existing service-item styles for consistency */
 #haircutsModal .service-item {
     padding: 15px;
     border-bottom: 1px solid #eee;
@@ -748,7 +779,6 @@ footer {
     border-bottom: none;
 }
 
-/* Additional styles for addon modal */
 #addon-button {
     background-color: white;
     border: 1px solid #ced4da;
@@ -759,7 +789,6 @@ footer {
     background-color: #f8f9fa;
 }
 
-/* Use existing service-item styles for consistency */
 #addonsModal .service-item {
     padding: 15px;
     border-bottom: 1px solid #eee;
@@ -769,7 +798,6 @@ footer {
     border-bottom: none;
 }
 
-/* Add these styles for the confirmation modal */
 #confirmationModal .modal-content {
     border-radius: 15px;
     border: none;
@@ -781,7 +809,7 @@ footer {
 }
 
 #confirmationModal .modal-title {
-    font-size: 24px;
+    font-size: var(--font-size-xlarge);
     font-weight: bold;
     width: 100%;
     text-align: center;
@@ -793,7 +821,7 @@ footer {
 
 #confirmationModal .modal-body p {
     margin-bottom: 10px;
-    font-size: 16px;
+    font-size: var(--font-size-base);
 }
 
 #confirmationModal .modal-footer {
@@ -808,15 +836,13 @@ footer {
     border: none;
     border-radius: 8px;
     padding: 10px 30px;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     font-weight: 500;
 }
 
 #confirmationModal .btn-confirm:hover {
     background-color: #3cb371;
 }
-
-/* Add these styles to your existing CSS file */
 
 .dropdown {
     position: relative;
@@ -828,7 +854,7 @@ footer {
     gap: 10px;
     cursor: pointer;
     padding: 8px 16px;
-    background: #000000;
+    background: var(--secondary-color);
     border-radius: 12px;
     color: white;
 }
@@ -844,7 +870,7 @@ footer {
 }
 
 .user-icon i {
-    color: #000000;
+    color: var(--secondary-color);
     font-size: 20px;
 }
 
@@ -856,7 +882,7 @@ footer {
 
 .user-name {
     font-weight: 500;
-    font-size: 16px;
+    font-size: var(--font-size-base);
 }
 
 .dropdown-menu {
@@ -879,7 +905,7 @@ footer {
 .dropdown-item {
     display: block;
     padding: 8px 16px;
-    color: #000000;
+    color: var(--text-color);
     text-decoration: none;
 }
 
@@ -887,16 +913,538 @@ footer {
     background: #f5f5f5;
 }
 
-/* Update styles for the Book Appointment button */
 .btn-book-appointment {
     background-color: #F3CD32;
-    transition: background-color 0.3s ease;
-    border-radius: 12px;  /* Increased roundness */
-    padding: 10px 20px;   /* Larger padding */
-    font-size: 18px;      /* Larger font size */
-    font-family: Arial, sans-serif;
+    transition: background-color var(--transition-duration) ease;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-family: var(--font-family);
 }
 
 .btn-book-appointment:hover {
-    background-color: #FFDE59 !important;
+    background-color: var(--primary-color) !important;
+}
+
+.menu-btn {
+    display: none;
+}
+
+.menu-dropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--secondary-color);
+    z-index: 1002;
+    display: none;
+    opacity: 0;
+    transition: opacity var(--transition-duration) ease;
+}
+
+.menu-dropdown.show {
+    display: block;
+    opacity: 1;
+}
+
+.menu-dropdown.show ~ .menu-btn {
+    display: none !important;
+}
+
+.menu-header {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.menu-close {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1003;
+}
+
+.menu-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 40px;
+}
+
+.menu-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: 500;
+    margin: 15px 0;
+    transition: color var(--transition-duration) ease;
+}
+
+.menu-link:hover {
+    color: var(--hover-color);
+}
+
+@media (max-width: 576px) {
+    .menu-links {
+        padding: 20px 30px;
+    }
+    
+    .menu-link {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .navbar {
+        background-color: transparent !important;
+        padding: 20px 0 !important;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+    .navbar .container {
+        max-width: 100%;
+        padding: 0 40px !important;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .navbar-brand {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0;
+        margin: 0;
+        z-index: 1;
+    }
+
+    .desktop-logo {
+        display: none !important;
+    }
+
+    .mobile-logo {
+        display: block;
+        width: 45px;
+        height: 45px;
+    }
+
+    .menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 28px;
+        cursor: pointer;
+        margin-left: auto;
+        z-index: 1001;
+    }
+
+    /* Hide desktop navigation */
+    .navbar-nav.mx-auto,
+    .navbar-nav.pe-5.me-4 {
+        display: none !important;
+    }
+
+    /* Content adjustments for mobile */
+    .content {
+        margin: 0;
+        padding: 100px 20px 40px 20px;
+        text-align: center;
+        align-items: center;
+        max-width: 100%;
+    }
+
+    .content h4 {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .content h1 {
+        font-size: 2.5rem;
+        line-height: 1.3;
+        margin-bottom: 2rem;
+        text-align: center;
+        padding-right: 0;
+    }
+
+    .content button {
+        margin-top: 2rem;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        width: 180px;
+        align-self: center;
+    }
+
+    .Follow {
+        justify-content: center;
+        margin-top: 2.5rem;
+        padding-left: 0;
+    }
+
+    .Follow i {
+        font-size: 2rem;
+        margin: 0 1rem;
+    }
+
+    /* Adjust haircuts container spacing */
+    .container {
+        padding-top: 120px; /* Increased padding from top */
+    }
+
+    .haircuts-header {
+        margin-top: 0; /* Removed extra top margin since we increased container padding */
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+        position: relative; /* Ensure proper stacking */
+        z-index: 1; /* Keep text above other elements */
+    }
+
+    /* Category buttons spacing */
+    .d-flex.justify-content-center.mb-4.gap-3 {
+        margin-top: 1rem;
+        margin-bottom: 2rem !important;
+        position: relative;
+        z-index: 1;
+    }
+
+    #gallery-container {
+        padding-top: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar .container {
+        padding: 0 20px !important;
+    }
+    
+    .mobile-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .content {
+        padding: 80px 20px 40px 20px;
+    }
+
+    .content h1 {
+        font-size: 2.2rem;
+    }
+
+    .content h4 {
+        font-size: 1rem;
+    }
+
+    .Follow i {
+        font-size: 1.8rem;
+        margin: 0 0.8rem;
+    }
+
+    .container {
+        padding-top: 100px; /* Adjusted for smaller screens */
+    }
+
+    .haircuts-header {
+        font-size: 2.2rem;
+        margin-top: 0;
+    }
+}
+
+/* Keep your gallery-specific media queries */
+@media (min-width: 600px) and (max-width: 919px) {
+    .gallery-item {
+        flex: 0 0 calc(50% - 20px);
+        margin: 0 10px 20px 10px;
+    }
+
+    .gallery-title {
+        font-size: 1.5rem;
+    }
+
+    .gallery {
+        justify-content: center;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 991.98px) {
+    /* Hide desktop navigation */
+    .navbar-nav.mx-auto,
+    .navbar-nav.pe-5.me-4 {
+        display: none !important;
+    }
+
+    /* Show mobile menu button */
+    .menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 28px;
+        cursor: pointer;
+        margin-left: auto;
+        z-index: 1001;
+    }
+
+    /* Mobile logo */
+    .desktop-logo {
+        display: none !important;
+    }
+
+    .mobile-logo {
+        display: block;
+    }
+
+    /* Appointments page styles */
+    .appointments-container {
+        margin: 0 10px;
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 12px;
+    }
+
+    .appointments-table th {
+        color: #666;
+        font-weight: normal;
+    }
+
+    .cancel-button {
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 991.98px) {
+        h1.appointments-header {
+            padding-top: 60px !important;
+            margin: 0 0 20px !important;
+            font-size: 28px !important;
+            color: #F3CD32;
+            text-align: center;
+        }
+
+        .appointments-container {
+            margin: 15px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .appointments-table {
+            width: 100%;
+        }
+
+        .appointments-table th {
+            padding: 15px;
+            color: #666;
+            font-weight: normal;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointments-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointments-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cancel-button {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Status colors */
+        .status-completed {
+            color: #28a745;
+        }
+
+        .status-cancelled {
+            color: #dc3545;
+        }
+
+        .status-pending {
+            color: #ffc107;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar .container {
+        padding: 0 15px !important;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .cancel-button {
+        padding: 4px 8px;
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 24px !important;
+        margin: 30px 0 15px !important;
+    }
+}
+
+/* Appointments header styling for all screen sizes */
+.appointments-header {
+    color: var(--primary-color);
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 50px 0 20px;
+}
+
+/* Mobile specific styles */
+@media (max-width: 991.98px) {
+    .appointments-header {
+        font-size: 24px !important;
+        margin: 120px 0 20px !important;
+        padding-top: 30px !important;
+    }
+
+    /* Ensure navbar has enough height */
+    .navbar {
+        min-height: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .appointments-header {
+        margin: 110px 0 20px !important;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 991.98px) {
+    /* ... existing mobile styles ... */
+
+    /* Appointments page header */
+    .appointments-header-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 120px;
+        margin-top: 80px;
+    }
+
+    .appointments-header {
+        font-size: 24px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* ... rest of the mobile styles ... */
+}
+
+@media (max-width: 576px) {
+    .appointments-header-wrapper {
+        min-height: 100px;
+        margin-top: 70px;
+    }
+}
+
+/* Mobile styles for appointments page */
+@media (max-width: 991.98px) {
+    /* ... existing mobile styles ... */
+
+    .appointments-container {
+        margin: 0 10px;
+        background-color: white;
+        border-radius: 15px;
+        overflow-x: auto;
+    }
+
+    .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 10px;
+        white-space: nowrap;
+    }
+
+    /* ... rest of the mobile styles ... */
+}
+
+@media (max-width: 620px) {
+    .appointments-container {
+        margin: 0;
+        border-radius: 0;
+        overflow-x: auto;
+        padding: 0 10px;
+    }
+
+    .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .cancel-button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .appointments-header-wrapper {
+        min-height: 100px;
+        margin-top: 70px;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .cancel-button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
 }

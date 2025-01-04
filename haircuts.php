@@ -59,8 +59,31 @@ $conn->close();
             <nav class="navbar navbar-expand-lg py-4">
                 <div class="container ps-5">
                     <a class="navbar-brand ms-0" href="index.php">
-                        <img src="css/images/jof_logo_black.png" alt="logo" width="45" height="45">
+                        <img src="css/images/jof_logo_black.png" alt="logo" width="45" height="45" class="desktop-logo">
+                        <img src="css/images/jof_logo_yellow.png" alt="logo" width="45" height="45" class="mobile-logo">
                     </a>
+
+                    <button class="menu-btn d-lg-none" type="button">
+                        <i class='bx bx-menu'></i>
+                    </button>
+
+                    <div class="menu-dropdown">
+                        <div class="menu-header">
+                            <button class="menu-close">&times;</button>
+                        </div>
+                        <div class="menu-links">
+                            <a href="index.php" class="menu-link">HOME</a>
+                            <?php if ($customerID): ?>
+                                <a href="haircuts.php" class="menu-link">HAIRCUTS</a>
+                                <a href="customer/appointment.php" class="menu-link">MY APPOINTMENT</a>
+                                <a href="logout.php" class="menu-link">LOGOUT</a>
+                            <?php else: ?>
+                                <a href="haircuts.php" class="menu-link">HAIRCUTS</a>
+                                <a href="login.php" class="menu-link">LOGIN</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                     <div class="navbar-nav mx-auto ps-5">
                         <a class="nav-link mx-4 nav-text fs-5" href="index.php">Home</a>
                         <a class="nav-link mx-4 nav-text fs-5" href="haircuts.php">Haircuts</a>
@@ -171,5 +194,21 @@ $conn->close();
             filterCategory("Basic");
         </script>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.querySelector('.menu-btn');
+        const menuDropdown = document.querySelector('.menu-dropdown');
+        const menuClose = document.querySelector('.menu-close');
+
+        menuBtn.addEventListener('click', function() {
+            menuDropdown.classList.add('show');
+        });
+
+        menuClose.addEventListener('click', function() {
+            menuDropdown.classList.remove('show');
+        });
+    });
+    </script>
 </body>
 </html>

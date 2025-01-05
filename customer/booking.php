@@ -84,17 +84,33 @@ $addonsResult = $conn->query($addonsQuery);
     <div class="header">
         <nav class="navbar navbar-expand-lg py-4">
             <div class="container ps-5">
-                <!-- Logo -->
                 <a class="navbar-brand ms-0" href="../index.php">
-                    <img src="../css/images/jof_logo_black.png" alt="logo" width="45" height="45">
+                    <img src="../css/images/jof_logo_black.png" alt="logo" width="45" height="45" class="desktop-logo">
+                    <img src="../css/images/jof_logo_yellow.png" alt="logo" width="45" height="45" class="mobile-logo">
                 </a>
-                <!-- Navigation Links -->
+
+                <button class="menu-btn d-lg-none" type="button" id="menuBtn">
+                    <i class='bx bx-menu'></i>
+                </button>
+
+                <div class="menu-dropdown" id="menuDropdown">
+                    <div class="menu-header">
+                        <button class="menu-close" id="menuClose">&times;</button>
+                    </div>
+                    <div class="menu-links">
+                        <a href="../index.php" class="menu-link">HOME</a>
+                        <a href="../haircuts.php" class="menu-link">HAIRCUTS</a>
+                        <a href="appointment.php" class="menu-link">MY APPOINTMENT</a>
+                        <a href="../logout.php" class="menu-link">LOGOUT</a>
+                    </div>
+                </div>
+
+                <!-- Rest of the navbar content -->
                 <div class="navbar-nav mx-auto ps-5">
                     <a class="nav-link mx-4 nav-text fs-5" href="../index.php">Home</a>
                     <a class="nav-link mx-4 nav-text fs-5" href="../haircuts.php">Haircuts</a>
                     <a class="nav-link mx-4 nav-text fs-5" href="appointment.php">My Appointment</a>
                 </div>
-                <!-- Buttons -->
                 <div class="navbar-nav pe-5 me-4">
                     <button class="btn btn-dark me-2 px-4" 
                         onclick="document.location='booking.php'" 
@@ -138,7 +154,7 @@ $addonsResult = $conn->query($addonsQuery);
     </div>
 
     <div class="container mt-5">
-        <div class="text-center mb-4">
+        <div class="text-center mb-4 d-none d-lg-block">
             <img src="css/images/JOF-Logo.png" alt="logo-1" width="90" height="120" class="mt-3">
         </div>
         <h2 class="text-center mb-5" style="color: #FFDF60;">Make an Appointment</h2>
@@ -200,7 +216,7 @@ $addonsResult = $conn->query($addonsQuery);
                 </div>
             </div>
 
-            <div class="col-12 text-center mt-4">
+            <div class="col-12 text-center mt-4 mb-5">
                 <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
             </div>
         </form>
@@ -610,6 +626,26 @@ $addonsResult = $conn->query($addonsQuery);
     document.getElementById('timeSlotModal').addEventListener('hidden.bs.modal', function () {
         if (!document.getElementById('selectedTimeSlot').value) {
             document.getElementById('time-slot-button').textContent = 'Choose Preferred Time';
+        }
+    });
+
+    // JavaScript to toggle mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const menuDropdown = document.getElementById('menuDropdown');
+    const menuClose = document.getElementById('menuClose');
+
+    menuBtn.addEventListener('click', function () {
+        menuDropdown.classList.toggle('show');
+    });
+
+    menuClose.addEventListener('click', function () {
+        menuDropdown.classList.remove('show');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function (event) {
+        if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
+            menuDropdown.classList.remove('show');
         }
     });
     </script>

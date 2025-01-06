@@ -337,228 +337,231 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         <!-- Main content -->
         <div class="main-content">
-            <h1 class="dashboard mb-3 ms-0">Edit Haircut Gallery</h1>
+            <h1 class="dashboard mb-3 ms-5">Edit Haircut Gallery</h1>
             <!-- Add Photo Button -->
-            <button class="btn btn-warning" id="addPhotoBtn">
-                + Add Haircut
-            </button>
-
-            <button class="btn btn-warning ms-2" id="editGalleryBtn">
-                Edit
-            </button>
-
-            <div class="haircut-gallery mt-1">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#Basic">Basic</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#Premium">Specialized</a>
-                    </li>
-                </ul>
-                
-                <div class="gallery-grid mt-3">
-                    <?php
-                    // Fetch haircuts from database with category filter
-                    $sql = "SELECT * FROM haircut_tbl WHERE hcCategory = 'Basic'"; // Default to showing Basic
-                    $result = $conn->query($sql);
-                    
-                    while($row = $result->fetch_assoc()) {
-                        ?>
-                        <div class="haircut-item" data-category="<?php echo $row['hcCategory']; ?>" data-id="<?php echo $row['hcID']; ?>">
-                            <div class="position-relative">
-                                <img src="data:image/jpeg;base64,<?php echo base64_encode($row['hcImage']); ?>" 
-                                     alt="<?php echo $row['hcName']; ?>">
-                                <button class="delete-btn btn btn-danger" style="display: none;">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <p class="text-center mt-2"><?php echo $row['hcName']; ?></p>
-                        </div>
-                        <?php
-                    }
-                    ?>
-                </div>
-                
-                <button class="btn btn-warning confirm-btn mt-3" id="confirmGalleryEditBtn" style="display: none;">
-                    Confirm
+            <div class="ms-5">
+                <button class="btn btn-warning" id="addPhotoBtn">
+                    + Add Haircut
                 </button>
-            </div>
 
-            <h1 class="dashboard mb-3 ms-0">Edit Services</h1>
+                <button class="btn btn-warning ms-2" id="editGalleryBtn">
+                    Edit
+                </button>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <!-- Add Services Button -->
-                    <button class="btn btn-warning" id="addServiceBtn">
-                        + Add Services
-                    </button>
-
-                    <!-- Move Confirm Button to the left of Edit Services Button -->
-                    <button class="btn btn-warning ms-2" id="confirmServicesEditBtn" style="display: none;">
+                <div class="haircut-gallery mt-1">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#Basic">Basic</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#Premium">Specialized</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="gallery-grid mt-3">
+                        <?php
+                        // Fetch haircuts from database with category filter
+                        $sql = "SELECT * FROM haircut_tbl WHERE hcCategory = 'Basic'"; // Default to showing Basic
+                        $result = $conn->query($sql);
+                        
+                        while($row = $result->fetch_assoc()) {
+                            ?>
+                            <div class="haircut-item" data-category="<?php echo $row['hcCategory']; ?>" data-id="<?php echo $row['hcID']; ?>">
+                                <div class="position-relative">
+                                    <img src="data:image/jpeg;base64,<?php echo base64_encode($row['hcImage']); ?>" 
+                                         alt="<?php echo $row['hcName']; ?>">
+                                    <button class="delete-btn btn btn-danger" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="text-center mt-2"><?php echo $row['hcName']; ?></p>
+                            </div>
+                            <?php
+                        }
+                        ?>
+                    </div>
+                    
+                    <button class="btn btn-warning confirm-btn mt-3" id="confirmGalleryEditBtn" style="display: none;">
                         Confirm
                     </button>
+                </div>
 
-                    <!-- Edit Services Button -->
-                    <button class="btn btn-warning ms-2" id="editServicesBtn">
-                        Edit
+                <h1 class="dashboard mb-3">Edit Services</h1>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <!-- Add Services Button -->
+                        <button class="btn btn-warning" id="addServiceBtn">
+                            + Add Services
+                        </button>
+
+                        <!-- Move Confirm Button to the left of Edit Services Button -->
+                        <button class="btn btn-warning ms-2" id="confirmServicesEditBtn" style="display: none;">
+                            Confirm
+                        </button>
+
+                        <!-- Edit Services Button -->
+                        <button class="btn btn-warning ms-2" id="editServicesBtn">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+
+                <div class="services-container">
+                    <table class="table table-striped" style="border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr>
+                                <th>Service Name</th>
+                                <th>Price</th>
+                                <th class="actions-column" style="display: none;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Fetch services from the database
+                            $sql = "SELECT * FROM service_tbl";
+                            $result = $conn->query($sql);
+
+                            while ($row = $result->fetch_assoc()) {
+                                ?>
+                                <tr>
+                                    <td><?php echo $row['serviceName']; ?></td>
+                                    <td><?php echo $row['servicePrice']; ?> PHP</td>
+                                    <td class="actions-column" style="display: none;">
+                                        <button class="btn btn-danger btn-sm delete-service-btn" data-id="<?php echo $row['serviceID']; ?>">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <button class="btn btn-warning btn-sm edit-service-btn" data-id="<?php echo $row['serviceID']; ?>" data-name="<?php echo $row['serviceName']; ?>" data-price="<?php echo $row['servicePrice']; ?>">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Confirm Button -->
+                <div class="text-center mb-3">
+                    <button class="btn btn-warning" id="confirmEditBtn" style="display: none;">
+                        Confirm
                     </button>
                 </div>
-            </div>
 
-            <div class="services-container">
-                <table class="table table-striped" style="border-radius: 8px; overflow: hidden;">
-                    <thead>
-                        <tr>
-                            <th>Service Name</th>
-                            <th>Price</th>
-                            <th class="actions-column" style="display: none;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Fetch services from the database
-                        $sql = "SELECT * FROM service_tbl";
-                        $result = $conn->query($sql);
-
-                        while ($row = $result->fetch_assoc()) {
-                            ?>
-                            <tr>
-                                <td><?php echo $row['serviceName']; ?></td>
-                                <td><?php echo $row['servicePrice']; ?> PHP</td>
-                                <td class="actions-column" style="display: none;">
-                                    <button class="btn btn-danger btn-sm delete-service-btn" data-id="<?php echo $row['serviceID']; ?>">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <button class="btn btn-warning btn-sm edit-service-btn" data-id="<?php echo $row['serviceID']; ?>" data-name="<?php echo $row['serviceName']; ?>" data-price="<?php echo $row['servicePrice']; ?>">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Confirm Button -->
-            <div class="text-center mb-3">
-                <button class="btn btn-warning" id="confirmEditBtn" style="display: none;">
-                    Confirm
-                </button>
-            </div>
-
-            <!-- Add Service Modal -->
-            <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="addServiceForm">
-                                <div class="mb-3">
-                                    <label for="serviceName" class="form-label">Service Name</label>
-                                    <input type="text" class="form-control" id="serviceName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="servicePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" id="servicePrice" required>
-                                </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-warning">Add Service</button>
-                                </div>
-                            </form>
+                <!-- Add Service Modal -->
+                <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addServiceForm">
+                                    <div class="mb-3">
+                                        <label for="serviceName" class="form-label">Service Name</label>
+                                        <input type="text" class="form-control" id="serviceName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="servicePrice" class="form-label">Price</label>
+                                        <input type="number" class="form-control" id="servicePrice" required>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-warning">Add Service</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Edit Service Modal -->
-            <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="editServiceForm">
-                                <input type="hidden" id="editServiceID">
-                                <div class="mb-3">
-                                    <label for="editServiceName" class="form-label">Service Name</label>
-                                    <input type="text" class="form-control" id="editServiceName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="editServicePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" id="editServicePrice" required>
-                                </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-warning">Update Service</button>
-                                </div>
-                            </form>
+                <!-- Edit Service Modal -->
+                <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editServiceForm">
+                                    <input type="hidden" id="editServiceID">
+                                    <div class="mb-3">
+                                        <label for="editServiceName" class="form-label">Service Name</label>
+                                        <input type="text" class="form-control" id="editServiceName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editServicePrice" class="form-label">Price</label>
+                                        <input type="number" class="form-control" id="editServicePrice" required>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-warning">Update Service</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <h1 class="dashboard mb-3 ms-0">Edit Add-ons</h1>
-            <!-- Add Add-ons Button -->
-            <button class="btn btn-warning" id="addAddonBtn">
-                + Add Add-ons
-            </button>
+                <h1 class="dashboard mb-3">Edit Add-ons</h1>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <button class="btn btn-warning" id="addAddonBtn">
+                            + Add Add-ons
+                        </button>
+                        <button class="btn btn-warning ms-2" id="editAddonsBtn">
+                            Edit
+                        </button>
+                    </div>
+                </div>
 
-            <button class="btn btn-warning ms-2" id="editAddonsBtn">
-                Edit
-            </button>
+                <!-- Add-ons Table -->
+                <div class="services-container">
+                    <div class="card border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Add-on Name</th>
+                                            <th>Price</th>
+                                            <th class="actions-column" style="display: none;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Fetch add-ons from the database
+                                        $sql = "SELECT * FROM addon_tbl";
+                                        $result = $conn->query($sql);
 
-            <!-- Add-ons Table -->
-            <div class="addons-container mt-3 mb-4 pb-4">
-                <table class="table table-striped" style="border-radius: 8px; overflow: hidden; width: 800px; padding-bottom: 1rem;">
-                    <thead>
-                        <tr>
-                            <th>Add-on Name</th>
-                            <th>Price</th>
-                            <th class="actions-column" style="display: none;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Fetch add-ons from the database
-                        $sql = "SELECT * FROM addon_tbl";
-                        $result = $conn->query($sql);
-
-                        while ($row = $result->fetch_assoc()) {
-                            ?>
-                            <tr>
-                                <td><?php echo $row['addonName']; ?></td>
-                                <td><?php echo $row['addonPrice']; ?> PHP</td>
-                                <td class="actions-column" style="display: none;">
-                                    <button class="btn btn-danger btn-sm delete-addon-btn" data-id="<?php echo $row['addonID']; ?>">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <button class="btn btn-warning btn-sm edit-addon-btn" data-id="<?php echo $row['addonID']; ?>" data-name="<?php echo $row['addonName']; ?>" data-price="<?php echo $row['addonPrice']; ?>">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php
-                        }
-                        ?>
-                    </tbody>
-                </table>
+                                        while ($row = $result->fetch_assoc()) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['addonName']; ?></td>
+                                                <td><?php echo $row['addonPrice']; ?> PHP</td>
+                                                <td class="actions-column" style="display: none;">
+                                                    <button class="btn btn-danger btn-sm delete-addon-btn" data-id="<?php echo $row['addonID']; ?>">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <button class="btn btn-warning btn-sm edit-addon-btn" data-id="<?php echo $row['addonID']; ?>" data-name="<?php echo $row['addonName']; ?>" data-price="<?php echo $row['addonPrice']; ?>">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Add this button for mobile menu toggle -->
-    <button class="btn btn-warning d-lg-none position-fixed" 
-            style="top: 10px; right: 10px; z-index: 1001;" 
-            onclick="document.getElementById('sidebarMenu').classList.toggle('show')">
-        <i class="fas fa-bars"></i>
-    </button>
 
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog">

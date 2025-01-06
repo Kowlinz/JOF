@@ -73,60 +73,124 @@ $result = $conn->query($sql);
             margin-top: 10px;
             text-align: center;
         }
+        /* Responsive table styles */
+        @media screen and (max-width: 712px) {
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .card {
+                margin: 0 -15px;
+                border-radius: 0 !important;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+
+            table {
+                white-space: nowrap;
+                font-size: 14px;
+            }
+
+            /* Adjust column widths for better mobile view */
+            table th, table td {
+                min-width: 100px;
+                padding: 8px !important;
+            }
+
+            /* Specific column widths for barbers table */
+            table th:first-child, 
+            table td:first-child {
+                min-width: 60px; /* No. column */
+            }
+            
+            table th:nth-child(3), 
+            table td:nth-child(3) {
+                min-width: 180px; /* Email column */
+            }
+            
+            table th:nth-child(4), 
+            table td:nth-child(4) {
+                min-width: 120px; /* Phone number column */
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container-xxl">
-        <h1 class="dashboard mb-5 ms-0">Barbers</h1>
-        <!-- Add Barber Button -->
-        <button class="btn btn-warning" onclick="window.location.href='registration.php'">
-            + Add Barber
-        </button>
+    <?php include 'db_connect.php'; ?>
 
-    
-        <!-- Bottom Section: Barbers Table -->
-        <div class="card p-3 mt-3">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <td>Name</td>
-                        <td>Email</td>
-                        <td>Phone Number</td>
-                        <td>Availability</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    if ($result->num_rows > 0) {
-                        $index = 1; // Counter for table row numbers
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>" . $index++ . "</td>";
-                            echo "<td>" . htmlspecialchars($row['firstName'] . ' ' . $row['lastName']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['contactNum']) . "</td>";
+    <!-- Add the mobile toggle button -->
+    <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-                            // Availability dropdown with form
-                            echo "<td>";
-                            echo "<form method='POST' action='update_availability.php'>";
-                            echo "<input type='hidden' name='barberID' value='" . $row['barberID'] . "'>";
-                            echo "<select name='availability' class='form-select' onchange='this.form.submit()'>";
-                            echo "<option value='Available'" . ($row['availability'] === 'Available' ? " selected" : "") . ">Available</option>";
-                            echo "<option value='Unavailable'" . ($row['availability'] === 'Unavailable' ? " selected" : "") . ">Unavailable</option>";
-                            echo "</select>";
-                            echo "</form>";
-                            echo "</td>";
+    <div class="body d-flex py-3 mt-5">
+        <div class="container-xxl">
+            <h1 class="dashboard mb-5 ms-5">Barbers</h1>
+            <!-- Add Barber Button -->
+            <div class="row ms-5 mb-4">
+                <div class="col-12">
+                    <button class="btn btn-warning" onclick="window.location.href='registration.php'">
+                        + Add Barber
+                    </button>
+                </div>
+            </div>
 
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='5'>No barbers found</td></tr>";
-                    }
-                    ?>
-                </tbody>
+            <!-- Bottom Section: Barbers Table -->
+            <div class="row ms-5">
+                <div class="col-12">
+                    <div class="card border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone Number</th>
+                                            <th>Availability</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        if ($result->num_rows > 0) {
+                                            $index = 1; // Counter for table row numbers
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<tr>";
+                                                echo "<td>" . $index++ . "</td>";
+                                                echo "<td>" . htmlspecialchars($row['firstName'] . ' ' . $row['lastName']) . "</td>";
+                                                echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                                                echo "<td>" . htmlspecialchars($row['contactNum']) . "</td>";
 
-            </table>
+                                                // Availability dropdown with form
+                                                echo "<td>";
+                                                echo "<form method='POST' action='update_availability.php'>";
+                                                echo "<input type='hidden' name='barberID' value='" . $row['barberID'] . "'>";
+                                                echo "<select name='availability' class='form-select' onchange='this.form.submit()'>";
+                                                echo "<option value='Available'" . ($row['availability'] === 'Available' ? " selected" : "") . ">Available</option>";
+                                                echo "<option value='Unavailable'" . ($row['availability'] === 'Unavailable' ? " selected" : "") . ">Unavailable</option>";
+                                                echo "</select>";
+                                                echo "</form>";
+                                                echo "</td>";
+
+                                                echo "</tr>";
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='5'>No barbers found</td></tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -164,6 +228,22 @@ $result = $conn->query($sql);
         </div>
     </nav>
 
+    <!-- Add necessary scripts -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebarMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>
 

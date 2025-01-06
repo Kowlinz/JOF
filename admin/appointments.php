@@ -114,6 +114,101 @@
                 padding: 0 15px;
             }
         }
+        /* Add these calendar responsive styles */
+        @media screen and (max-width: 768px) {
+            .calendar-container {
+                transform: scale(0.95);
+                transform-origin: top left;
+                margin-bottom: 15px;
+            }
+            
+            .dropdown-menu {
+                width: 290px !important;
+                padding: 10px !important;
+                margin-top: 5px !important;
+            }
+            
+            .calendar-header {
+                padding: 15px !important;
+            }
+            
+            .calendar-body {
+                padding: 10px !important;
+            }
+            
+            .calendar-weekdays li, 
+            .calendar-dates li {
+                font-size: 14px;
+                height: 40px;
+                width: 40px;
+                line-height: 40px;
+            }
+            
+            .calendar-navigation span {
+                font-size: 22px;
+            }
+
+            .calendar-current-date {
+                font-size: 16px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .calendar-container {
+                transform: scale(0.85);
+                margin-bottom: 25px;
+            }
+            
+            .dropdown-menu {
+                width: 260px !important;
+                padding: 15px !important;
+            }
+            
+            .calendar-weekdays li, 
+            .calendar-dates li {
+                font-size: 12px;
+            }
+        }
+
+        /* Add new styles for very small screens */
+        @media screen and (max-width: 505px) {
+            .calendar-container {
+                transform: scale(0.8);
+                margin-bottom: 30px;
+            }
+            
+            .dropdown-menu {
+                width: 240px !important;
+                margin-left: -20px;
+                padding: 20px !important;
+                min-height: 380px;
+            }
+            
+            .calendar-weekdays li, 
+            .calendar-dates li {
+                font-size: 11px;
+                height: 30px;
+                width: 30px;
+                line-height: 30px;
+            }
+            
+            .calendar-header {
+                padding: 8px !important;
+            }
+            
+            .calendar-navigation span {
+                font-size: 18px;
+            }
+            
+            .calendar-current-date {
+                font-size: 14px;
+            }
+        }
+
+        /* Add this to ensure the dropdown has enough space */
+        .dropdown {
+            margin-bottom: 50px;
+        }
     </style>
 </head>
 <body>

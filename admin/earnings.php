@@ -139,6 +139,108 @@
                 z-index: 999;
             }
         }
+        .alert {
+            background-color: white !important;
+            border-radius: 15px !important;
+            padding: 20px !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        .stat-icon.revenue { 
+            color: #F3CD32; 
+        }
+        .h5 { 
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .h6 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+        }
+        .card {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            border-bottom: 1px solid #eee;
+        }
+        .card-header h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #000;
+        }
+        /* Responsive text styles */
+        .h5 {
+            font-size: clamp(14px, 2vw, 16px);
+            word-wrap: break-word;
+        }
+        
+        .h6 {
+            font-size: clamp(18px, 2.5vw, 24px);
+        }
+        
+        /* Responsive card styles */
+        .alert {
+            padding: clamp(15px, 3vw, 20px) !important;
+        }
+        
+        @media (max-width: 576px) {
+            .stat-icon {
+                font-size: 20px;
+                margin-right: 10px;
+            }
+            
+            .alert {
+                margin: 0 -10px;
+            }
+        }
+
+        /* Responsive table styles */
+        @media screen and (max-width: 712px) {
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .card {
+                margin: 0 -15px;
+                border-radius: 0 !important;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+
+            table {
+                white-space: nowrap;
+                font-size: 14px;
+            }
+
+            /* Adjust column widths for better mobile view */
+            table th, table td {
+                min-width: 100px;
+                padding: 8px !important;
+            }
+
+            /* Make sure the money columns don't wrap */
+            table th:nth-child(1), 
+            table td:nth-child(1),
+            table th:nth-child(2), 
+            table td:nth-child(2),
+            table th:nth-child(4), 
+            table td:nth-child(4) {
+                min-width: 120px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -151,39 +253,42 @@
 
     <div class="body d-flex py-3 mt-5">
       <div class="container-xxl">
-        <h1 class="dashboard mb-5 ms-0">Earnings</h1>
-        <div class="row g-1 mb-5">
-    <div class="col-3 custom-width">
-        <div class="alert-warning alert mb-0">
+        <h1 class="dashboard mb-5 ms-5">Earnings</h1>
+        <div class="row g-1 mb-5 ms-5">
+    <div class="col-md-4 col-sm-6">
+        <div class="alert mb-0">
             <div class="d-flex align-items-center">
-                <div class=""><i class="fa-solid fa-lg"></i></div>
-                <div class="flex-fill ms-3 text-truncate">
-                    <div class="h5 mb-0 mt-0">Today's Admin Earnings</div>
-                    <div class="h4 fw-bold mt-1">₱<?= number_format($totalAdminEarnings, 2) ?></div>
+                <div class="stat-icon revenue">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+                <div class="flex-fill text-wrap">
+                    <div class="h5">Today's Admin Earnings</div>
+                    <div class="h6">₱<?= number_format($totalAdminEarnings, 2) ?></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-        <div class="row g-3 mb-5 ms-0">
-            <div class="col-md-10">
-                <div class="card border-danger">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
-                        <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Today</h4>
-                        <td><button> View All </button></td>
+        <div class="row g-3 mb-5 ms-5">
+            <div class="col-md-12">
+                <div class="card border-0 rounded-4">
+                    <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold">Today</h4>
+                        <button class="btn btn-warning">View All</button>
                     </div>
                     <div class="card-body">
-                        <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
-                          <thead>
-                              <tr>
-                                  <td>Total</td>
-                                  <td>My Earnings</td>
-                                  <td>Barber Name</td>
-                                  <td>Barber Earnings</td>
-                                  <td>Time</td>
-                              </tr>
-                          </thead>
-                          <tbody>
+                        <div class="table-responsive">
+                            <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th>My Earnings</th>
+                                        <th>Barber Name</th>
+                                        <th>Barber Earnings</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
     <?php if ($resultToday->num_rows > 0): ?>
         <?php while ($row = $resultToday->fetch_assoc()): ?>
             <tr>
@@ -200,7 +305,8 @@
         </tr>
     <?php endif; ?>
 </tbody>
-                      </table>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

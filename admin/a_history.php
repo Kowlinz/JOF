@@ -149,6 +149,155 @@
                 z-index: 999;
             }
         }
+
+        /* Update the calendar responsive styles */
+        @media screen and (max-width: 768px) {
+            .calendar-container {
+                transform: scale(0.95);
+                transform-origin: top left;
+                margin-bottom: 15px;
+            }
+            
+            .dropdown-menu {
+                width: 290px !important;
+                padding: 10px !important;
+                margin-top: 5px !important;
+            }
+            
+            .calendar-header {
+                padding: 15px !important;
+            }
+            
+            .calendar-body {
+                padding: 10px !important;
+            }
+            
+            .calendar-weekdays li, 
+            .calendar-dates li {
+                font-size: 14px;
+                height: 40px;
+                width: 40px;
+                line-height: 40px;
+            }
+            
+            .calendar-navigation span {
+                font-size: 22px;
+            }
+
+            .calendar-current-date {
+                font-size: 16px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .calendar-container {
+                transform: scale(0.85);
+                margin-bottom: 25px;
+            }
+            
+            .dropdown-menu {
+                width: 260px !important;
+                padding: 15px !important;
+            }
+            
+            .calendar-weekdays li, 
+            .calendar-dates li {
+                font-size: 13px;
+                height: 35px;
+                width: 35px;
+                line-height: 35px;
+            }
+        }
+
+        @media screen and (max-width: 505px) {
+            .calendar-container {
+                transform: scale(0.8);
+                margin-bottom: 30px;
+            }
+            
+            .dropdown-menu {
+                width: 240px !important;
+                margin-left: -20px;
+                padding: 20px !important;
+                min-height: 380px;
+            }
+            
+            .calendar-weekdays li, 
+            .calendar-dates li {
+                font-size: 12px;
+                height: 33px;
+                width: 33px;
+                line-height: 33px;
+            }
+            
+            .calendar-header {
+                padding: 12px !important;
+            }
+            
+            .calendar-navigation span {
+                font-size: 20px;
+            }
+            
+            .calendar-current-date {
+                font-size: 15px;
+            }
+        }
+
+        /* Add this to ensure the dropdown has enough space */
+        .dropdown {
+            margin-bottom: 50px;
+        }
+
+        /* Add these responsive table styles */
+        @media screen and (max-width: 712px) {
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .card {
+                margin: 0 -15px;
+                border-radius: 0 !important;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+
+            table {
+                white-space: nowrap;
+                font-size: 14px;
+            }
+
+            /* Adjust column widths for better mobile view */
+            table th, table td {
+                min-width: 100px;
+                padding: 8px !important;
+            }
+
+            /* Make sure the money columns don't wrap */
+            table th:first-child, 
+            table td:first-child {
+                min-width: 120px; /* Name column */
+            }
+            
+            table th:nth-child(2), 
+            table td:nth-child(2) {
+                min-width: 100px; /* Date/Time column */
+            }
+            
+            table th:nth-child(3), 
+            table td:nth-child(3) {
+                min-width: 100px; /* Service/Time column */
+            }
+            
+            table th:nth-child(4), 
+            table td:nth-child(4) {
+                min-width: 150px; /* Reason/Barber column */
+            }
+        }
     </style>
 </head>
 <body>
@@ -161,9 +310,9 @@
 
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
-            <h1 class="dashboard mb-5 ms-0">Appointments History</h1>
+            <h1 class="dashboard mb-5 ms-5">Appointments History</h1>
             <!-- Calendar Row -->
-            <div class="row mb-4">
+            <div class="row mb-4 ms-5">
                 <div class="col-md-4">
                     <div class="dropdown">
                         <button class="btn btn-warning dropdown-toggle" type="button" id="calendarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -198,7 +347,7 @@
             <script src="js/calendar.js"></script>
 
             <!-- Cancelled Appointments Row -->
-            <div class="row mb-4">
+            <div class="row mb-4 ms-5">
                 <div class="col-md-12">
                     <div class="card p-3">
                         <h4 class="fw-bold mb-8">Cancelled</h4>
@@ -248,71 +397,73 @@
             </div>
 
             <!-- Previous Customers Row -->
-            <div class="col-md-12">
-                <div class="card p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="fw-bold">Previous Customers</h4>
-                        <h4>Total: <?php echo $countData['total_previous'] ?? '0'; ?></h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
-                                <thead>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>Time</td>
-                                        <td>Service</td>
-                                        <td>Barber</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                        $completedQuery = "SELECT 
-                                            a.appointmentID,
-                                            a.date,
-                                            a.timeSlot,
-                                            a.status,
-                                            CASE 
-                                                WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-                                                ELSE 'Admin Booking' 
-                                            END AS fullName,
-                                            s.serviceName, 
-                                            b.firstName AS barberFirstName, 
-                                            b.lastName AS barberLastName
-                                        FROM 
-                                            appointment_tbl a
-                                        LEFT JOIN 
-                                            customer_tbl c ON a.customerID = c.customerID
-                                        LEFT JOIN 
-                                            service_tbl s ON a.serviceID = s.serviceID
-                                        LEFT JOIN 
-                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
-                                        LEFT JOIN 
-                                            barbers_tbl b ON b.barberID = ba.barberID
-                                        WHERE 
-                                            a.date = CURDATE() AND a.status = 'Completed'
-                                        GROUP BY
-                                            a.appointmentID
-                                        ORDER BY 
-                                            a.timeSlot ASC";
+            <div class="row mb-4 ms-5">
+                <div class="col-md-12">
+                    <div class="card p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="fw-bold">Previous Customers</h4>
+                            <h4>Total: <?php echo $countData['total_previous'] ?? '0'; ?></h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Time</td>
+                                            <td>Service</td>
+                                            <td>Barber</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                            $completedQuery = "SELECT 
+                                                a.appointmentID,
+                                                a.date,
+                                                a.timeSlot,
+                                                a.status,
+                                                CASE 
+                                                    WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
+                                                    ELSE 'Admin Booking' 
+                                                END AS fullName,
+                                                s.serviceName, 
+                                                b.firstName AS barberFirstName, 
+                                                b.lastName AS barberLastName
+                                            FROM 
+                                                appointment_tbl a
+                                            LEFT JOIN 
+                                                customer_tbl c ON a.customerID = c.customerID
+                                            LEFT JOIN 
+                                                service_tbl s ON a.serviceID = s.serviceID
+                                            LEFT JOIN 
+                                                barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
+                                            LEFT JOIN 
+                                                barbers_tbl b ON b.barberID = ba.barberID
+                                            WHERE 
+                                                a.date = CURDATE() AND a.status = 'Completed'
+                                            GROUP BY
+                                                a.appointmentID
+                                            ORDER BY 
+                                                a.timeSlot ASC";
 
-                                        $completedResult = mysqli_query($conn, $completedQuery);
-                                        
-                                        if ($completedResult && mysqli_num_rows($completedResult) > 0) {
-                                            while ($row = mysqli_fetch_assoc($completedResult)) {
-                                                echo "<tr>
-                                                        <td>{$row['fullName']}</td>
-                                                        <td>{$row['timeSlot']}</td>
-                                                        <td>{$row['serviceName']}</td>
-                                                        <td>{$row['barberFirstName']} {$row['barberLastName']}</td>
-                                                      </tr>";
+                                            $completedResult = mysqli_query($conn, $completedQuery);
+                                            
+                                            if ($completedResult && mysqli_num_rows($completedResult) > 0) {
+                                                while ($row = mysqli_fetch_assoc($completedResult)) {
+                                                    echo "<tr>
+                                                            <td>{$row['fullName']}</td>
+                                                            <td>{$row['timeSlot']}</td>
+                                                            <td>{$row['serviceName']}</td>
+                                                            <td>{$row['barberFirstName']} {$row['barberLastName']}</td>
+                                                          </tr>";
+                                                }
+                                            } else {
+                                                echo "<tr><td colspan='4' class='text-center'>No completed appointments found.</td></tr>";
                                             }
-                                        } else {
-                                            echo "<tr><td colspan='4' class='text-center'>No completed appointments found.</td></tr>";
-                                        }
-                                    ?>
-                                </tbody>
-                            </table>
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

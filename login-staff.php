@@ -66,6 +66,7 @@ if (isset($_SESSION["user"])) {
                         if ($user_barber) {
                             if (password_verify($password, $user_barber["password"])) {
                                 $_SESSION["user"] = "barber";
+                                $_SESSION["barberID"] = $user_barber["barberID"];
                                 header("Location: ./barber/b_dashboard.php");
                                 die();
 
@@ -76,6 +77,7 @@ if (isset($_SESSION["user"])) {
                         } elseif ($user_admin) {
                             if (password_verify($password, $user_admin["password"])) {
                                 $_SESSION["user"] = "admin";
+                                $_SESSION["adminID"] = $user_admin["adminID"];
                                 header("Location: ./admin/a_dashboard.php");
                                 die();
 

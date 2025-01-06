@@ -28,7 +28,7 @@ if (!isset($_SESSION['firstName'])) {
 }
 
 // Fetch appointments for the logged-in customer
-$sql = "SELECT * FROM appointment_tbl WHERE customerID = $customerID ORDER BY date, timeSlot";
+$sql = "SELECT * FROM appointment_tbl WHERE customerID = $customerID ORDER BY date DESC, timeSlot DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -187,41 +187,41 @@ $result = $conn->query($sql);
                 </thead>
                 <tbody>
                 <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $statusClass = '';
-                switch($row['status']) {
-                    case 'Completed':
-                        $statusClass = 'status-completed';
-                        break;
-                    case 'Cancelled':
-                        $statusClass = 'status-cancelled';
-                        break;
-                    case 'Pending':
-                        $statusClass = 'status-pending';
-                        break;
-                }
-                
-                echo "<tr>";
-                echo "<td>" . $row['date'] . "</td>";
-                echo "<td>" . $row['timeSlot'] . "</td>";
-                echo "<td class='" . $statusClass . "'>" . $row['status'] . "</td>";
-                
-                if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed") {
-                    echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
-                    "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
-                    $row['appointmentID'] . ", `" . 
-                    $row['date'] . "`, `" . 
-                    $row['timeSlot'] . "`)'>Cancel</button></td>";
-                } else {
-                    echo "<td>-</td>";
-                }
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='4'>No appointments found.</td></tr>";
-        }
-    ?>
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $statusClass = '';
+                            switch($row['status']) {
+                                case 'Completed':
+                                    $statusClass = 'status-completed';
+                                    break;
+                                case 'Cancelled':
+                                    $statusClass = 'status-cancelled';
+                                    break;
+                                case 'Pending':
+                                    $statusClass = 'status-pending';
+                                    break;
+                            }
+                            
+                            echo "<tr>";
+                            echo "<td>" . $row['date'] . "</td>";
+                            echo "<td>" . $row['timeSlot'] . "</td>";
+                            echo "<td class='" . $statusClass . "'>" . $row['status'] . "</td>";
+                            
+                            if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed") {
+                                echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
+                                "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
+                                $row['appointmentID'] . ", `" . 
+                                $row['date'] . "`, `" . 
+                                $row['timeSlot'] . "`)'>Cancel</button></td>";
+                            } else {
+                                echo "<td></td>";
+                            }
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='4'>No appointments found.</td></tr>";
+                    }
+                ?>
                 </tbody>
             </table>
         </div>
@@ -239,9 +239,9 @@ $result = $conn->query($sql);
                         <p>Date: <span id="appointmentDate"></span></p>
                         <p>Time: <span id="appointmentTime"></span></p>
                         <div class="mb-3">
-    <label for="cancelReason" class="form-label">Reason for Cancellation</label>
-    <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (optional)">
-</div>
+                        <label for="cancelReason" class="form-label">Reason for Cancellation</label>
+                        <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (optional)">
+                    </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
@@ -253,44 +253,44 @@ $result = $conn->query($sql);
 
 
         <script>
-    // Function to handle appointment cancellation
-    function openCancelModal(appointmentID, date, time) {
-        document.getElementById('appointmentDate').textContent = date;
-        document.getElementById('appointmentTime').textContent = time;
+        // Function to handle appointment cancellation
+        function openCancelModal(appointmentID, date, time) {
+            document.getElementById('appointmentDate').textContent = date;
+            document.getElementById('appointmentTime').textContent = time;
 
-        // Set up the Confirm button to handle the cancellation
-        const confirmButton = document.getElementById('confirmCancelButton');
-        confirmButton.onclick = function () {
-            const reason = document.getElementById('cancelReason').value;
+            // Set up the Confirm button to handle the cancellation
+            const confirmButton = document.getElementById('confirmCancelButton');
+                confirmButton.onclick = function () {
+                const reason = document.getElementById('cancelReason').value;
 
-            // No validation needed anymore for the reason (allow empty reason)
-            // Redirect to cancellation PHP script with parameters
-            window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
-        };
-    }
+                // No validation needed anymore for the reason (allow empty reason)
+                // Redirect to cancellation PHP script with parameters
+                window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
+            };
+        }
         </script>
 
         <script>
-    // JavaScript to toggle mobile menu
-    const menuBtn = document.getElementById('menuBtn');
-    const menuDropdown = document.getElementById('menuDropdown');
-    const menuClose = document.getElementById('menuClose');
+            // JavaScript to toggle mobile menu
+            const menuBtn = document.getElementById('menuBtn');
+            const menuDropdown = document.getElementById('menuDropdown');
+            const menuClose = document.getElementById('menuClose');
 
-    menuBtn.addEventListener('click', function () {
-        menuDropdown.classList.toggle('show');
-    });
+            menuBtn.addEventListener('click', function () {
+                menuDropdown.classList.toggle('show');
+            });
 
-    menuClose.addEventListener('click', function () {
-        menuDropdown.classList.remove('show');
-    });
+            menuClose.addEventListener('click', function () {
+                menuDropdown.classList.remove('show');
+            });
 
-    // Close menu when clicking outside
-    document.addEventListener('click', function (event) {
-        if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
-            menuDropdown.classList.remove('show');
-        }
-    });
-</script>
+            // Close menu when clicking outside
+            document.addEventListener('click', function (event) {
+                if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
+                    menuDropdown.classList.remove('show');
+                }
+            });
+        </script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </div>

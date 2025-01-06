@@ -41,14 +41,14 @@ $addonsResult = $conn->query($addonsQuery);
     <div class="container mt-5">
         <!-- Back Button -->
         <div class="d-flex justify-content-start mb-4">
-            <a href="appointments.php" class="btn btn-secondary">
+            <a href="appointments.php" class="btn btn-warning text-dark fw-bold">
                 <i class="bi bi-arrow-left"></i> Back
             </a>
         </div>
 
         <div class="container mt-5">
             <div class="text-center mb-4">
-                <img src="css/images/JOF-Logo.png" alt="logo-1" width="90" height="120" class="mt-3">
+                <img src="css/images/jof_logo_yellow.png" alt="logo-1" width="90" height="120" class="mt-3">
             </div>
             <h2 class="text-center mb-5" style="color: #FFDF60;">Walk-In Customer</h2>
 

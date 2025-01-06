@@ -133,7 +133,7 @@ $barberID = isset($_SESSION['barberID']) ? $_SESSION['barberID'] : 1; // Default
     <div class="position-sticky">
         <div class="list-group list-group-flush mx-3 mt-5">
             <a href="b_dashboard.php"><img src="css/images/jof_logo_black.png" alt="logo" width="45" height="45"></a>
-            <img src="css/images/mickey.jpg" alt="Avatar" width="140r" height="140" style="border: 5px solid #000000; border-radius: 50%;">
+            <img src="css/images/barber.jpg" alt="Avatar" width="140r" height="140" style="border: 5px solid #000000; border-radius: 50%;">
 
             <h5 style="text-align: center;"> Barber </h5>
             <a href="b_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
@@ -148,7 +148,7 @@ $barberID = isset($_SESSION['barberID']) ? $_SESSION['barberID'] : 1; // Default
             <a href="income.php" class="list-group-item list-group-item-action py-2 ripple">
                 <i class="fa-solid fa-receipt fa-fw me-3"></i><span>Income</span>
             </a>
-            <a href="../logout.php" class="list-group-item list-group-item-action py-2 ripple">
+            <a href="../logout-staff.php" class="list-group-item list-group-item-action py-2 ripple">
                 <i class="fa-solid fa-right-from-bracket fa-fw me-3"></i><span>Log Out</span>
             </a>
         </div>

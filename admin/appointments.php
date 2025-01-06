@@ -89,12 +89,11 @@
     ?>
 <div class="body d-flex py-3 mt-5">
     <div class="container-xxl">
-        <h1 class="dashboard mb-5 ms-0">Appointments</h1>
+        <h1 class="dashboard mb-5 ms-5">Appointments</h1>
 
-        <!-- Top Section: Calendar and Canceled -->
-        <div class="row mb-4">
-            <!-- Calendar Section -->
-            <div class="col-md-5">
+        <!-- Calendar Section -->
+        <div class="row ms-5 mb-4">
+            <div class="col-md-4">
                 <div class="calendar-container card p-3">
                     <header class="calendar-header d-flex justify-content-between align-items-center">
                         <p class="calendar-current-date fw-bold"></p>
@@ -120,8 +119,6 @@
             </div>
         </div>
 
-        <button button class="btn btn-warning" onclick="window.location.href='booking.php';">Add Customer +</button>
-        
         <?php
 
         // Check if there is a status or message in the query string
@@ -139,135 +136,151 @@
         }
         ?>
 
-        <!-- Bottom Section: Upcoming Customers -->
-        <div class="card p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="fw-bold">Upcoming Customers</h4>
-                <?php
-                    $countQuery = "
-                        SELECT COUNT(*) AS total_upcoming
-                        FROM appointment_tbl a
-                        LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                        WHERE a.date = CURDATE() AND a.status = 'Pending'
-                    ";
-                    $countResult = mysqli_query($conn, $countQuery);
-                    $countData = mysqli_fetch_assoc($countResult);
-                    $totalUpcoming = $countData['total_upcoming'];
-                ?>
-                <h4>Total: <?php echo $totalUpcoming; ?></h4>
+        <!-- Add Customer Button -->
+        <div class="row ms-5 mb-4">
+            <div class="col-12">
+                <button class="btn btn-warning" onclick="window.location.href='booking.php';">Add Customer +</button>
             </div>
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Time</th>
-                        <th>Service</th>
-                        <th>Barber</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        // Modified query to include barberID from the barb_apps_tbl table
-                        $upcomingQuery = "
-                            SELECT 
-                                a.appointmentID,
-                                a.date,
-                                a.timeSlot,
-                                a.status,
-                                CASE 
-                                    WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-                                    ELSE 'Admin Booking' 
-                                END AS fullName,
-                                s.serviceName, 
-                                ba.barberID  -- Get barberID from the barb_apps_tbl
-                            FROM 
-                                appointment_tbl a
-                            LEFT JOIN 
-                                customer_tbl c ON a.customerID = c.customerID
-                            LEFT JOIN 
-                                service_tbl s ON a.serviceID = s.serviceID
-                            LEFT JOIN 
-                                barb_apps_tbl ba ON a.appointmentID = ba.appointmentID  -- Join barb_apps_tbl to get barberID
-                            WHERE 
-                                a.date = CURDATE() AND a.status = 'Pending'
-                            ORDER BY 
-                                a.timeSlot ASC
-                        ";
-                        $upcomingResult = mysqli_query($conn, $upcomingQuery);
+        </div>
 
-                        // Modified query to fetch only available barbers
-                        $barbersQuery = "SELECT * FROM barbers_tbl WHERE availability = 'available'";
-                        $barbersResult = mysqli_query($conn, $barbersQuery);
-                        $barbers = [];
-                        if ($barbersResult && mysqli_num_rows($barbersResult) > 0) {
-                            while ($barberRow = mysqli_fetch_assoc($barbersResult)) {
-                                $barbers[] = $barberRow;
-                            }
-                        }
+        <!-- Bottom Section: Upcoming Customers -->
+        <div class="row ms-5">
+            <div class="col-12">
+                <div class="card border-0 rounded-4">
+                    <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold">Upcoming Customers</h4>
+                        <?php
+                            $countQuery = "
+                                SELECT COUNT(*) AS total_upcoming
+                                FROM appointment_tbl a
+                                LEFT JOIN customer_tbl c ON a.customerID = c.customerID
+                                WHERE a.date = CURDATE() AND a.status = 'Pending'
+                            ";
+                            $countResult = mysqli_query($conn, $countQuery);
+                            $countData = mysqli_fetch_assoc($countResult);
+                            $totalUpcoming = $countData['total_upcoming'];
+                        ?>
+                        <h4>Total: <?php echo $totalUpcoming; ?></h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>Time</th>
+                                    <th>Service</th>
+                                    <th>Barber</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    // Modified query to include barberID from the barb_apps_tbl table
+                                    $upcomingQuery = "
+                                        SELECT 
+                                            a.appointmentID,
+                                            a.date,
+                                            a.timeSlot,
+                                            a.status,
+                                            CASE 
+                                                WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
+                                                ELSE 'Admin Booking' 
+                                            END AS fullName,
+                                            s.serviceName, 
+                                            ba.barberID  -- Get barberID from the barb_apps_tbl
+                                        FROM 
+                                            appointment_tbl a
+                                        LEFT JOIN 
+                                            customer_tbl c ON a.customerID = c.customerID
+                                        LEFT JOIN 
+                                            service_tbl s ON a.serviceID = s.serviceID
+                                        LEFT JOIN 
+                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID  -- Join barb_apps_tbl to get barberID
+                                        WHERE 
+                                            a.date = CURDATE() AND a.status = 'Pending'
+                                        ORDER BY 
+                                            a.timeSlot ASC
+                                    ";
+                                    $upcomingResult = mysqli_query($conn, $upcomingQuery);
 
-                        $counter = 1;
+                                    // Modified query to fetch only available barbers
+                                    $barbersQuery = "SELECT * FROM barbers_tbl WHERE availability = 'available'";
+                                    $barbersResult = mysqli_query($conn, $barbersQuery);
+                                    $barbers = [];
+                                    if ($barbersResult && mysqli_num_rows($barbersResult) > 0) {
+                                        while ($barberRow = mysqli_fetch_assoc($barbersResult)) {
+                                            $barbers[] = $barberRow;
+                                        }
+                                    }
 
-                        // Check if there are any upcoming appointments
-                        if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
-                            while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                                echo "  <tr>
-                                        <td>{$counter}</td>
-                                        <td>{$row['fullName']}</td>
-                                        <td>{$row['timeSlot']}</td>
-                                        <td>{$row['serviceName']}</td>
-                                        <td>
-                                            <form action='assign_barber.php' method='POST'>
-                                                <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
-                                                <select name='barberID' class='form-select' onchange='this.form.submit()'>
-                                                    <option value=''>Select Barber</option>";
-                                                    // Loop through all barbers to display them in the dropdown
-                                                    foreach ($barbers as $barber) {
-                                                        // Check if the barber is assigned to this appointment
-                                                        $selected = ($row['barberID'] == $barber['barberID']) ? "selected" : "";
-                                                        echo "<option value='{$barber['barberID']}' $selected>{$barber['firstName']} {$barber['lastName']}</option>";
-                                                    }
-                                                echo "</select>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div class='dropdown'>
-                                                <i class='fas fa-ellipsis-v' style='cursor: pointer;' data-bs-toggle='dropdown'></i>
-                                                <ul class='dropdown-menu'>
-                                                    <li>
-                                                        <form action='update_status.php' method='POST' style='display: inline;'>
+                                    $counter = 1;
+
+                                    // Check if there are any upcoming appointments
+                                    if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
+                                        while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                            echo "  <tr>
+                                                    <td>{$counter}</td>
+                                                    <td>{$row['fullName']}</td>
+                                                    <td>{$row['timeSlot']}</td>
+                                                    <td>{$row['serviceName']}</td>
+                                                    <td>
+                                                        <form action='assign_barber.php' method='POST'>
                                                             <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
-                                                            <input type='hidden' name='status' value='Completed'>
-                                                            <button type='submit' class='dropdown-item'>
-                                                                <i class='fas fa-check text-success'></i> Done
-                                                            </button>
+                                                            <select name='barberID' class='form-select' onchange='this.form.submit()'>
+                                                                <option value=''>Select Barber</option>";
+                                                                // Loop through all barbers to display them in the dropdown
+                                                                foreach ($barbers as $barber) {
+                                                                    // Check if the barber is assigned to this appointment
+                                                                    $selected = ($row['barberID'] == $barber['barberID']) ? "selected" : "";
+                                                                    echo "<option value='{$barber['barberID']}' $selected>{$barber['firstName']} {$barber['lastName']}</option>";
+                                                                }
+                                                            echo "</select>
                                                         </form>
-                                                    </li>
-                                                    <li>
-                                                        <form action='update_status.php' method='POST' style='display: inline;'>
-                                                            <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
-                                                            <input type='hidden' name='status' value='Cancelled'>
-                                                            <button type='submit' class='dropdown-item'>
-                                                                <i class='fas fa-times text-danger'></i> Cancel
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>";
-                                    $counter++;
-                            }
-                        } else {
-                            echo "<tr><td colspan='7' class='text-center'>No upcoming appointments found.</td></tr>";
-                        }
-                    ?>
-                </tbody>
-            </table>
+                                                    </td>
+                                                    <td>
+                                                        <div class='dropdown'>
+                                                            <i class='fas fa-ellipsis-v' style='cursor: pointer;' data-bs-toggle='dropdown'></i>
+                                                            <ul class='dropdown-menu'>
+                                                                <li>
+                                                                    <form action='update_status.php' method='POST' style='display: inline;'>
+                                                                        <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
+                                                                        <input type='hidden' name='status' value='Completed'>
+                                                                        <button type='submit' class='dropdown-item'>
+                                                                            <i class='fas fa-check text-success'></i> Done
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                                <li>
+                                                                    <form action='update_status.php' method='POST' style='display: inline;'>
+                                                                        <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
+                                                                        <input type='hidden' name='status' value='Cancelled'>
+                                                                        <button type='submit' class='dropdown-item'>
+                                                                            <i class='fas fa-times text-danger'></i> Cancel
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>";
+                                                $counter++;
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='7' class='text-center'>No upcoming appointments found.</td></tr>";
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+    <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse">
         <div class="position-sticky">
             <div class="list-group list-group-flush mx-3 mt-5">
@@ -327,10 +340,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
-
-    <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
 
     <script>
         function toggleSidebar() {

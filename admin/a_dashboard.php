@@ -128,10 +128,47 @@
         .table tbody tr:hover {
             background-color: #f8f9fa;
         }
+        /* Mobile toggle button styling */
+        .mobile-toggle {
+            position: fixed;
+            top: 25px;
+            left: 20px;
+            z-index: 1000;
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: none;
+            color: #F3CD32;
+            font-size: 24px;
+        }
+
+        /* Show toggle button only on smaller screens */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+        }
     </style>
 </head>
 <body>
-<?php
+    <?php
 
 include 'db_connect.php';
 
@@ -224,7 +261,13 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
 <!-- First container for stats -->
 <div class="body d-flex py-3 mt-5">
     <div class="container-xxl">
-        <h1 class="dashboard mb-5 ms-5">Admin Dashboard</h1>
+        <div class="position-relative">
+            <h1 class="dashboard mb-5 ms-5">Admin Dashboard</h1>
+            <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
         <!-- Stats cards row -->
         <div class="row g-3 mb-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 ms-5">
             <!-- Stats cards remain the same -->
@@ -396,6 +439,23 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
     </div>
   </div>
 </nav>
+
+<!-- Add this script at the bottom of the body -->
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebarMenu');
+        sidebar.classList.toggle('show');
+    }
+
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebarMenu');
+        const toggle = document.querySelector('.mobile-toggle');
+        if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+            sidebar.classList.remove('show');
+        }
+    });
+</script>
 
 </body>
 </html>

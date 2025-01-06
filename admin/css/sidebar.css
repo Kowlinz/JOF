@@ -7,23 +7,26 @@
 /* Media query for smaller screens */
 @media (max-width: 991.98px) {
     .main-content {
-        margin-left: 0;
+        margin-left: 0; /* No margin on smaller screens */
     }
     .sidebar {
-        position: fixed;
-        top: 0;
-        left: -240px; /* Hide sidebar by default on mobile */
-        width: 240px;
-        z-index: 1000;
-        transition: left 0.3s ease;
+        position: fixed; /* Fixed position */
+        top: 0; /* Align to the top */
+        left: 0; /* Start from the left */
+        width: 240px; /* Width of sidebar */
+        height: 100vh; /* Full height */
+        background-color: #F3CD32; /* Sidebar background color */
+        z-index: 1000; /* Ensure it is above other content */
+        transform: translateX(-100%); /* Hide sidebar by default */
+        transition: transform 0.3s ease; /* Smooth transition */
     }
     .sidebar.show {
-        left: 0;
+        transform: translateX(0); /* Show sidebar */
     }
 }
 
 /* Container for all the content */
 .content-wrapper {
     position: relative;
-    min-height: 100vh;
+    min-height: 100vh; /* Ensure content is at least full height */
 } 

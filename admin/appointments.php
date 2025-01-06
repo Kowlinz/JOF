@@ -286,7 +286,7 @@
         <!-- Add Customer Button -->
         <div class="row ms-5 mb-4">
             <div class="col-12">
-                <button class="btn btn-warning" onclick="window.location.href='booking.php';">Add Customer +</button>
+                <button class="btn btn-warning" onclick="window.location.href='walk-in.php';">Add Customer +</button>
             </div>
         </div>
 

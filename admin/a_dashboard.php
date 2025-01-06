@@ -317,7 +317,7 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
                             <i class="fa-solid fa-sack-dollar"></i>
                         </div>
                         <div class="flex-fill">
-                            <div class="h5">Today's Revenue</div>
+                            <div class="h5">Today's Earnings</div>
                             <div class="h6">₱<?php echo number_format($totalRevenue, 2); ?></div>
                         </div>
                     </div>

@@ -29,6 +29,17 @@
     $stmtPrevious->bind_param("s", $todayDate);
     $stmtPrevious->execute();
     $resultPrevious = $stmtPrevious->get_result();
+
+    // Query to calculate total adminEarnings for today
+    $totalAdminEarningsQuery = "SELECT SUM(adminEarnings) AS totalAdminEarnings 
+                                FROM earnings_tbl e 
+                                JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+                                WHERE DATE(a.date) = ?";
+    $stmtTotalAdmin = $conn->prepare($totalAdminEarningsQuery);
+    $stmtTotalAdmin->bind_param("s", $todayDate);
+    $stmtTotalAdmin->execute();
+    $resultTotalAdmin = $stmtTotalAdmin->get_result();
+    $totalAdminEarnings = $resultTotalAdmin->fetch_assoc()['totalAdminEarnings'] ?? 0; // Default to 0 if null
 ?>
 
 <!DOCTYPE html>
@@ -97,59 +108,21 @@
     <div class="body d-flex py-3 mt-5">
       <div class="container-xxl">
         <h1 class="dashboard mb-5 ms-0">Earnings</h1>
-        <div class="row g-3 mb-4">
-            <!-- First Row -->
-            <div class="col-6 custom-width">
-                <div class="alert-warning alert mb-0">
-                    <div class="d-flex align-items-center">
-                        <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
-                        <div class="flex-fill ms-3 text-truncate">
-                            <div class="h5 mb-0 mt-0">Today</div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 custom-width">
-                    <div class="alert-warning alert mb-0">
-                        <div class="d-flex align-items-center">
-                            <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
-                            <div class="flex-fill ms-3 text-truncate">
-                                <div class="h5 mb-0 mt-0">This Week</div>
-
-                        </div>
-                    </div>
+        <div class="row g-1 mb-5">
+    <div class="col-3 custom-width">
+        <div class="alert-warning alert mb-0">
+            <div class="d-flex align-items-center">
+                <div class=""><i class="fa-solid fa-lg"></i></div>
+                <div class="flex-fill ms-3 text-truncate">
+                    <div class="h5 mb-0 mt-0">Today's Admin Earnings</div>
+                    <div class="h4 fw-bold mt-1">₱<?= number_format($totalAdminEarnings, 2) ?></div>
                 </div>
             </div>
         </div>
-              <!-- Second Row -->
-<div class="row g-3 mb-4">
-    <div class="col-6 custom-width">
-        <div class="alert-warning alert mb-0">
-            <div class="d-flex align-items-center">
-                <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
-                <div class="flex-fill ms-3 text-truncate">
-                    <div class="h5 mb-0 mt-0">This Month</div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-             
-                <div class="col-6 custom-width">
-                    <div class="alert-warning alert mb-0">
-                        <div class="d-flex align-items-center">
-                            <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
-                            <div class="flex-fill ms-3 text-truncate">
-                                <div class="h5 mb-0 mt-0">This Year</div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          <div class="row g-3 mb-5 ms-0">
-            <div class="col-md-12">
+    </div>
+</div>
+        <div class="row g-3 mb-5 ms-0">
+            <div class="col-md-10">
                 <div class="card border-danger">
                     <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                         <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Today</h4>
@@ -159,15 +132,30 @@
                         <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
                           <thead>
                               <tr>
-                                  <td>No.</td>
-                                  <td>Time</td>
-                                  <td>Admin</td>
-                                  <td>Barber</td>
                                   <td>Total</td>
+                                  <td>My Earnings</td>
+                                  <td>Barber Name</td>
+                                  <td>Barber Earnings</td>
+                                  <td>Time</td>
                               </tr>
                           </thead>
                           <tbody>
-                          </tbody>
+    <?php if ($resultToday->num_rows > 0): ?>
+        <?php while ($row = $resultToday->fetch_assoc()): ?>
+            <tr>
+                <td><?= number_format($row['adminEarnings'] + $row['barberEarnings'], 2) ?></td>
+                <td><?= number_format($row['adminEarnings'], 2) ?></td>
+                <td><?= htmlspecialchars($row['barberFullName']) ?></td>
+                <td><?= number_format($row['barberEarnings'], 2) ?></td>
+                <td><?= htmlspecialchars($row['timeSlot']) ?></td>
+            </tr>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="4" class="text-center">No earnings data for today</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
                       </table>
                     </div>
                 </div>

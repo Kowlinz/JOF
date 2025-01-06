@@ -424,7 +424,7 @@
                                                 a.status,
                                                 CASE 
                                                     WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-                                                    ELSE 'Admin Booking' 
+                                                    ELSE 'Walk In' 
                                                 END AS fullName,
                                                 s.serviceName, 
                                                 b.firstName AS barberFirstName, 

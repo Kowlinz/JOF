@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// Check if the user is logged in as a barber
+if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "barber") {
+    header("Location: ../login-staff.php"); // Redirect to login if not logged in or not a barber
+    exit();
+}
+
+// Get the logged-in barber's ID from the session
+$barberID = $_SESSION["barberID"];
+
+include 'db_connect.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,9 +27,6 @@
     <title>Customer History</title>
 </head>
 <body>
-    <?php include 'db_connect.php'; // Ensure the barberID is fetched from the session or passed via URL
-    $barberID = isset($_SESSION['barberID']) ? $_SESSION['barberID'] : 1; // Defaulting to 1 for testing
-    ?>
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
             <h1 class="dashboard mb-5 ms-0">Customer History</h1>

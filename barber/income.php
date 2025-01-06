@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// Check if the user is logged in as a barber
+if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "barber") {
+    header("Location: ../login-staff.php"); // Redirect to login if not logged in or not a barber
+    exit();
+}
+
+// Get the logged-in barber's ID from the session
+$barberID = $_SESSION["barberID"];
+
+include 'db_connect.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

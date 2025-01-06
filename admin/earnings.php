@@ -289,22 +289,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-    <?php if ($resultToday->num_rows > 0): ?>
-        <?php while ($row = $resultToday->fetch_assoc()): ?>
-            <tr>
-                <td><?= number_format($row['adminEarnings'] + $row['barberEarnings'], 2) ?></td>
-                <td><?= number_format($row['adminEarnings'], 2) ?></td>
-                <td><?= htmlspecialchars($row['barberFullName']) ?></td>
-                <td><?= number_format($row['barberEarnings'], 2) ?></td>
-                <td><?= htmlspecialchars($row['timeSlot']) ?></td>
-            </tr>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <tr>
-            <td colspan="4" class="text-center">No earnings data for today</td>
-        </tr>
-    <?php endif; ?>
-</tbody>
+                                    <?php if ($resultToday->num_rows > 0): ?>
+                                        <?php while ($row = $resultToday->fetch_assoc()): ?>
+                                            <tr>
+                                                <td><?= number_format($row['adminEarnings'] + $row['barberEarnings'], 2) ?></td>
+                                                <td><?= number_format($row['adminEarnings'], 2) ?></td>
+                                                <td><?= htmlspecialchars($row['barberFullName']) ?></td>
+                                                <td><?= number_format($row['barberEarnings'], 2) ?></td>
+                                                <td><?= htmlspecialchars($row['timeSlot']) ?></td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center">No earnings data for today</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
                             </table>
                         </div>
                     </div>

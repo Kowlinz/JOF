@@ -11,8 +11,32 @@ if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "barber") {
 $barberID = $_SESSION["barberID"];
 
 include 'db_connect.php';
-?>
 
+// Query for Total Barber Earnings (Income) and Time
+$incomeQuery = "
+    SELECT a.timeSlot, e.barberEarnings 
+    FROM earnings_tbl e
+    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+    WHERE DATE(a.date) = CURDATE() AND e.barberID = '$barberID'
+    ORDER BY a.timeSlot ASC
+";
+
+$incomeResult = mysqli_query($conn, $incomeQuery);
+if (!$incomeResult) {
+    echo "Error in income query: " . mysqli_error($conn);
+}
+
+// Query to calculate the total income
+$totalIncomeQuery = "
+    SELECT SUM(e.barberEarnings) AS total_income
+    FROM earnings_tbl e
+    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+    WHERE DATE(a.date) = CURDATE() AND e.barberID = '$barberID'
+";
+$totalIncomeResult = mysqli_query($conn, $totalIncomeQuery);
+$totalIncome = mysqli_fetch_assoc($totalIncomeResult)['total_income'];
+$totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00'; // Format the income
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,52 +58,14 @@ include 'db_connect.php';
                 <div class="col-6 custom-width">
                     <div class="alert-warning alert mb-0">
                         <div class="d-flex align-items-center">
-                            <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
+                            <div class=""><i class="fa-solid fa-peso-sign fa-lg"></i></div>
                             <div class="flex-fill ms-3 text-truncate">
-                                <div class="h5 mb-0 mt-0">Today</div>
-                                  
+                            <div class="h5 mb-0 mt-2">Total Income</div>
+                            <div class="h5 mb-0"><?php echo $totalIncome; ?></div> <!-- Display Total Income -->
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-6 custom-width">
-                    <div class="alert-warning alert mb-0">
-                        <div class="d-flex align-items-center">
-                            <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
-                            <div class="flex-fill ms-3 text-truncate">
-                                <div class="h5 mb-0 mt-0">This Week</div>
-                            
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </div>
-              
-        <div class="row g-3 mb-4">
-                    <div class="col-6 custom-width">
-                        <div class="alert-warning alert mb-0">
-                            <div class="d-flex align-items-center">
-                                <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
-                                <div class="flex-fill ms-3 text-truncate">
-                                    <div class="h5 mb-0 mt-0">This Month</div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-             
-                    <div class="col-6 custom-width">
-                        <div class="alert-warning alert mb-0">
-                            <div class="d-flex align-items-center">
-                                <div class=""><i class="fa-solid fa-dollar-sign fa-lg"></i></div>
-                                <div class="flex-fill ms-3 text-truncate">
-                                    <div class="h5 mb-0 mt-0">This Year</div>
-                              
-                                </div>
-                            </div>
-                        </div>
-                    </div>
         </div>
           <div class="row g-3 mb-5 ms-0">
             <div class="col-md-12">
@@ -88,7 +74,6 @@ include 'db_connect.php';
                         <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Today</h4> <!-- lagyan container -->
                         <td><button> View All </button></td>
                     </div>
-
                     <div class="card-body">
                         <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
                           <thead>
@@ -98,7 +83,19 @@ include 'db_connect.php';
                               </tr>
                           </thead>
                           <tbody>
-
+                                    <?php
+                                        // Display each row
+                                        while ($row = mysqli_fetch_assoc($incomeResult)) {
+                                            $timeSlot = date("h:i A", strtotime($row['timeSlot'])); // Format time
+                                            $earnings = number_format($row['barberEarnings'], 2);
+                                            echo "
+                                                <tr>
+                                                    <td>{$timeSlot}</td>
+                                                    <td>₱ {$earnings}</td>  
+                                                </tr>
+                                            ";
+                                        }
+                                    ?>
                           </tbody>
                         </table>
                     </div>

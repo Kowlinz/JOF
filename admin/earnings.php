@@ -102,9 +102,53 @@
             margin-top: 10px;
             text-align: center;
         }
+        /* Mobile toggle button styling */
+        .mobile-toggle {
+            position: fixed;
+            top: 25px;
+            left: 20px;
+            z-index: 1000;
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: none;
+            color: #F3CD32;
+            font-size: 24px;
+        }
+
+        /* Show toggle button only on smaller screens */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+        }
     </style>
 </head>
 <body>
+    <?php include 'db_connect.php'; ?>
+
+    <!-- Add the mobile toggle button -->
+    <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <div class="body d-flex py-3 mt-5">
       <div class="container-xxl">
         <h1 class="dashboard mb-5 ms-0">Earnings</h1>
@@ -195,5 +239,21 @@
     </div>
 </nav>
 
+    <!-- Add this script before closing body tag -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebarMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

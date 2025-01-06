@@ -67,167 +67,253 @@
             margin-top: 10px;
             text-align: center;
         }
+        .dropdown-menu {
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .calendar-container {
+            background: white;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn-secondary {
+            background-color: #F3CD32;
+            border-color: #F3CD32;
+            color: black;
+        }
+        .btn-secondary:hover {
+            background-color: #dbb82e;
+            border-color: #dbb82e;
+            color: black;
+        }
+        /* Ensure dropdown menu shows properly */
+        .dropdown-menu.show {
+            display: block !important;
+        }
+        /* Table responsiveness styles */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        @media (max-width: 768px) {
+            .table-responsive {
+                margin: 0 -15px;
+            }
+            
+            .card {
+                border-radius: 0;
+            }
+            
+            .container-xxl {
+                padding: 0 15px;
+            }
+        }
+        /* Mobile toggle button styling */
+        .mobile-toggle {
+            position: fixed;
+            top: 25px;
+            left: 20px;
+            z-index: 1000;
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: none;
+            color: #F3CD32;
+            font-size: 24px;
+        }
+
+        /* Show toggle button only on smaller screens */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+        }
     </style>
 </head>
 <body>
     <?php include 'db_connect.php'; ?>
 
+    <!-- Add the mobile toggle button -->
+    <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
             <h1 class="dashboard mb-5 ms-0">Appointments History</h1>
+            <!-- Calendar Row -->
             <div class="row mb-4">
-            <div class="col-md-5">
-                <div class="calendar-container card p-3">
-                    <header class="calendar-header d-flex justify-content-between align-items-center">
-                        <p class="calendar-current-date fw-bold"></p>
-                        <div class="calendar-navigation">
-                            <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
-                            <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
+                <div class="col-md-4">
+                    <div class="dropdown">
+                        <button class="btn btn-warning dropdown-toggle" type="button" id="calendarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Date Picker
+                        </button>
+                        <div class="dropdown-menu p-0" style="width: 300px;">
+                            <div class="calendar-container">
+                                <header class="calendar-header d-flex justify-content-between align-items-center">
+                                    <p class="calendar-current-date fw-bold"></p>
+                                    <div class="calendar-navigation">
+                                        <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
+                                        <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
+                                    </div>
+                                </header>
+                                <div class="calendar-body">
+                                    <ul class="calendar-weekdays">
+                                        <li>Sun</li>
+                                        <li>Mon</li>
+                                        <li>Tue</li>
+                                        <li>Wed</li>
+                                        <li>Thu</li>
+                                        <li>Fri</li>
+                                        <li>Sat</li>
+                                    </ul>
+                                    <ul class="calendar-dates"></ul>
+                                </div>
+                            </div>
                         </div>
-                    </header>
-                    <div class="calendar-body">
-                        <ul class="calendar-weekdays">
-                            <li>Sun</li>
-                            <li>Mon</li>
-                            <li>Tue</li>
-                            <li>Wed</li>
-                            <li>Thu</li>
-                            <li>Fri</li>
-                            <li>Sat</li>
-                        </ul>
-                        <ul class="calendar-dates"></ul>
                     </div>
                 </div>
             </div>
             <script src="js/calendar.js"></script>
-            
-            <!-- Canceled Appointments Section -->
-            <div class="col-md-6">
-                <div class="card p-3">
-                    <h4 class="fw-bold mb-8">Cancelled</h4>
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Reason</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                <?php
-                                    // Modify the query to select only cancelled appointments for the current date
-                                    $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
-                                    FROM appointment_tbl a
-                                    LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                                    WHERE a.status = 'Cancelled' 
-                                    AND a.date = CURDATE()";
-                                    
-                                    $cancelledResult = mysqli_query($conn, $cancelledQuery);
-                                    
-                                    if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
-                                        while ($row = mysqli_fetch_assoc($cancelledResult)) {
-                                            // Check if firstName or lastName is null (for admin bookings)
-                                            $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
-                                            $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
-                                    
-                                            echo "<tr>
-                                                    <td>{$firstName} {$lastName}</td>
-                                                    <td>{$row['date']}</td>
-                                                    <td>{$row['timeSlot']}</td>
-                                                    <td>{$row['reason']}</td>
-                                                </tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
-                                    }
-                                ?>
-                        </tbody>
-                    </table>
+
+            <!-- Cancelled Appointments Row -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card p-3">
+                        <h4 class="fw-bold mb-8">Cancelled</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        <?php
+                                            // Modify the query to select only cancelled appointments for the current date
+                                            $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
+                                            FROM appointment_tbl a
+                                            LEFT JOIN customer_tbl c ON a.customerID = c.customerID
+                                            WHERE a.status = 'Cancelled' 
+                                            AND a.date = CURDATE()";
+                                            
+                                            $cancelledResult = mysqli_query($conn, $cancelledQuery);
+                                            
+                                            if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
+                                                while ($row = mysqli_fetch_assoc($cancelledResult)) {
+                                                    // Check if firstName or lastName is null (for admin bookings)
+                                                    $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
+                                                    $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
+                                            
+                                                    echo "<tr>
+                                                            <td>{$firstName} {$lastName}</td>
+                                                            <td>{$row['date']}</td>
+                                                            <td>{$row['timeSlot']}</td>
+                                                            <td>{$row['reason']}</td>
+                                                        </tr>";
+                                                }
+                                            } else {
+                                                echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
+                                            }
+                                        ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
+
+            <!-- Previous Customers Row -->
             <div class="col-md-12">
                 <div class="card p-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="fw-bold">Previous Customers</h4>
-                        <h4>
-                            Total: 
-                            <?php
-                                // Query to count the number of completed appointments
-                                $countQuery = "SELECT COUNT(*) AS total_previous
-                                               FROM appointment_tbl a
-                                               WHERE a.date >= CURDATE() AND a.status = 'Completed'";
-
-                                $countResult = mysqli_query($conn, $countQuery);
-                                if ($countResult) {
-                                    $countData = mysqli_fetch_assoc($countResult);
-                                    echo $countData['total_previous'];
-                                } else {
-                                    echo "0"; // In case of an error, show 0
-                                }
-                            ?>
-                        </h4>
+                        <h4>Total: <?php echo $countData['total_previous'] ?? '0'; ?></h4>
                     </div>
-
                     <div class="card-body">
-                        <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Time</td>
-                                    <td>Service</td>
-                                    <td>Barber</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    $completedQuery = "SELECT 
-                                        a.appointmentID,
-                                        a.date,
-                                        a.timeSlot,
-                                        a.status,
-                                        CASE 
-                                            WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-                                            ELSE 'Admin Booking' 
-                                        END AS fullName,
-                                        s.serviceName, 
-                                        b.firstName AS barberFirstName, 
-                                        b.lastName AS barberLastName
-                                    FROM 
-                                        appointment_tbl a
-                                    LEFT JOIN 
-                                        customer_tbl c ON a.customerID = c.customerID
-                                    LEFT JOIN 
-                                        service_tbl s ON a.serviceID = s.serviceID
-                                    LEFT JOIN 
-                                        barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
-                                    LEFT JOIN 
-                                        barbers_tbl b ON b.barberID = ba.barberID
-                                    WHERE 
-                                        a.date = CURDATE() AND a.status = 'Completed'
-                                    GROUP BY
-                                        a.appointmentID
-                                    ORDER BY 
-                                        a.timeSlot ASC";
+                        <div class="table-responsive">
+                            <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
+                                <thead>
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>Time</td>
+                                        <td>Service</td>
+                                        <td>Barber</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                        $completedQuery = "SELECT 
+                                            a.appointmentID,
+                                            a.date,
+                                            a.timeSlot,
+                                            a.status,
+                                            CASE 
+                                                WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
+                                                ELSE 'Admin Booking' 
+                                            END AS fullName,
+                                            s.serviceName, 
+                                            b.firstName AS barberFirstName, 
+                                            b.lastName AS barberLastName
+                                        FROM 
+                                            appointment_tbl a
+                                        LEFT JOIN 
+                                            customer_tbl c ON a.customerID = c.customerID
+                                        LEFT JOIN 
+                                            service_tbl s ON a.serviceID = s.serviceID
+                                        LEFT JOIN 
+                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
+                                        LEFT JOIN 
+                                            barbers_tbl b ON b.barberID = ba.barberID
+                                        WHERE 
+                                            a.date = CURDATE() AND a.status = 'Completed'
+                                        GROUP BY
+                                            a.appointmentID
+                                        ORDER BY 
+                                            a.timeSlot ASC";
 
-                                    $completedResult = mysqli_query($conn, $completedQuery);
-                                    
-                                    if ($completedResult && mysqli_num_rows($completedResult) > 0) {
-                                        while ($row = mysqli_fetch_assoc($completedResult)) {
-                                            echo "<tr>
-                                                    <td>{$row['fullName']}</td>
-                                                    <td>{$row['timeSlot']}</td>
-                                                    <td>{$row['serviceName']}</td>
-                                                    <td>{$row['barberFirstName']} {$row['barberLastName']}</td>
-                                                  </tr>";
+                                        $completedResult = mysqli_query($conn, $completedQuery);
+                                        
+                                        if ($completedResult && mysqli_num_rows($completedResult) > 0) {
+                                            while ($row = mysqli_fetch_assoc($completedResult)) {
+                                                echo "<tr>
+                                                        <td>{$row['fullName']}</td>
+                                                        <td>{$row['timeSlot']}</td>
+                                                        <td>{$row['serviceName']}</td>
+                                                        <td>{$row['barberFirstName']} {$row['barberLastName']}</td>
+                                                      </tr>";
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='4' class='text-center'>No completed appointments found.</td></tr>";
                                         }
-                                    } else {
-                                        echo "<tr><td colspan='4' class='text-center'>No completed appointments found.</td></tr>";
-                                    }
-                                ?>
-                            </tbody>
-                        </table>
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -266,5 +352,32 @@
             </div>
         </div>
     </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="js/calendar.js"></script>
+    <script>
+        // Initialize Bootstrap dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl)
+            });
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebarMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

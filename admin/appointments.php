@@ -68,6 +68,52 @@
             margin-top: 10px;
             text-align: center;
         }
+        /* Add these date picker styles */
+        .dropdown-menu {
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .calendar-container {
+            background: white;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn-secondary {
+            background-color: #F3CD32;
+            border-color: #F3CD32;
+            color: black;
+        }
+        .btn-secondary:hover {
+            background-color: #dbb82e;
+            border-color: #dbb82e;
+            color: black;
+        }
+        /* Ensure dropdown menu shows properly */
+        .dropdown-menu.show {
+            display: block !important;
+        }
+        /* Table responsiveness styles */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        @media (max-width: 768px) {
+            .table-responsive {
+                margin: 0 -15px;
+            }
+            
+            .card {
+                border-radius: 0;
+            }
+            
+            .container-xxl {
+                padding: 0 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -94,27 +140,33 @@
         <!-- Calendar Section -->
         <div class="row ms-5 mb-4">
             <div class="col-md-4">
-                <div class="calendar-container card p-3">
-                    <header class="calendar-header d-flex justify-content-between align-items-center">
-                        <p class="calendar-current-date fw-bold"></p>
-                        <div class="calendar-navigation">
-                            <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
-                            <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
+                <div class="dropdown">
+                    <button class="btn btn-warning dropdown-toggle" type="button" id="calendarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Date Picker
+                    </button>
+                    <div class="dropdown-menu p-0" style="width: 300px;">
+                        <div class="calendar-container">
+                            <header class="calendar-header d-flex justify-content-between align-items-center">
+                                <p class="calendar-current-date fw-bold"></p>
+                                <div class="calendar-navigation">
+                                    <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
+                                    <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
+                                </div>
+                            </header>
+                            <div class="calendar-body">
+                                <ul class="calendar-weekdays">
+                                    <li>Sun</li>
+                                    <li>Mon</li>
+                                    <li>Tue</li>
+                                    <li>Wed</li>
+                                    <li>Thu</li>
+                                    <li>Fri</li>
+                                    <li>Sat</li>
+                                </ul>
+                                <ul class="calendar-dates"></ul>
+                            </div>
                         </div>
-                    </header>
-                    <div class="calendar-body">
-                        <ul class="calendar-weekdays">
-                            <li>Sun</li>
-                            <li>Mon</li>
-                            <li>Tue</li>
-                            <li>Wed</li>
-                            <li>Thu</li>
-                            <li>Fri</li>
-                            <li>Sat</li>
-                        </ul>
-                        <ul class="calendar-dates"></ul>
                     </div>
-                    <script src="js/calendar.js"></script>
                 </div>
             </div>
         </div>
@@ -338,7 +390,8 @@
         });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Remove or comment out these existing scripts -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 
     <script>
@@ -354,6 +407,25 @@
             if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
                 sidebar.classList.remove('show');
             }
+        });
+    </script>
+
+    <!-- Replace with these scripts in this specific order -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="js/calendar.js"></script>
+    <script>
+        // Initialize Bootstrap dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+
+            // Prevent dropdown from closing when clicking inside calendar
+            document.querySelector('.calendar-container').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         });
     </script>
 </body>

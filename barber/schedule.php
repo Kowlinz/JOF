@@ -347,7 +347,7 @@ include 'db_connect.php';
                         $countQuery = "SELECT COUNT(*) AS total_upcoming
                                        FROM barb_apps_tbl ba
                                        JOIN appointment_tbl a ON ba.appointmentID = a.appointmentID
-                                       WHERE ba.barberID = $barberID AND a.date >= CURDATE() AND a.status = 'Pending'";
+                                       WHERE ba.barberID = $barberID AND a.date AND a.status = 'Pending'";
                         $countResult = mysqli_query($conn, $countQuery);
                         if ($countResult) {
                             $countData = mysqli_fetch_assoc($countResult);
@@ -365,6 +365,7 @@ include 'db_connect.php';
                             <tr>
                                 <th>No.</th>
                                 <th>Name</th>
+                                <th>Date</th>
                                 <th>Time</th>
                                 <th>Service</th>
                             </tr>
@@ -375,6 +376,7 @@ include 'db_connect.php';
                             $upcomingQuery = "SELECT 
                                 a.appointmentID,
                                 CONCAT(c.firstName, ' ', c.lastName) AS fullName,
+                                a.date,
                                 a.timeSlot,
                                 s.serviceName
                             FROM 
@@ -386,7 +388,7 @@ include 'db_connect.php';
                             LEFT JOIN 
                                 service_tbl s ON a.serviceID = s.serviceID
                             WHERE 
-                                a.date = CURDATE() 
+                                a.date
                                 AND a.status = 'Pending'
                                 AND ba.barberID = '$barberID'
                             ORDER BY 
@@ -397,13 +399,15 @@ include 'db_connect.php';
                             if (mysqli_num_rows($upcomingResult) > 0) {
                                 $no = 1;
                                 while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                                    $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Admin Booking';  // Use "Admin Booking" if no name exists
+                                    $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';  // Use "Walk In" if no name exists
                                     $timeSlot = $row['timeSlot'];
+                                    $date = $row['date'];  
                                     $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
 
                                     echo "<tr>
                                             <td>{$no}</td>
                                             <td>{$fullName}</td>
+                                            <td>{$date}</td>
                                             <td>{$timeSlot}</td>
                                             <td>{$serviceName}</td>
                                           </tr>";

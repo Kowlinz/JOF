@@ -356,34 +356,6 @@ include 'db_connect.php';
             <div class="col-md-12 ms-5">
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <div class="dropdown">
-                            <button class="btn btn-warning dropdown-toggle" type="button" id="calendarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Date Picker
-                            </button>
-                            <div class="dropdown-menu p-0" style="width: 300px;">
-                                <div class="calendar-container">
-                                    <header class="calendar-header d-flex justify-content-between align-items-center">
-                                        <p class="calendar-current-date fw-bold"></p>
-                                        <div class="calendar-navigation">
-                                            <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
-                                            <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
-                                        </div>
-                                    </header>
-                                    <div class="calendar-body">
-                                        <ul class="calendar-weekdays">
-                                            <li>Sun</li>
-                                            <li>Mon</li>
-                                            <li>Tue</li>
-                                            <li>Wed</li>
-                                            <li>Thu</li>
-                                            <li>Fri</li>
-                                            <li>Sat</li>
-                                        </ul>
-                                        <ul class="calendar-dates"></ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -396,7 +368,7 @@ include 'db_connect.php';
                                 SELECT COUNT(*) AS total_previous
                                 FROM barb_apps_tbl ba
                                 JOIN appointment_tbl a ON ba.appointmentID = a.appointmentID
-                                WHERE a.date = CURDATE() AND a.status = 'Completed'
+                                WHERE a.date AND a.status = 'Completed'
                             ";
                             $countResult = mysqli_query($conn, $countQuery);
                             if ($countResult) {
@@ -413,6 +385,7 @@ include 'db_connect.php';
                                 <tr>
                                     <th>No.</th>
                                     <th>Name</th>
+                                    <th>Date</th>
                                     <th>Time</th>
                                     <th>Service</th>
                                 </tr>
@@ -423,6 +396,7 @@ include 'db_connect.php';
                                 $previousQuery = "SELECT 
                                     a.appointmentID,
                                     CONCAT(c.firstName, ' ', c.lastName) AS fullName,
+                                    a.date,
                                     a.timeSlot,
                                     s.serviceName
                                 FROM 
@@ -434,7 +408,7 @@ include 'db_connect.php';
                                 LEFT JOIN 
                                     service_tbl s ON a.serviceID = s.serviceID
                                 WHERE 
-                                    a.date = CURDATE() 
+                                    a.date 
                                     AND a.status = 'Completed'
                                     AND ba.barberID = '$barberID'
                                 ORDER BY 
@@ -445,12 +419,14 @@ include 'db_connect.php';
                                 if (mysqli_num_rows($previousResult) > 0) {
                                     $no = 1;
                                     while ($row = mysqli_fetch_assoc($previousResult)) {
-                                        $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Admin Booking';  // Use "Admin Booking" if no name exists
+                                        $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';  // Use "Walk In" if no name exists
                                         $timeSlot = $row['timeSlot'];
+                                        $date = $row['date'];  
                                         $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
                                         echo "<tr>
                                                 <td>{$no}</td>
                                                 <td>{$fullName}</td>
+                                                <td>{$date}</td>
                                                 <td>{$timeSlot}</td>
                                                 <td>{$serviceName}</td>
                                               </tr>";

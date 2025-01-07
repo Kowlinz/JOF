@@ -56,11 +56,11 @@ if ($customerID) {
 						<div class="menu-links">
 							<a href="index.php" class="menu-link">HOME</a>
 							<?php if ($customerID): ?>
-								<a href="haircuts.php" class="menu-link">HAIRCUTS</a>
+								<a href="haircuts.php" class="menu-link">HAIRCUTS & SERVICES</a>
 								<a href="customer/appointment.php" class="menu-link">MY APPOINTMENT</a>
 								<a href="logout.php" class="menu-link">LOGOUT</a>
 							<?php else: ?>
-								<a href="haircuts.php" class="menu-link">HAIRCUTS</a>
+								<a href="haircuts.php" class="menu-link">HAIRCUTS & SERVICES</a>
 								<a href="login.php" class="menu-link">LOGIN</a>
 							<?php endif; ?>
 						</div>
@@ -69,10 +69,10 @@ if ($customerID) {
 					<div class="navbar-nav mx-auto ps-5">
 						<a class="nav-link mx-4 nav-text fs-5" href="index.php">Home</a>
 						<?php if ($customerID): ?>
-							<a class="nav-link mx-4 nav-text fs-5" href="haircuts.php">Haircuts</a>
+							<a class="nav-link mx-4 nav-text fs-5" href="haircuts.php">HAIRCUTS & SERVICES</a>
 							<a class="nav-link mx-4 nav-text fs-5" href="customer/appointment.php">My Appointment</a>
 						<?php else: ?>
-							<a class="nav-link mx-4 nav-text fs-5" href="haircuts.php">Haircuts</a>
+							<a class="nav-link mx-4 nav-text fs-5" href="haircuts.php">HAIRCUTS & SERVICES</a>
 							<a class="nav-link mx-4 nav-text fs-5" href="login.php">Login</a>
 						<?php endif; ?>
 					</div>

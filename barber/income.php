@@ -246,6 +246,20 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00'; /
   </div>
 </nav>
 
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebarMenu');
+        sidebar.classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebarMenu');
+        const toggle = document.querySelector('.mobile-toggle');
+        if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+            sidebar.classList.remove('show');
+        }
+    });
+</script>
 
 </body>
 </html>

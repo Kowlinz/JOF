@@ -134,16 +134,13 @@ $addonsResult = $conn->query($addonsQuery);
                                 <?php endwhile; ?>
                             </select>
                         </div>
+                        <!-- Remarks Dropdown -->
+                        <div class="mb-3">
+                            <label for="remarks" class="form-label text-white">Remarks:</label>
+                            <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="ex. I prefer Jonathan as my Barber."></textarea>
+                        </div>
                     </div>
                 </div>
-
-                <div class="col-12">
-                    <div class="mb-3 col-md-4 mx-auto">
-                        <label for="remarks" class="form-label text-white">Remarks:</label>
-                        <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
-                    </div>
-                </div>
-
                 <div class="col-12 text-center mt-4">
                     <button type="submit" class="btn btn-warning text-dark fw-bold">Book Appointment</button>
                 </div>

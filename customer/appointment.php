@@ -118,7 +118,7 @@ $result = $conn->query($sql);
                         </div>
                         <div class="menu-links">
                             <a href="../index.php" class="menu-link">HOME</a>
-                            <a href="../haircuts.php" class="menu-link">HAIRCUTS</a>
+                            <a href="../haircuts.php" class="menu-link">HAIRCUTS & SERVICES</a>
                             <a href="appointment.php" class="menu-link">MY APPOINTMENT</a>
                             <a href="../logout.php" class="menu-link">LOGOUT</a>
                         </div>
@@ -126,7 +126,7 @@ $result = $conn->query($sql);
 
                     <div class="navbar-nav mx-auto ps-5">
                         <a class="nav-link mx-4 nav-text fs-5" href="../index.php">Home</a>
-                        <a class="nav-link mx-4 nav-text fs-5" href="../haircuts.php">Haircuts</a>
+                        <a class="nav-link mx-4 nav-text fs-5" href="../haircuts.php">HAIRCUTS & SERVICES</a>
                         <a class="nav-link mx-4 nav-text fs-5" href="appointment.php">My Appointment</a>
                     </div>
                     <div class="navbar-nav pe-5 me-4">

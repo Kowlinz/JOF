@@ -328,40 +328,6 @@
             </button>
         </div>
 
-        <!-- Calendar Section -->
-        <div class="row ms-5 mb-4">
-            <div class="col-md-4">
-                <div class="dropdown">
-                    <button class="btn btn-warning dropdown-toggle" type="button" id="calendarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Date Picker
-                    </button>
-                    <div class="dropdown-menu p-0" style="width: 300px;">
-                        <div class="calendar-container">
-                            <header class="calendar-header d-flex justify-content-between align-items-center">
-                                <p class="calendar-current-date fw-bold"></p>
-                                <div class="calendar-navigation">
-                                    <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
-                                    <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
-                                </div>
-                            </header>
-                            <div class="calendar-body">
-                                <ul class="calendar-weekdays">
-                                    <li>Sun</li>
-                                    <li>Mon</li>
-                                    <li>Tue</li>
-                                    <li>Wed</li>
-                                    <li>Thu</li>
-                                    <li>Fri</li>
-                                    <li>Sat</li>
-                                </ul>
-                                <ul class="calendar-dates"></ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <?php
 
         // Check if there is a status or message in the query string
@@ -431,7 +397,7 @@
                                                 ELSE 'Walk In' 
                                             END AS fullName,
                                             s.serviceName, 
-                                            ba.barberID  -- Get barberID from the barb_apps_tbl
+                                            ba.barberID
                                         FROM 
                                             appointment_tbl a
                                         LEFT JOIN 
@@ -439,7 +405,7 @@
                                         LEFT JOIN 
                                             service_tbl s ON a.serviceID = s.serviceID
                                         LEFT JOIN 
-                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID  -- Join barb_apps_tbl to get barberID
+                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
                                         WHERE 
                                             a.date = CURDATE() AND a.status = 'Pending'
                                         ORDER BY 

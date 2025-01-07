@@ -265,6 +265,158 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                 z-index: 999;
             }
         }
+
+        /* Adjust main content area to account for sidebar */
+        .container-xxl {
+            padding-left: 260px; /* Width of sidebar + some padding */
+            width: 100%;
+            transition: padding-left 0.3s ease;
+        }
+
+        /* Sidebar positioning */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            z-index: 999;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .container-xxl {
+                padding-left: 15px; /* Reset padding on mobile */
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* Adjust margin for content */
+        @media (min-width: 992px) and (max-width: 1680px) {
+            .ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            .dashboard.mb-5.ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            /* Stats cards adjustments */
+            .row.g-3.mb-3 {
+                margin-left: 0 !important;
+            }
+            
+            /* Table section adjustments */
+            .row.g-3.mb-3.ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            /* Card adjustments */
+            .card {
+                margin-right: 15px;
+            }
+            
+            /* Alert adjustments */
+            .alert {
+                margin-right: 15px;
+            }
+        }
+
+        /* Update mobile styles */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+            
+            /* Adjust table container on mobile */
+            .table-responsive {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .card {
+                margin: 0 10px;
+            }
+            
+            /* Adjust alert on mobile */
+            .alert {
+                margin: 0 10px 15px 10px;
+            }
+            
+            /* Adjust stats card spacing */
+            .row.g-3.mb-3 {
+                margin: 0 0 20px 0;
+            }
+            
+            /* Ensure proper spacing for tables */
+            .row.g-3.mb-3.ms-5 {
+                margin: 0 !important;
+            }
+            
+            /* Adjust text sizes for better mobile display */
+            .h5 {
+                font-size: 14px;
+            }
+            
+            .h6 {
+                font-size: 20px;
+            }
+            
+            /* Adjust stat icons on mobile */
+            .stat-icon {
+                font-size: 20px;
+                margin-right: 10px;
+            }
+        }
+
+        /* Responsive table styles */
+        @media screen and (max-width: 768px) {
+            .table {
+                white-space: nowrap;
+            }
+            
+            .table th, 
+            .table td {
+                padding: 8px !important;
+            }
+            
+            .card-body {
+                padding: 10px;
+            }
+            
+            .card-header {
+                padding: 12px;
+            }
+            
+            .card-header h4 {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>

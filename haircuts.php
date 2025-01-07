@@ -62,12 +62,12 @@ $conn->close();
                         <img src="css/images/jof_logo_black.png" alt="logo" width="45" height="45" class="desktop-logo">
                         <img src="css/images/jof_logo_yellow.png" alt="logo" width="45" height="45" class="mobile-logo">
                     </a>
-                    <button class="menu-btn d-lg-none" type="button">
+                    <button class="menu-btn d-lg-none" type="button" id="menuBtn">
                         <i class='bx bx-menu'></i>
                     </button>
-                    <div class="menu-dropdown">
+                    <div class="menu-dropdown" id="menuDropdown">
                         <div class="menu-header">
-                            <button class="menu-close">&times;</button>
+                            <button class="menu-close" id="menuClose">&times;</button>
                         </div>
                         <div class="menu-links">
                             <a href="index.php" class="menu-link">HOME</a>
@@ -129,15 +129,15 @@ $conn->close();
         </div>
 
         <!-- Haircuts -->
-        <div class="container">
+        <div class="container fade-in">
             <h1 class="haircuts-header">Haircuts</h1>
             <div class="d-flex justify-content-center mb-4 gap-3">
                 <button class="category-btn active" id="basic-btn" onclick="filterCategory('Basic')">Basic</button>
                 <button class="category-btn inactive" id="premium-btn" onclick="filterCategory('Premium')">Premium</button>
             </div>
-            <div class="row g-4" id="gallery-container">
+            <div class="row g-4 justify-content-center" id="gallery-container">
                 <?php foreach ($haircuts as $haircut): ?>
-                    <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="col-12 col-sm-10 col-md-6 col-lg-3">
                         <div class="gallery-item">
                             <img src="data:image/jpeg;base64,<?php echo $haircut['hcImage']; ?>" alt="<?php echo htmlspecialchars($haircut['hcName']); ?>" />
                             <div class="gallery-title"><?php echo htmlspecialchars($haircut['hcName']); ?></div>
@@ -147,41 +147,133 @@ $conn->close();
             </div>
 
             <!-- Services -->
-            <h1 class="haircuts-header">Services</h1>
-            <div class="card-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Service Name</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        include 'customer/db_connect.php';
-                        $query = "SELECT serviceName, servicePrice, serviceDesc FROM service_tbl";
-                        $result = $conn->query($query);
+            <div class="container fade-in" style="margin-top: 30px;">
+                <h1 class="haircuts-header">Services</h1>
+                <div class="card-body p-0">
+                    <div class="container services-container" style="max-width: 800px;">
+                        <table class="table" style="background-color: #FFDE59; border-radius: 15px; overflow: hidden;">
+                            <thead>
+                                <tr style="background-color: #000000; color: #FFDE59;">
+                                    <th style="font-size: 1.2rem; padding: 15px 15px 15px 25px; width: 25%;">Service Name</th>
+                                    <th style="font-size: 1.2rem; padding: 15px 15px 15px 25px; width: 55%;">Description</th>
+                                    <th style="font-size: 1.2rem; padding: 15px; width: 20%; text-align: center;">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                include 'customer/db_connect.php';
+                                $query = "SELECT serviceName, servicePrice, serviceDesc FROM service_tbl";
+                                $result = $conn->query($query);
 
-                        if ($result && $result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($row['serviceName']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['serviceDesc']) . "</td>";
-                                echo "<td>₱" . htmlspecialchars($row['servicePrice']) . "</td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='3' class='text-center'>No services found.</td></tr>";
-                        }
-                        $conn->close();
-                        ?>
-                    </tbody>
-                </table>
+                                if ($result && $result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<tr>";
+                                        echo "<td style='padding-left: 25px;'>" . htmlspecialchars($row['serviceName']) . "</td>";
+                                        echo "<td style='padding-left: 25px;'>" . htmlspecialchars($row['serviceDesc']) . "</td>";
+                                        echo "<td style='text-align: center; font-size: 1.2rem; font-weight: bold;'>₱" . htmlspecialchars($row['servicePrice']) . "</td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='3' class='text-center'>No services found.</td></tr>";
+                                }
+                                $conn->close();
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <style>
+            .fade-in {
+                animation: fadeIn 1s ease-out;
+                opacity: 1;
+            }
+
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Add a delay to the services section */
+            .container.fade-in:nth-child(3) {
+                animation-delay: 0.2s;
+            }
+        </style>
+
+        <style>
+            .services-container {
+                margin-bottom: 50px;
+            }
+            
+            @media (max-width: 768px) {
+                .services-container {
+                    margin-bottom: 30px;
+                }
+                .card-body {
+                    padding: 0 10px;
+                    margin-top: -60px;
+                }
+                .haircuts-header {
+                    margin-bottom: 15px;
+                }
+                .haircuts-header:last-of-type {
+                    margin-bottom: 45px;
+                }
+            }
+
+            @media (min-width: 576px) and (max-width: 920px) {
+                #gallery-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+                #gallery-container > div {
+                    width: 80%;
+                    max-width: 500px;
+                    flex: 0 0 auto;
+                }
+                .gallery-item {
+                    width: 100%;
+                    margin: 0 auto;
+                }
+                .gallery-item img {
+                    width: 100%;
+                    height: auto;
+                    object-fit: cover;
+                }
+            }
+        </style>
+
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const menuBtn = document.getElementById('menuBtn');
+                const menuClose = document.getElementById('menuClose');
+                const menuDropdown = document.getElementById('menuDropdown');
+
+                menuBtn.addEventListener('click', function() {
+                    menuDropdown.classList.add('show');
+                });
+
+                menuClose.addEventListener('click', function() {
+                    menuDropdown.classList.remove('show');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!menuDropdown.contains(event.target) && !menuBtn.contains(event.target)) {
+                        menuDropdown.classList.remove('show');
+                    }
+                });
+            });
+
             const haircuts = <?php echo json_encode($haircuts); ?>;
             function filterCategory(category) {
                 const galleryContainer = document.getElementById("gallery-container");
@@ -194,7 +286,7 @@ $conn->close();
                     .filter(haircut => haircut.hcCategory === category)
                     .forEach(haircut => {
                         galleryContainer.innerHTML += `
-                            <div class="col-sm-6 col-md-4 col-lg-3">
+                            <div class="col-12 col-sm-10 col-md-6 col-lg-3">
                                 <div class="gallery-item">
                                     <img src="data:image/jpeg;base64,${haircut.hcImage}" alt="${haircut.hcName}" />
                                     <div class="gallery-title">${haircut.hcName}</div>

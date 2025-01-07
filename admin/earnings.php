@@ -274,7 +274,6 @@
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold">Today</h4>
-                        <button class="btn btn-warning">View All</button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

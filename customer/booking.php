@@ -13,6 +13,22 @@ $customerID = $_SESSION["customerID"];
 // Database connection
 include 'db_connect.php';
 
+// Create a function to get booked time slots for a specific date
+function getBookedTimeSlots($conn, $date) {
+    $sql = "SELECT timeSlot FROM appointment_tbl WHERE date = ? AND status != 'Cancelled'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $date);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $bookedSlots = array();
+    while($row = $result->fetch_assoc()) {
+        $bookedSlots[] = $row['timeSlot'];
+    }
+    
+    return $bookedSlots;
+}
+
 // Fetch customer's firstName if not in session
 if (!isset($_SESSION['firstName'])) {
     $sql = "SELECT firstName FROM customer_tbl WHERE customerID = ?";
@@ -60,23 +76,33 @@ $addonsResult = $conn->query($addonsQuery);
     }
 
     .time-slot-btn {
-        background-color: #D3D3D3;
+        background-color: #FFDE59;
         border: none;
         padding: 10px;
         border-radius: 20px;
-        color: white;
+        color: black;
         font-weight: bold;
         cursor: pointer;
         transition: background-color 0.3s;
     }
 
     .time-slot-btn:hover {
-        background-color: #BEBEBE;
+        background-color: #FFD700;
     }
 
     .time-slot-btn.selected {
-        background-color: #FFDE59;
+        background-color: #D3D3D3;
         color: black;
+    }
+
+    .time-slot-btn.booked {
+        background-color: #D3D3D3;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .time-slot-btn.booked:hover {
+        background-color: #D3D3D3;
     }
     </style>
 </head>
@@ -311,6 +337,50 @@ $addonsResult = $conn->query($addonsQuery);
                     document.addEventListener('DOMContentLoaded', function() {
                         const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
                     });
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Initialize flatpickr
+                        const dateInput = flatpickr("#date", {
+                            dateFormat: "Y-m-d",
+                            minDate: "today",
+                            onChange: function(selectedDates, dateStr) {
+                                // When date is selected, fetch booked slots
+                                fetchBookedSlots(dateStr);
+                            }
+                        });
+
+                        function fetchBookedSlots(date) {
+                            fetch(`get_booked_slots.php?date=${date}`)
+                                .then(response => response.json())
+                                .then(bookedSlots => {
+                                    updateTimeSlots(bookedSlots);
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
+
+                        function updateTimeSlots(bookedSlots) {
+                            const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
+                            timeSlotBtns.forEach(btn => {
+                                const time = btn.getAttribute('data-time');
+                                if (bookedSlots.includes(time)) {
+                                    btn.classList.add('booked');
+                                    btn.disabled = true;
+                                } else {
+                                    btn.classList.remove('booked');
+                                    btn.disabled = false;
+                                }
+                            });
+                        }
+                    });
+
+                    function selectTimeSlot(time) {
+                        const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
+                        if (btn && btn.classList.contains('booked')) {
+                            return; // Don't allow selection of booked slots
+                        }
+                        
+                        // Rest of your existing selectTimeSlot function...
+                    }
                 </script>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -586,6 +656,11 @@ $addonsResult = $conn->query($addonsQuery);
     });
 
     function selectTimeSlot(time) {
+        const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
+        if (btn && btn.classList.contains('booked')) {
+            return; // Don't allow selection of booked slots
+        }
+        
         // Update the hidden input
         document.getElementById('selectedTimeSlot').value = time;
         

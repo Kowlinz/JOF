@@ -8,38 +8,25 @@
     include 'db_connect.php'; // Include database connection
 
     // Query to fetch today's earnings
-    $todayDate = date('Y-m-d'); // Current date
     $todayQuery = "SELECT e.adminEarnings, e.barberEarnings, CONCAT(b.firstName, ' ', b.lastName) AS barberFullName, a.date, a.timeSlot
-                   FROM earnings_tbl e 
-                   JOIN barbers_tbl b ON e.barberID = b.barberID
-                   JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-                   WHERE DATE(a.date) = ?";
+               FROM earnings_tbl e 
+               JOIN barbers_tbl b ON e.barberID = b.barberID
+               JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+               WHERE DATE(a.date) = CURDATE()";
     $stmtToday = $conn->prepare($todayQuery);
-    $stmtToday->bind_param("s", $todayDate);
     $stmtToday->execute();
     $resultToday = $stmtToday->get_result();
-    
-    // Query to fetch previous earnings
-    $previousQuery = "SELECT e.adminEarnings, e.barberEarnings, CONCAT(b.firstName, ' ', b.lastName) AS barberFullName, a.date, a.timeSlot
-                      FROM earnings_tbl e 
-                      JOIN barbers_tbl b ON e.barberID = b.barberID
-                      JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-                      WHERE DATE(a.date) < ?";
-    $stmtPrevious = $conn->prepare($previousQuery);
-    $stmtPrevious->bind_param("s", $todayDate);
-    $stmtPrevious->execute();
-    $resultPrevious = $stmtPrevious->get_result();
 
     // Query to calculate total adminEarnings for today
     $totalAdminEarningsQuery = "SELECT SUM(adminEarnings) AS totalAdminEarnings 
-                                FROM earnings_tbl e 
-                                JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-                                WHERE DATE(a.date) = ?";
+    FROM earnings_tbl e 
+    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+    WHERE DATE(a.date) = CURDATE()";
     $stmtTotalAdmin = $conn->prepare($totalAdminEarningsQuery);
-    $stmtTotalAdmin->bind_param("s", $todayDate);
     $stmtTotalAdmin->execute();
     $resultTotalAdmin = $stmtTotalAdmin->get_result();
     $totalAdminEarnings = $resultTotalAdmin->fetch_assoc()['totalAdminEarnings'] ?? 0; // Default to 0 if null
+
 ?>
 
 <!DOCTYPE html>

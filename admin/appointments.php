@@ -348,7 +348,7 @@
         <!-- Add Customer Button -->
         <div class="row ms-5 mb-4">
             <div class="col-12">
-                <button class="btn btn-warning" onclick="window.location.href='walk-in.php';">Add Walk-In Customer +</button>
+                <button class="btn btn-warning" onclick="window.location.href='walk-in.php';">+ Add Walk-In Customer</button>
             </div>
         </div>
 
@@ -363,7 +363,7 @@
                                 SELECT COUNT(*) AS total_upcoming
                                 FROM appointment_tbl a
                                 LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                                WHERE a.date = CURDATE() AND a.status = 'Pending'
+                                WHERE a.date AND a.status = 'Pending'
                             ";
                             $countResult = mysqli_query($conn, $countQuery);
                             $countData = mysqli_fetch_assoc($countResult);
@@ -377,6 +377,7 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Name</th>
+                                    <th>Date</th>
                                     <th>Time</th>
                                     <th>Service</th>
                                     <th>Barber</th>
@@ -407,7 +408,7 @@
                                         LEFT JOIN 
                                             barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
                                         WHERE 
-                                            a.date = CURDATE() AND a.status = 'Pending'
+                                            a.date AND a.status = 'Pending'
                                         ORDER BY 
                                             a.timeSlot ASC
                                     ";
@@ -431,6 +432,7 @@
                                             echo "  <tr>
                                                     <td>{$counter}</td>
                                                     <td>{$row['fullName']}</td>
+                                                    <td>{$row['date']}</td>
                                                     <td>{$row['timeSlot']}</td>
                                                     <td>{$row['serviceName']}</td>
                                                     <td>

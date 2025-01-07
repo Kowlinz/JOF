@@ -88,7 +88,7 @@ $addonsResult = $conn->query($addonsQuery);
                     <div class="col-md-4">
                         <div class="mb-3 required">
                             <span style="color: red;">* </span>
-                            <label for="time-slot" class="form-label text-white">Preferred Time Slot:</label>
+                            <label for="time-slot" class="form-label text-white">Time Slot:</label>
                             <div class="time-slot-dropdown">
                                 <!-- Hidden input to store the selected time slot -->
                                 <input type="hidden" name="timeSlot" id="selectedTimeSlot">
@@ -142,7 +142,7 @@ $addonsResult = $conn->query($addonsQuery);
                     </div>
                 </div>
                 <div class="col-12 text-center mt-4">
-                    <button type="submit" class="btn btn-warning text-dark fw-bold">Book Appointment</button>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold">Add Walk-in</button>
                 </div>
             </form>
         </div>

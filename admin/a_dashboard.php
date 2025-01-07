@@ -418,7 +418,7 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
             <div class="col-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white">
-                        <h4 class="mb-0">Previous Customers</h4>
+                        <h4 class="mb-0">Previous Customers Today</h4>
                     </div>
                     <div class="card-body">
                         <table class="table">

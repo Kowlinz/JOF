@@ -337,41 +337,6 @@ include 'db_connect.php';
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-
-        <div class="col-md-12 ms-5">
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <div class="dropdown">
-                        <button class="btn btn-warning dropdown-toggle" type="button" id="calendarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Date Picker
-                        </button>
-                        <div class="dropdown-menu p-0" style="width: 300px;">
-                            <div class="calendar-container">
-                                <header class="calendar-header d-flex justify-content-between align-items-center">
-                                    <p class="calendar-current-date fw-bold"></p>
-                                    <div class="calendar-navigation">
-                                        <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
-                                        <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
-                                    </div>
-                                </header>
-                                <div class="calendar-body">
-                                    <ul class="calendar-weekdays">
-                                        <li>Sun</li>
-                                        <li>Mon</li>
-                                        <li>Tue</li>
-                                        <li>Wed</li>
-                                        <li>Thu</li>
-                                        <li>Fri</li>
-                                        <li>Sat</li>
-                                    </ul>
-                                    <ul class="calendar-dates"></ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="card border-0 rounded-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                     <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Upcoming Customers</h4>

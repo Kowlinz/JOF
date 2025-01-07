@@ -81,6 +81,7 @@
                     }
                 ?>
 
+                <button onclick="window.location.href='index.php'">Back</button>
                 <h2 class="login-header">Login</h2>
                 <form action="login.php" method="post">
                     <div class="form-group">

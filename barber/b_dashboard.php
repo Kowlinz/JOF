@@ -485,21 +485,25 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                                 </thead>
                                 <tbody>
                                     <?php
+                                    // Check if there are any upcoming results
+                                    if (mysqli_num_rows($upcomingResult) > 0) {
+                                        $no = 1;
+                                        while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                            $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';  // Use "Admin Booking" if no name exists
+                                            $timeSlot = $row['timeSlot'];
+                                            $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
                                         $counter = 1;
-
-                                        if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
-                                            while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                                                echo "<tr>";
-                                                echo "<td>{$counter}</td>";
-                                                echo "<td>{$row['fullName']}</td>";
-                                                echo "<td>{$row['timeSlot']}</td>";
-                                                echo "<td>{$row['serviceName']}</td>";
-                                                echo "</tr>";
-                                                $counter++;
-                                            }
-                                        } else {
-                                            echo "<tr><td colspan='4' class='text-center'>No upcoming appointments found.</td></tr>";
+                                            echo "<tr>
+                                                    <td>{$no}</td>
+                                                    <td>{$fullName}</td>
+                                                    <td>{$timeSlot}</td>
+                                                    <td>{$serviceName}</td>
+                                                  </tr>";
+                                            $no++;
                                         }
+                                    } else {
+                                        echo "<tr><td colspan='4' class='text-center'>No Upcoming Customers</td></tr>";
+                                    }
                                     ?>
                                 </tbody>
                             </table>

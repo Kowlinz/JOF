@@ -477,9 +477,9 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th width="10%">#</th>
-                                        <th width="60%">Name</th>
-                                        <th width="30%">Time</th>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Time</th>
                                         <th>Service</th>
                                     </tr>
                                 </thead>
@@ -521,9 +521,9 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th width="10%">#</th>
-                                        <th width="60%">Name</th>
-                                        <th width="30%">Time</th>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Time</th>
                                         <th>Service</th>
                                     </tr>
                                 </thead>

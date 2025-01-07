@@ -219,7 +219,7 @@ $result = $conn->query($sql);
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='4'>No appointments found.</td></tr>";
+                        echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
                     }
                 ?>
                 </tbody>

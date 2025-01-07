@@ -636,6 +636,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                         <thead>
                             <tr>
                                 <th>Service Name</th>
+                                <th>Description</th>
                                 <th>Price</th>
                                 <th class="actions-column" style="display: none;">Actions</th>
                             </tr>
@@ -650,7 +651,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                 ?>
                                 <tr>
                                     <td><?php echo $row['serviceName']; ?></td>
-                                    <td><?php echo $row['servicePrice']; ?> PHP</td>
+                                    <td><?php echo $row['serviceDesc']; ?></td>
+                                    <td>₱<?php echo $row['servicePrice']; ?></td>
                                     <td class="actions-column" style="display: none;">
                                         <button class="btn btn-danger btn-sm delete-service-btn" data-id="<?php echo $row['serviceID']; ?>">
                                             <i class="fas fa-times"></i>
@@ -779,7 +781,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                             ?>
                                             <tr>
                                                 <td><?php echo $row['addonName']; ?></td>
-                                                <td><?php echo $row['addonPrice']; ?> PHP</td>
+                                                <td>₱<?php echo $row['addonPrice']; ?></td>
                                                 <td class="actions-column" style="display: none;">
                                                     <button class="btn btn-danger btn-sm delete-addon-btn" data-id="<?php echo $row['addonID']; ?>">
                                                         <i class="fas fa-times"></i>

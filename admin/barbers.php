@@ -118,19 +118,57 @@ $result = $conn->query($sql);
                 min-width: 120px; /* Phone number column */
             }
         }
+        /* Mobile toggle button styling */
+        .mobile-toggle {
+            position: fixed;
+            top: 25px;
+            left: 20px;
+            z-index: 1000;
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: none;
+            color: #F3CD32;
+            font-size: 24px;
+        }
+
+        /* Show toggle button only on smaller screens */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+        }
     </style>
 </head>
 <body>
     <?php include 'db_connect.php'; ?>
 
-    <!-- Add the mobile toggle button -->
-    <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
-            <h1 class="dashboard mb-5 ms-5">Barbers</h1>
+            <div class="position-relative">
+                <h1 class="dashboard mb-5 ms-5">Barbers</h1>
+                <button class="mobile-toggle d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
             <!-- Add Barber Button -->
             <div class="row ms-5 mb-4">
                 <div class="col-12">
@@ -229,6 +267,10 @@ $result = $conn->query($sql);
     </nav>
 
     <!-- Add necessary scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebarMenu');
@@ -241,6 +283,15 @@ $result = $conn->query($sql);
             const toggle = document.querySelector('.mobile-toggle');
             if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
                 sidebar.classList.remove('show');
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.querySelector('.mobile-toggle');
+            if (toggleButton) {
+                toggleButton.setAttribute('onclick', 'toggleSidebar()');
             }
         });
     </script>

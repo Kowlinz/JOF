@@ -292,52 +292,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             position: relative;
             min-height: 100vh;
         }
+
+        /* Mobile toggle button styling */
+        .mobile-toggle {
+            position: fixed;
+            top: 25px;
+            left: 20px;
+            z-index: 1000;
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: none;
+            color: #F3CD32;
+            font-size: 24px;
+        }
+
+        /* Show toggle button only on smaller screens */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Add the mobile toggle button -->
-    <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <div class="content-wrapper">
-        <!-- Sidebar -->
-        <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse">
-            <div class="position-sticky">
-                <div class="list-group list-group-flush mx-3 mt-5">
-                    <div class="avatar-container">
-                        <img src="css/images/jof_logo_black.png" alt="logo" width="55" height="55" class="logo">
-                        <img src="css/images/admin.jpg" alt="Avatar" width="140" height="140" style="border: 5px solid #000000; border-radius: 50%;" class="avatar">
-                        <h5>Admin</h5>
-                    </div>
-                    <a href="a_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
-                        <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
-                    </a>
-                    <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
-                        <i class="fa-solid fa-users fa-fw me-3"></i><span>Appointment</span>
-                    </a>
-                    <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple">
-                        <i class="fa-solid fa-clock-rotate-left fa-fw me-3"></i><span>History</span>
-                    </a>
-                    <a href="earnings.php" class="list-group-item list-group-item-action py-2 ripple">
-                        <i class="fa-solid fa-money-bill-trend-up fa-fw me-3"></i><span>Earnings</span>
-                    </a>
-                    <a href="barbers.php" class="list-group-item list-group-item-action py-2 ripple">
-                        <i class="fa-solid fa-scissors fa-fw me-3"></i><span>Barbers</span>
-                    </a>
-                    <a href="options.php" class="list-group-item list-group-item-action py-2 ripple active">
-                        <i class="fa-solid fa-gear fa-fw me-3"></i><span>Options</span>
-                    </a>
-                    <a href="../logout-staff.php" class="list-group-item list-group-item-action py-2 ripple">
-                        <i class="fa-solid fa-right-from-bracket fa-fw me-3"></i><span>Log Out</span>
-                    </a>
-                </div>
+    <div class="body d-flex py-3 mt-5">
+        <div class="container-xxl">
+            <div class="position-relative">
+                <h1 class="dashboard mb-5 ms-5">Edit Haircut Gallery</h1>
+                <button class="mobile-toggle d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-        </nav>
-
-        <!-- Main content -->
-        <div class="main-content">
-            <h1 class="dashboard mb-3 ms-5">Edit Haircut Gallery</h1>
             <!-- Add Photo Button -->
             <div class="ms-5">
                 <button class="btn btn-warning" id="addPhotoBtn">
@@ -927,6 +930,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             }
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.querySelector('.mobile-toggle');
+            if (toggleButton) {
+                toggleButton.setAttribute('onclick', 'toggleSidebar()');
+            }
+        });
+    </script>
+
+    <!-- Add the sidebar navigation after the main content div -->
+    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse">
+        <div class="position-sticky">
+            <div class="list-group list-group-flush mx-3 mt-5">
+                <div class="avatar-container">
+                    <img src="css/images/jof_logo_black.png" alt="logo" width="55" height="55" class="logo">
+                    <img src="css/images/admin.jpg" alt="Avatar" width="140" height="140" style="border: 5px solid #000000; border-radius: 50%;" class="avatar">
+                    <h5>Admin</h5>
+                </div>
+                <a href="a_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
+                </a>
+                <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-users fa-fw me-3"></i><span>Appointment</span>
+                </a>
+                <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-clock-rotate-left fa-fw me-3"></i><span>History</span>
+                </a>
+                <a href="earnings.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-money-bill-trend-up fa-fw me-3"></i><span>Earnings</span>
+                </a>
+                <a href="barbers.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-scissors fa-fw me-3"></i><span>Barbers</span>
+                </a>
+                <a href="options.php" class="list-group-item list-group-item-action py-2 ripple active">
+                    <i class="fa-solid fa-gear fa-fw me-3"></i><span>Options</span>
+                </a>
+                <a href="../logout-staff.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-right-from-bracket fa-fw me-3"></i><span>Log Out</span>
+                </a>
+            </div>
+        </div>
+    </nav>
 
 </body>
 </html>

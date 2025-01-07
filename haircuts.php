@@ -145,42 +145,42 @@ $conn->close();
                     </div>
                 <?php endforeach; ?>
             </div>
+        </div>
 
-            <!-- Services -->
-            <div class="container fade-in" style="margin-top: 30px;">
-                <h1 class="haircuts-header">Services</h1>
-                <div class="card-body p-0">
-                    <div class="container services-container" style="max-width: 800px;">
-                        <table class="table" style="background-color: #FFDE59; border-radius: 15px; overflow: hidden;">
-                            <thead>
-                                <tr style="background-color: #000000; color: #FFDE59;">
-                                    <th style="font-size: 1.2rem; padding: 15px 15px 15px 25px; width: 25%;">Service Name</th>
-                                    <th style="font-size: 1.2rem; padding: 15px 15px 15px 25px; width: 55%;">Description</th>
-                                    <th style="font-size: 1.2rem; padding: 15px; width: 20%; text-align: center;">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                include 'customer/db_connect.php';
-                                $query = "SELECT serviceName, servicePrice, serviceDesc FROM service_tbl";
-                                $result = $conn->query($query);
+        <!-- Services -->
+        <div class="container fade-in services-section">
+            <h1 class="haircuts-header">Services</h1>
+            <div class="card-body p-0">
+                <div class="container services-container" style="max-width: 800px;">
+                    <table class="table" style="background-color: #FFDE59; border-radius: 15px; overflow: hidden;">
+                        <thead>
+                            <tr style="background-color: #000000; color: #FFDE59;">
+                                <th style="font-size: 1.2rem; padding: 15px 15px 15px 25px; width: 25%;">Service Name</th>
+                                <th style="font-size: 1.2rem; padding: 15px 15px 15px 25px; width: 55%;">Description</th>
+                                <th style="font-size: 1.2rem; padding: 15px; width: 20%; text-align: center;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            include 'customer/db_connect.php';
+                            $query = "SELECT serviceName, servicePrice, serviceDesc FROM service_tbl";
+                            $result = $conn->query($query);
 
-                                if ($result && $result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<tr>";
-                                        echo "<td style='padding-left: 25px;'>" . htmlspecialchars($row['serviceName']) . "</td>";
-                                        echo "<td style='padding-left: 25px;'>" . htmlspecialchars($row['serviceDesc']) . "</td>";
-                                        echo "<td style='text-align: center; font-size: 1.2rem; font-weight: bold;'>₱" . htmlspecialchars($row['servicePrice']) . "</td>";
-                                        echo "</tr>";
-                                    }
-                                } else {
-                                    echo "<tr><td colspan='3' class='text-center'>No services found.</td></tr>";
+                            if ($result && $result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td style='padding-left: 25px;'>" . htmlspecialchars($row['serviceName']) . "</td>";
+                                    echo "<td style='padding-left: 25px;'>" . htmlspecialchars($row['serviceDesc']) . "</td>";
+                                    echo "<td style='text-align: center; font-size: 1.2rem; font-weight: bold;'>₱" . htmlspecialchars($row['servicePrice']) . "</td>";
+                                    echo "</tr>";
                                 }
-                                $conn->close();
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
+                            } else {
+                                echo "<tr><td colspan='3' class='text-center'>No services found.</td></tr>";
+                            }
+                            $conn->close();
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -202,33 +202,69 @@ $conn->close();
                 }
             }
 
-            /* Add a delay to the services section */
             .container.fade-in:nth-child(3) {
                 animation-delay: 0.2s;
             }
-        </style>
 
-        <style>
-            .services-container {
-                margin-bottom: 50px;
+            /* Services section styling */
+            .services-section {
+                padding-top: 20px;
             }
-            
-            @media (max-width: 768px) {
-                .services-container {
-                    margin-bottom: 30px;
+
+            .services-container {
+                margin-bottom: 30px;
+            }
+
+            .haircuts-header {
+                margin-bottom: 20px;
+            }
+
+            /* Container adjustments */
+            .container.fade-in {
+                margin-bottom: 20px;
+            }
+
+            /* Table container adjustments */
+            .card-body {
+                padding: 0;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 991px) {
+                .services-section {
+                    padding-top: 15px;
                 }
-                .card-body {
-                    padding: 0 10px;
-                    margin-top: -60px;
-                }
+
                 .haircuts-header {
                     margin-bottom: 15px;
+                    text-align: center;
                 }
-                .haircuts-header:last-of-type {
-                    margin-bottom: 45px;
+
+                .services-container {
+                    margin-top: 0;
+                    padding: 0 15px;
+                }
+
+                #gallery-container {
+                    margin-bottom: 0;
                 }
             }
 
+            @media (max-width: 768px) {
+                .services-section {
+                    padding-top: 10px;
+                }
+
+                .haircuts-header {
+                    font-size: 24px;
+                }
+
+                .services-container {
+                    padding: 0 10px;
+                }
+            }
+
+            /* Gallery layout for tablets */
             @media (min-width: 576px) and (max-width: 920px) {
                 #gallery-container {
                     display: flex;

@@ -404,40 +404,6 @@
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
             <h1 class="dashboard mb-5 ms-5">Appointments History</h1>
-            <!-- Calendar Row -->
-            <div class="row mb-4 ms-5">
-                <div class="col-md-4">
-                    <div class="dropdown">
-                        <button class="btn btn-warning dropdown-toggle" type="button" id="calendarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Date Picker
-                        </button>
-                        <div class="dropdown-menu p-0" style="width: 300px;">
-                            <div class="calendar-container">
-                                <header class="calendar-header d-flex justify-content-between align-items-center">
-                                    <p class="calendar-current-date fw-bold"></p>
-                                    <div class="calendar-navigation">
-                                        <span id="calendar-prev" class="material-symbols-rounded">chevron_left</span>
-                                        <span id="calendar-next" class="material-symbols-rounded">chevron_right</span>
-                                    </div>
-                                </header>
-                                <div class="calendar-body">
-                                    <ul class="calendar-weekdays">
-                                        <li>Sun</li>
-                                        <li>Mon</li>
-                                        <li>Tue</li>
-                                        <li>Wed</li>
-                                        <li>Thu</li>
-                                        <li>Fri</li>
-                                        <li>Sat</li>
-                                    </ul>
-                                    <ul class="calendar-dates"></ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <script src="js/calendar.js"></script>
 
             <!-- Cancelled Appointments Row -->
             <div class="row mb-4 ms-5">
@@ -461,7 +427,7 @@
                                             FROM appointment_tbl a
                                             LEFT JOIN customer_tbl c ON a.customerID = c.customerID
                                             WHERE a.status = 'Cancelled' 
-                                            AND a.date = CURDATE()";
+                                            AND a.date";
                                             
                                             $cancelledResult = mysqli_query($conn, $cancelledQuery);
                                             
@@ -503,6 +469,7 @@
                                     <thead>
                                         <tr>
                                             <td>Name</td>
+                                            <td>Date</td>
                                             <td>Time</td>
                                             <td>Service</td>
                                             <td>Barber</td>
@@ -533,11 +500,11 @@
                                             LEFT JOIN 
                                                 barbers_tbl b ON b.barberID = ba.barberID
                                             WHERE 
-                                                a.date = CURDATE() AND a.status = 'Completed'
+                                                a.date AND a.status = 'Completed'
                                             GROUP BY
                                                 a.appointmentID
                                             ORDER BY 
-                                                a.timeSlot ASC";
+                                                a.timeSlot DESC";
 
                                             $completedResult = mysqli_query($conn, $completedQuery);
                                             
@@ -545,6 +512,7 @@
                                                 while ($row = mysqli_fetch_assoc($completedResult)) {
                                                     echo "<tr>
                                                             <td>{$row['fullName']}</td>
+                                                            <td>{$row['date']}</td>
                                                             <td>{$row['timeSlot']}</td>
                                                             <td>{$row['serviceName']}</td>
                                                             <td>{$row['barberFirstName']} {$row['barberLastName']}</td>

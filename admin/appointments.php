@@ -247,6 +247,59 @@
                 z-index: 999;
             }
         }
+
+        /* Adjust main content area to account for sidebar */
+        .container-xxl {
+            padding-left: 260px; /* Width of sidebar + some padding */
+            width: 100%;
+            transition: padding-left 0.3s ease;
+        }
+
+        /* Sidebar positioning */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            z-index: 999;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .container-xxl {
+                padding-left: 15px; /* Reset padding on mobile */
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* Adjust margin for content */
+        @media (min-width: 992px) and (max-width: 1680px) {
+            .ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            .dashboard.mb-5.ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            /* Calendar section adjustments */
+            .row.ms-5.mb-4 {
+                margin-left: 0 !important;
+            }
+            
+            /* Table section adjustments */
+            .row.ms-5 {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>

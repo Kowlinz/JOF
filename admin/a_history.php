@@ -298,6 +298,99 @@
                 min-width: 150px; /* Reason/Barber column */
             }
         }
+
+        /* Adjust main content area to account for sidebar */
+        .container-xxl {
+            padding-left: 260px; /* Width of sidebar + some padding */
+            width: 100%;
+            transition: padding-left 0.3s ease;
+        }
+
+        /* Sidebar positioning */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            z-index: 999;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .container-xxl {
+                padding-left: 15px; /* Reset padding on mobile */
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* Adjust margin for content */
+        @media (min-width: 992px) and (max-width: 1680px) {
+            .ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            .dashboard.mb-5.ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            /* Calendar section adjustments */
+            .row.mb-4.ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            /* Table section adjustments */
+            .row.ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            /* Card adjustments */
+            .card {
+                margin-right: 15px;
+            }
+        }
+
+        /* Update mobile styles */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+            
+            /* Adjust table container on mobile */
+            .table-responsive {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .card {
+                margin: 0 10px;
+            }
+        }
     </style>
 </head>
 <body>

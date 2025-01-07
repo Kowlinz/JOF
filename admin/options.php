@@ -6,6 +6,95 @@ if (!isset($_SESSION["user"])) {
 
 include 'db_connect.php';
 
+// Handle all POST actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if ($_POST['action'] === 'delete_haircut') {
+        // Existing haircut deletion code...
+    } 
+    else if ($_POST['action'] === 'delete_service') {
+        if (!isset($_POST['serviceID'])) {
+            die(json_encode(['success' => false, 'message' => 'No service ID provided']));
+        }
+
+        $serviceID = $_POST['serviceID'];
+
+        // Check if service is being used in appointments
+        $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM appointment_tbl WHERE serviceID = ?");
+        $check_stmt->bind_param("i", $serviceID);
+        $check_stmt->execute();
+        $result = $check_stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        if ($row['count'] > 0) {
+            $check_stmt->close();
+            die(json_encode([
+                'success' => false, 
+                'message' => 'This service cannot be deleted because it is being used in existing appointments.'
+            ]));
+        }
+
+        $check_stmt->close();
+
+        // Delete the service
+        $delete_stmt = $conn->prepare("DELETE FROM service_tbl WHERE serviceID = ?");
+        $delete_stmt->bind_param("i", $serviceID);
+
+        try {
+            if ($delete_stmt->execute()) {
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to delete service']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+
+        $delete_stmt->close();
+        exit();
+    }
+    else if ($_POST['action'] === 'delete_addon') {
+        if (!isset($_POST['addonID'])) {
+            die(json_encode(['success' => false, 'message' => 'No add-on ID provided']));
+        }
+
+        $addonID = $_POST['addonID'];
+
+        // Check if add-on is being used in appointments
+        $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM appointment_tbl WHERE addonID = ?");
+        $check_stmt->bind_param("i", $addonID);
+        $check_stmt->execute();
+        $result = $check_stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        if ($row['count'] > 0) {
+            $check_stmt->close();
+            die(json_encode([
+                'success' => false, 
+                'message' => 'This add-on cannot be deleted because it is being used in existing appointments.'
+            ]));
+        }
+
+        $check_stmt->close();
+
+        // Delete the add-on
+        $delete_stmt = $conn->prepare("DELETE FROM addon_tbl WHERE addonID = ?");
+        $delete_stmt->bind_param("i", $addonID);
+
+        try {
+            if ($delete_stmt->execute()) {
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to delete add-on']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+
+        $delete_stmt->close();
+        exit();
+    }
+}
+
 // Handle haircut deletion request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_haircut') {
     if (!isset($_POST['haircut_id'])) {
@@ -259,9 +348,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             max-width: 800px;
         }
         .btn-active {
-            background-color: gray;
-            border-color: gray;
-            color: white;
+            background-color: gray !important;
+            border-color: gray !important;
+            color: white !important;
         }
         /* Add these new styles for layout management */
         .main-content {
@@ -357,7 +446,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             <a class="nav-link active" href="#Basic">Basic</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#Premium">Specialized</a>
+                            <a class="nav-link" href="#Premium">Premium</a>
                         </li>
                     </ul>
                     
@@ -395,12 +484,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                     <div>
                         <!-- Add Services Button -->
                         <button class="btn btn-warning" id="addServiceBtn">
-                            + Add Services
-                        </button>
-
-                        <!-- Move Confirm Button to the left of Edit Services Button -->
-                        <button class="btn btn-warning ms-2" id="confirmServicesEditBtn" style="display: none;">
-                            Confirm
+                            + Add Service
                         </button>
 
                         <!-- Edit Services Button -->
@@ -434,7 +518,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                         <button class="btn btn-danger btn-sm delete-service-btn" data-id="<?php echo $row['serviceID']; ?>">
                                             <i class="fas fa-times"></i>
                                         </button>
-                                        <button class="btn btn-warning btn-sm edit-service-btn" data-id="<?php echo $row['serviceID']; ?>" data-name="<?php echo $row['serviceName']; ?>" data-price="<?php echo $row['servicePrice']; ?>">
+                                        <button class="btn btn-warning btn-sm edit-service-btn" 
+                                            data-id="<?php echo $row['serviceID']; ?>" 
+                                            data-name="<?php echo $row['serviceName']; ?>" 
+                                            data-desc="<?php echo $row['serviceDesc']; ?>"
+                                            data-price="<?php echo $row['servicePrice']; ?>">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </td>
@@ -444,6 +532,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             ?>
                         </tbody>
                     </table>
+                    <button class="btn btn-warning mt-3" id="confirmServicesEditBtn" style="display: none;">
+                        Confirm
+                    </button>
                 </div>
 
                 <!-- Confirm Button -->
@@ -466,6 +557,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                     <div class="mb-3">
                                         <label for="serviceName" class="form-label">Service Name</label>
                                         <input type="text" class="form-control" id="serviceName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="serviceDesc" class="form-label">Service Description</label>
+                                        <textarea class="form-control" id="serviceDesc" rows="3" required></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <label for="servicePrice" class="form-label">Price</label>
@@ -496,6 +591,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                         <input type="text" class="form-control" id="editServiceName" required>
                                     </div>
                                     <div class="mb-3">
+                                        <label for="editServiceDesc" class="form-label">Service Description</label>
+                                        <textarea class="form-control" id="editServiceDesc" rows="3" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="editServicePrice" class="form-label">Price</label>
                                         <input type="number" class="form-control" id="editServicePrice" required>
                                     </div>
@@ -512,7 +611,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <button class="btn btn-warning" id="addAddonBtn">
-                            + Add Add-ons
+                            + Add Add-on
                         </button>
                         <button class="btn btn-warning ms-2" id="editAddonsBtn">
                             Edit
@@ -561,6 +660,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             </div>
                         </div>
                     </div>
+                    <button class="btn btn-warning mt-3" id="confirmAddonsEditBtn" style="display: none;">
+                        Confirm
+                    </button>
                 </div>
             </div>
         </div>
@@ -596,7 +698,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             <label for="haircutCategory" class="form-label">Category</label>
                             <select class="form-select" id="haircutCategory" required>
                                 <option value="Basic">Basic</option>
-                                <option value="Specialized">Specialized</option>
+                                <option value="Premium">Premium</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -605,6 +707,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-warning">Add Haircut</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Add-on Modal -->
+    <div class="modal fade" id="addAddonModal" tabindex="-1" aria-labelledby="addAddonModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAddonModalLabel">Add New Add-on</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAddonForm">
+                        <div class="mb-3">
+                            <label for="addonName" class="form-label">Add-on Name</label>
+                            <input type="text" class="form-control" id="addonName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addonPrice" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="addonPrice" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-warning">Add Add-on</button>
                         </div>
                     </form>
                 </div>
@@ -647,20 +776,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             
             confirmBtn.style.display = confirmBtn.style.display === 'none' ? 'block' : 'none';
 
-            // Change the color of the Edit Gallery button
-            this.classList.toggle('btn-active'); // Toggle the active class
+            // Toggle the active class on the Edit Gallery button
+            this.classList.toggle('btn-active');
+            
+            // Update button text color when active
+            if (this.classList.contains('btn-active')) {
+                this.style.color = 'white';
+            } else {
+                this.style.color = 'black';
+            }
         });
 
         // Confirm button functionality
         document.querySelector('.confirm-btn').addEventListener('click', function() {
             const deleteBtns = document.querySelectorAll('.delete-btn');
             const confirmBtn = this;
+            const editBtn = document.getElementById('editGalleryBtn');
 
             // Hide delete buttons and confirm button
             deleteBtns.forEach(btn => {
                 btn.style.display = 'none';
             });
             confirmBtn.style.display = 'none';
+
+            // Remove active state from Edit button
+            editBtn.classList.remove('btn-active');
+            editBtn.style.color = 'black';
         });
 
         // Function to attach delete event listeners
@@ -711,25 +852,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         document.getElementById('addHaircutForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const haircutName = document.getElementById('haircutName').value;
-            const haircutPhoto = document.getElementById('haircutPhoto').files[0];
-
-            // Create a FormData object to send the form data
             const formData = new FormData();
-            formData.append('haircutName', haircutName);
-            formData.append('haircutPhoto', haircutPhoto);
+            formData.append('haircutName', document.getElementById('haircutName').value);
+            formData.append('haircutCategory', document.getElementById('haircutCategory').value);
+            formData.append('haircutPhoto', document.getElementById('haircutPhoto').files[0]);
 
             // Send the form data to the server using fetch
             fetch('add_haircut.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     // Refresh the gallery grid
@@ -748,16 +881,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
                     // Reset the form
                     document.getElementById('addHaircutForm').reset();
+
+                    // Show success message
+                    alert('Haircut added successfully!');
                 } else {
                     // Show error message
-                    document.getElementById('errorModalBody').textContent = data.message;
-                    errorModal.show();
+                    alert('Error adding haircut: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('errorModalBody').textContent = 'An error occurred while adding the haircut. Please check the console for more details.';
-                errorModal.show();
+                alert('An error occurred while adding the haircut. Please check the console for more details.');
             });
         });
 
@@ -771,54 +905,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         document.getElementById('addServiceForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const serviceName = document.getElementById('serviceName').value;
-            const servicePrice = document.getElementById('servicePrice').value;
+            const formData = new FormData();
+            formData.append('serviceName', document.getElementById('serviceName').value);
+            formData.append('serviceDesc', document.getElementById('serviceDesc').value);
+            formData.append('servicePrice', document.getElementById('servicePrice').value);
 
             // Send the form data to the server using fetch
             fetch('add_service.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `serviceName=${serviceName}&servicePrice=${servicePrice}`
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Close the modal
+                    const addServiceModal = bootstrap.Modal.getInstance(document.getElementById('addServiceModal'));
+                    addServiceModal.hide();
+
+                    // Reset the form
+                    document.getElementById('addServiceForm').reset();
+
+                    // Show success message
+                    alert('Service added successfully!');
+
                     // Refresh the services table
                     location.reload();
                 } else {
                     // Show error message
-                    document.getElementById('errorModalBody').textContent = data.message;
-                    errorModal.show();
+                    alert('Error adding service: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('errorModalBody').textContent = 'An error occurred while adding the service. Please check the console for more details.';
-                errorModal.show();
+                alert('An error occurred while adding the service. Please check the console for more details.');
             });
         });
 
         // Edit Services button functionality
         document.getElementById('editServicesBtn').addEventListener('click', function() {
-            const actionsColumn = document.querySelectorAll('.actions-column');
+            const actionsColumn = document.querySelectorAll('.services-container > .table .actions-column');
+            const confirmBtn = document.getElementById('confirmServicesEditBtn');
             
             actionsColumn.forEach(column => {
                 column.style.display = column.style.display === 'none' ? 'table-cell' : 'none';
             });
 
-            // Show the Confirm button
-            const confirmButton = document.getElementById('confirmEditBtn');
-            confirmButton.style.display = confirmButton.style.display === 'none' ? 'inline-block' : 'none';
+            // Toggle the Confirm button
+            confirmBtn.style.display = confirmBtn.style.display === 'none' ? 'block' : 'none';
 
             // Change the color of the Edit Services button
-            this.classList.toggle('btn-active'); // Toggle the active class
+            this.classList.toggle('btn-active');
+            
+            // Update button text color when active
+            if (this.classList.contains('btn-active')) {
+                this.style.color = 'white';
+            } else {
+                this.style.color = 'black';
+            }
         });
 
-        // Confirm button functionality
-        document.getElementById('confirmEditBtn').addEventListener('click', function() {
-            const actionsColumn = document.querySelectorAll('.actions-column');
+        // Update the Confirm button functionality
+        document.getElementById('confirmServicesEditBtn').addEventListener('click', function() {
+            const actionsColumn = document.querySelectorAll('.services-container > .table .actions-column');
+            const editBtn = document.getElementById('editServicesBtn');
             
             actionsColumn.forEach(column => {
                 column.style.display = 'none'; // Hide action buttons
@@ -826,6 +975,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
             // Hide the Confirm button
             this.style.display = 'none';
+            
+            // Remove active state from Edit button
+            editBtn.classList.remove('btn-active');
+            editBtn.style.color = 'black';
         });
 
         // Delete service functionality
@@ -833,26 +986,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             btn.addEventListener('click', function() {
                 if (confirm('Are you sure you want to delete this service?')) {
                     const serviceID = this.dataset.id;
+                    const formData = new FormData();
+                    formData.append('action', 'delete_service');
+                    formData.append('serviceID', serviceID);
 
-                    fetch('delete_service.php', {
+                    fetch('options.php', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: `serviceID=${serviceID}`
+                        body: formData
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Remove the service row from the table
                             this.closest('tr').remove();
                         } else {
-                            alert('Error deleting service: ' + data.message);
+                            document.getElementById('errorModalBody').textContent = data.message;
+                            errorModal.show();
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('An error occurred while deleting the service.');
+                        document.getElementById('errorModalBody').textContent = 'An error occurred while deleting the service.';
+                        errorModal.show();
                     });
                 }
             });
@@ -863,11 +1017,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             btn.addEventListener('click', function() {
                 const serviceID = this.dataset.id;
                 const serviceName = this.dataset.name;
+                const serviceDesc = this.dataset.desc;
                 const servicePrice = this.dataset.price;
 
                 // Populate the modal fields
                 document.getElementById('editServiceID').value = serviceID;
                 document.getElementById('editServiceName').value = serviceName;
+                document.getElementById('editServiceDesc').value = serviceDesc;
                 document.getElementById('editServicePrice').value = servicePrice;
 
                 // Show the modal
@@ -880,37 +1036,158 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         document.getElementById('editServiceForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const serviceID = document.getElementById('editServiceID').value;
-            const serviceName = document.getElementById('editServiceName').value;
-            const servicePrice = document.getElementById('editServicePrice').value;
+            const formData = new FormData();
+            formData.append('serviceID', document.getElementById('editServiceID').value);
+            formData.append('serviceName', document.getElementById('editServiceName').value);
+            formData.append('serviceDesc', document.getElementById('editServiceDesc').value);
+            formData.append('servicePrice', document.getElementById('editServicePrice').value);
 
             // Send the updated data to the server using fetch
             fetch('edit_service.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `serviceID=${serviceID}&serviceName=${serviceName}&servicePrice=${servicePrice}`
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update the table row
-                    const row = document.querySelector(`button[data-id="${serviceID}"]`).closest('tr');
-                    row.querySelector('td:nth-child(1)').textContent = serviceName;
-                    row.querySelector('td:nth-child(2)').textContent = servicePrice + ' PHP';
+                    // Show success message
+                    alert('Service updated successfully!');
+                    
+                    // Refresh the page to show updated data
+                    location.reload();
 
                     // Close the modal
                     const editServiceModal = bootstrap.Modal.getInstance(document.getElementById('editServiceModal'));
                     editServiceModal.hide();
                 } else {
-                    alert('Error updating service: ' + data.message);
+                    document.getElementById('errorModalBody').textContent = data.message;
+                    errorModal.show();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while updating the service.');
+                document.getElementById('errorModalBody').textContent = 'An error occurred while updating the service.';
+                errorModal.show();
             });
+        });
+
+        // Open the Add Add-on modal when the "Add Add-ons" button is clicked
+        document.getElementById('addAddonBtn').addEventListener('click', function() {
+            const addAddonModal = new bootstrap.Modal(document.getElementById('addAddonModal'));
+            addAddonModal.show();
+        });
+
+        // Handle form submission for adding a new add-on
+        document.getElementById('addAddonForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('addonName', document.getElementById('addonName').value);
+            formData.append('addonPrice', document.getElementById('addonPrice').value);
+
+            // Send the form data to the server using fetch
+            fetch('add_addon.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    const addAddonModal = bootstrap.Modal.getInstance(document.getElementById('addAddonModal'));
+                    addAddonModal.hide();
+
+                    // Reset the form
+                    document.getElementById('addAddonForm').reset();
+
+                    // Show success message
+                    alert('Add-on added successfully!');
+
+                    // Refresh the page to show the new add-on
+                    location.reload();
+                } else {
+                    // Show error message
+                    document.getElementById('errorModalBody').textContent = data.message;
+                    errorModal.show();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorModalBody').textContent = 'An error occurred while adding the add-on.';
+                errorModal.show();
+            });
+        });
+
+        // Delete add-on functionality
+        document.querySelectorAll('.delete-addon-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this add-on?')) {
+                    const addonID = this.dataset.id;
+                    const formData = new FormData();
+                    formData.append('action', 'delete_addon');
+                    formData.append('addonID', addonID);
+
+                    fetch('options.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.closest('tr').remove();
+                        } else {
+                            document.getElementById('errorModalBody').textContent = data.message;
+                            errorModal.show();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('errorModalBody').textContent = 'An error occurred while deleting the add-on.';
+                        errorModal.show();
+                    });
+                }
+            });
+        });
+
+        // Edit Add-ons button functionality
+        document.getElementById('editAddonsBtn').addEventListener('click', function() {
+            const actionsColumn = document.querySelectorAll('.services-container .card .table .actions-column');
+            const confirmBtn = document.getElementById('confirmAddonsEditBtn');
+            
+            actionsColumn.forEach(column => {
+                column.style.display = column.style.display === 'none' ? 'table-cell' : 'none';
+            });
+
+            // Toggle the Confirm button
+            confirmBtn.style.display = confirmBtn.style.display === 'none' ? 'block' : 'none';
+
+            // Change the color of the Edit Add-ons button
+            this.classList.toggle('btn-active');
+            
+            // Update button text color when active
+            if (this.classList.contains('btn-active')) {
+                this.style.color = 'white';
+            } else {
+                this.style.color = 'black';
+            }
+        });
+
+        // Confirm Add-ons button functionality
+        document.getElementById('confirmAddonsEditBtn').addEventListener('click', function() {
+            const actionsColumn = document.querySelectorAll('.services-container .card .table .actions-column');
+            const editBtn = document.getElementById('editAddonsBtn');
+            
+            // Hide action buttons
+            actionsColumn.forEach(column => {
+                column.style.display = 'none';
+            });
+
+            // Hide the Confirm button
+            this.style.display = 'none';
+
+            // Remove active state from Edit button
+            editBtn.classList.remove('btn-active');
+            editBtn.style.color = 'black';
         });
     });
     </script>

@@ -26,21 +26,21 @@
                             <img src="css/images/jof_logo_yellow.png" alt="logo" width="45" height="45">
                         </div>
 
-                        <button class="menu-btn d-lg-none" type="button">
+                        <button class="menu-btn d-lg-none" type="button" id="menuBtn">
                             <i class='bx bx-menu'></i>
                         </button>
 
-                        <div class="menu-dropdown">
+                        <div class="menu-dropdown" id="menuDropdown">
                             <div class="menu-header">
-                                <button class="menu-close">&times;</button>
+                                <button class="menu-close" id="menuClose">&times;</button>
                             </div>
                             <div class="menu-links">
                                 <a href="index.php" class="menu-link">HOME</a>
+                                <a href="haircuts.php" class="menu-link">HAIRCUTS & SERVICES</a>
                                 <?php if (isset($_SESSION["user"])): ?>
-                                    <a href="haircuts.php" class="menu-link">HAIRCUTS</a>
                                     <a href="customer/appointment.php" class="menu-link">MY APPOINTMENT</a>
+                                    <a href="logout.php" class="menu-link">LOGOUT</a>
                                 <?php else: ?>
-                                    <a href="haircuts.php" class="menu-link">HAIRCUTS</a>
                                     <a href="login.php" class="menu-link">LOGIN</a>
                                 <?php endif; ?>
                             </div>
@@ -49,7 +49,7 @@
                 </nav>
             </div>
 
-            <div class="login-container">
+            <div class="login-container fade-in">
 
                 <?php
                         if (isset($_POST["Login"])) {
@@ -104,11 +104,29 @@
         </div>
     </div>
 
+    <style>
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.querySelector('.menu-btn');
-        const menuDropdown = document.querySelector('.menu-dropdown');
-        const menuClose = document.querySelector('.menu-close');
+        const menuBtn = document.getElementById('menuBtn');
+        const menuClose = document.getElementById('menuClose');
+        const menuDropdown = document.getElementById('menuDropdown');
 
         menuBtn.addEventListener('click', function() {
             menuDropdown.classList.add('show');
@@ -116,6 +134,13 @@
 
         menuClose.addEventListener('click', function() {
             menuDropdown.classList.remove('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!menuDropdown.contains(event.target) && !menuBtn.contains(event.target)) {
+                menuDropdown.classList.remove('show');
+            }
         });
     });
     </script>

@@ -413,7 +413,7 @@
                                         <?php endwhile; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="4" class="text-center">No earnings data for today</td>
+                                            <td colspan="5" class="text-center">No earnings data for today</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>

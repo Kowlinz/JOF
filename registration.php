@@ -17,7 +17,7 @@
 <body>
     <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
         <div class="container">
-            <div class="login-container">
+            <div class="login-container fade-in">
 
                 <?php 
                     // validate the submit button
@@ -128,5 +128,22 @@
             </div>
         </div>
     </div>
+    <style>
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </body>
 </html>

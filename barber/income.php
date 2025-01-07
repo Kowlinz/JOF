@@ -335,12 +335,12 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00'; /
                 <div class="alert mb-0">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon revenue">
-                            <i class="fa-solid fa-peso-sign fa-lg" style="color: #000;"></i>
+                            <i class="fa-solid fa-sack-dollar"></i>
                         </div>
-                        <div class="flex-fill ms-3 text-truncate">
-                            <div class="h5 mb-0 mt-2">Total Income</div>
-                            <div class="h5 mb-0"><?php echo $totalIncome; ?></div> <!-- Display Total Income -->
-                        </div>
+                        <div class="flex-fill text-wrap">
+                    <div class="h5">Today's Income</div>
+                    <div class="h6">₱<?= number_format($totalIncome, 2) ?></div>
+                </div>
                     </div>
                 </div>
             </div>
@@ -360,19 +360,18 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00'; /
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                    // Display each row
-                                    while ($row = mysqli_fetch_assoc($incomeResult)) {
-                                        $timeSlot = date("h:i A", strtotime($row['timeSlot'])); // Format time
-                                        $earnings = number_format($row['barberEarnings'], 2);
-                                        echo "
-                                            <tr>
-                                                <td>{$timeSlot}</td>
-                                                <td>₱ {$earnings}</td>  
-                                            </tr>
-                                        ";
-                                    }
-                                ?>
+                                <?php if ($incomeResult && mysqli_num_rows($incomeResult) > 0): ?>
+                                    <?php while ($row = mysqli_fetch_assoc($incomeResult)): ?>
+                                        <tr>
+                                            <td><?= date("h:i A", strtotime($row['timeSlot'])) ?></td>
+                                            <td>₱ <?= number_format($row['barberEarnings'], 2) ?></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="2" class="text-center">No earnings data for today</td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>

@@ -767,6 +767,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                     <thead>
                                         <tr>
                                             <th>Add-on Name</th>
+                                            <th>Description</th>
                                             <th>Price</th>
                                             <th class="actions-column" style="display: none;">Actions</th>
                                         </tr>
@@ -781,6 +782,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                             ?>
                                             <tr>
                                                 <td><?php echo $row['addonName']; ?></td>
+                                                <td><?php echo $row['addonDesc']; ?></td>
                                                 <td>₱<?php echo $row['addonPrice']; ?></td>
                                                 <td class="actions-column" style="display: none;">
                                                     <button class="btn btn-danger btn-sm delete-addon-btn" data-id="<?php echo $row['addonID']; ?>">
@@ -866,6 +868,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                         <div class="mb-3">
                             <label for="addonName" class="form-label">Add-on Name</label>
                             <input type="text" class="form-control" id="addonName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addonDesc" class="form-label">Add-On Description</label>
+                            <textarea class="form-control" id="addonDesc" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="addonPrice" class="form-label">Price</label>

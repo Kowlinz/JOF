@@ -89,9 +89,9 @@
                     <div class="form-group">
                         <input type="password" name="password" class="form-control" placeholder="Password" required>
                     </div>
-                    <div class="forgot-password">
+                    <!-- <div class="forgot-password">
                         <a href="forgot-password.php">Forgot Password?</a>
-                    </div>
+                    </div> -->
                     <div class="form-btn">
                         <input type="submit" value="Login" name="Login" class="btn btn-primary">
                     </div>

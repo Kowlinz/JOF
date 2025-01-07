@@ -232,16 +232,13 @@ $addonsResult = $conn->query($addonsQuery);
                         </button>
                         <input type="hidden" name="haircut" id="haircut" value="">
                     </div>
+                    <!-- Remarks Dropdown -->
+                        <div class="mb-3">
+                            <label for="remarks" class="form-label text-white">Remarks:</label>
+                            <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="ex. I prefer Jonathan as my Barber."></textarea>
+                        </div>
                 </div>
             </div>
-
-            <div class="col-12">
-                <div class="mb-3 col-md-4 mx-auto">
-                    <label for="remarks" class="form-label text-white">Remarks:</label>
-                    <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="ex. I prefer Jonathan as my Barber."></textarea>
-                </div>
-            </div>
-
             <div class="col-12 text-center mt-4 mb-5">
                 <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
             </div>

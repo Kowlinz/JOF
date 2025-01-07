@@ -419,6 +419,143 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 z-index: 999;
             }
         }
+
+        /* Adjust main content area to account for sidebar */
+        .container-xxl {
+            padding-left: 260px; /* Width of sidebar + some padding */
+            width: 100%;
+            transition: padding-left 0.3s ease;
+        }
+
+        /* Sidebar positioning */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            z-index: 999;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .container-xxl {
+                padding-left: 15px; /* Reset padding on mobile */
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* Adjust margin for content */
+        @media (min-width: 992px) and (max-width: 1680px) {
+            .ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            .dashboard.mb-5.ms-5 {
+                margin-left: 0 !important;
+            }
+            
+            /* Gallery section adjustments */
+            .haircut-gallery {
+                margin-right: 15px;
+            }
+            
+            /* Services section adjustments */
+            .services-container {
+                margin-right: 15px;
+            }
+            
+            /* Table section adjustments */
+            .table-responsive {
+                margin-right: 15px;
+            }
+            
+            /* Card adjustments */
+            .card {
+                margin-right: 15px;
+            }
+        }
+
+        /* Update mobile styles */
+        @media (max-width: 991.98px) {
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 20px;
+            }
+            
+            .sidebar {
+                display: none;
+                background-color: #F3CD32 !important;
+            }
+            
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 240px;
+                z-index: 999;
+            }
+            
+            /* Adjust containers on mobile */
+            .haircut-gallery,
+            .services-container {
+                margin: 0 10px;
+            }
+            
+            /* Adjust table container on mobile */
+            .table-responsive {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .card {
+                margin: 0 10px;
+            }
+            
+            /* Adjust buttons on mobile */
+            .btn-warning {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+            
+            /* Adjust gallery grid on mobile */
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+            
+            /* Adjust modal content on mobile */
+            .modal-dialog {
+                margin: 10px;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            /* Adjust nav tabs on mobile */
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .nav-tabs .nav-link {
+                white-space: nowrap;
+                padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 <body>

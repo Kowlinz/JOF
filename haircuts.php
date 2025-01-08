@@ -208,7 +208,7 @@ $conn->close();
 
             /* Services section styling */
             .services-section {
-                padding-top: 20px;
+                padding-top: 0;
             }
 
             .services-container {
@@ -216,12 +216,12 @@ $conn->close();
             }
 
             .haircuts-header {
-                margin-bottom: 20px;
+                margin-bottom: 15px;
             }
 
             /* Container adjustments */
             .container.fade-in {
-                margin-bottom: 20px;
+                margin-bottom: 0;
             }
 
             /* Table container adjustments */
@@ -286,6 +286,25 @@ $conn->close();
                     object-fit: cover;
                 }
             }
+
+            .gallery-item {
+                opacity: 0;
+                transform: translateY(20px);
+                animation: fadeInItem 0.5s ease forwards;
+            }
+
+            @keyframes fadeInItem {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Add animation delay for each item */
+            .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+            .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+            .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+            .gallery-item:nth-child(4) { animation-delay: 0.4s; }
         </style>
 
         <script>
@@ -313,22 +332,37 @@ $conn->close();
             const haircuts = <?php echo json_encode($haircuts); ?>;
             function filterCategory(category) {
                 const galleryContainer = document.getElementById("gallery-container");
-                galleryContainer.innerHTML = "";
+                
+                // Fade out current items
+                const currentItems = galleryContainer.children;
+                Array.from(currentItems).forEach(item => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                });
 
-                document.getElementById("basic-btn").classList.toggle("active", category === "Basic");
-                document.getElementById("premium-btn").classList.toggle("active", category === "Premium");
+                // Short delay before showing new items
+                setTimeout(() => {
+                    galleryContainer.innerHTML = "";
 
-                haircuts
-                    .filter(haircut => haircut.hcCategory === category)
-                    .forEach(haircut => {
-                        galleryContainer.innerHTML += `
-                            <div class="col-12 col-sm-10 col-md-6 col-lg-3">
-                                <div class="gallery-item">
-                                    <img src="data:image/jpeg;base64,${haircut.hcImage}" alt="${haircut.hcName}" />
-                                    <div class="gallery-title">${haircut.hcName}</div>
-                                </div>
-                            </div>`;
-                    });
+                    // Update button states
+                    document.getElementById("basic-btn").classList.remove("active", "inactive");
+                    document.getElementById("premium-btn").classList.remove("active", "inactive");
+                    
+                    document.getElementById("basic-btn").classList.add(category === "Basic" ? "active" : "inactive");
+                    document.getElementById("premium-btn").classList.add(category === "Premium" ? "active" : "inactive");
+
+                    haircuts
+                        .filter(haircut => haircut.hcCategory === category)
+                        .forEach((haircut, index) => {
+                            galleryContainer.innerHTML += `
+                                <div class="col-12 col-sm-10 col-md-6 col-lg-3">
+                                    <div class="gallery-item" style="animation-delay: ${index * 0.1}s">
+                                        <img src="data:image/jpeg;base64,${haircut.hcImage}" alt="${haircut.hcName}" />
+                                        <div class="gallery-title">${haircut.hcName}</div>
+                                    </div>
+                                </div>`;
+                        });
+                }, 200); // 200ms delay before showing new items
             }
             filterCategory("Basic");
         </script>

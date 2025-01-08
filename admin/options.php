@@ -1228,6 +1228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
             const formData = new FormData();
             formData.append('addonName', document.getElementById('addonName').value);
+            formData.append('addonDesc', document.getElementById('addonDesc').value);
             formData.append('addonPrice', document.getElementById('addonPrice').value);
 
             // Send the form data to the server using fetch

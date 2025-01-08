@@ -461,7 +461,7 @@
                     <div class="card p-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="fw-bold">Previous Customers</h4>
-                            <h4>Total: <?php echo $countData['total_previous'] ?? '0'; ?></h4>
+                            <!-- <h4>Total: <?php echo $countData['total_previous'] ?? '0'; ?></h4> -->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

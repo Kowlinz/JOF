@@ -434,13 +434,6 @@ $addonsResult = $conn->query($addonsQuery);
                                 <div class="service-name"><?= $haircut['hcName'] ?></div>
                             </div>
                         <?php endwhile; ?>
-                        <!-- Add the "Heart-to-heart" option -->
-                        <div class="service-item"
-                             role="button"
-                             data-haircut-id="uploadPhoto"
-                             onclick="selectHaircut('uploadPhoto', 'Heart-to-heart with my Barber')">
-                            <div class="service-name">Heart-to-heart with my Barber</div>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -70,10 +70,11 @@
         }
         /* Add these date picker styles */
         .dropdown-menu {
-            padding: 0 !important;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
+            padding: 8px 0 !important;
+            background: white !important;
+            border: 1px solid rgba(0,0,0,.15) !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            min-width: 120px !important;
         }
         .calendar-container {
             background: white;
@@ -299,6 +300,25 @@
             .row.ms-5 {
                 margin-left: 0 !important;
             }
+        }
+
+        /* Add these new styles for the dropdown items */
+        .dropdown-item {
+            padding: 8px 16px;
+            color: #212529;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
         }
     </style>
 </head>

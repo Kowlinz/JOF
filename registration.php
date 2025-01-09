@@ -43,8 +43,8 @@
 
                         $errors = array();
                         // validate if all fields are empty
-                        if (empty ($FirstName) OR empty ($MiddleName) OR empty ($LastName) OR empty ($dateOfBirth) OR empty ($email) OR empty ($contactNum) OR empty ($password) OR empty ($RepeatPassword)) {
-                            array_push($errors, "All fields are required"); 
+                        if (empty ($FirstName) OR empty ($LastName) OR empty ($dateOfBirth) OR empty ($email) OR empty ($password) OR empty ($RepeatPassword)) {
+                            array_push($errors, "All fields are required except Middle Name"); 
                         }
                         // validate if the email is not validated 
                         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -57,6 +57,10 @@
                         // check if password is the same 
                         if(!$password = $RepeatPassword){
                             array_push($errors, "Password does not match");
+                        }
+                        // validate contact number length and numeric value
+                        if (!preg_match('/^[0-9]{11}$/', $contactNum)) {
+                            array_push($errors, "Contact number must be 11 digits and numeric");
                         }
 
                         require_once "database.php"; 
@@ -99,7 +103,7 @@
                         </div> 
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="MiddleName" placeholder="Middle Name" required>
+                            <input type="text" class="form-control" name="MiddleName" placeholder="Middle Name">
                         </div> 
 
                         <div class="form-group">
@@ -115,7 +119,7 @@
                         </div>
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="contactNum" placeholder="Contact Number" required>
+                            <input type="tel" class="form-control" name="contactNum" placeholder="Contact Number" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
                         </div> 
 
                         <div class="form-group">

@@ -150,5 +150,52 @@ $addonsResult = $conn->query($addonsQuery);
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="js/booking.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize flatpickr for the date input
+                flatpickr("#date", {
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    onChange: function(selectedDates, dateStr) {
+                        // When date is selected, update time slots
+                        updateTimeSlots();
+                    }
+                });
+
+                function updateTimeSlots() {
+                    const timeSlotBtns = document.querySelectorAll('.time-slot');
+                    const currentDate = new Date();
+                    const selectedDate = new Date(document.getElementById('date').value);
+                    const isToday = selectedDate.toDateString() === currentDate.toDateString();
+
+                    timeSlotBtns.forEach(btn => {
+                        const time = btn.textContent.trim();
+                        const [hours, minutes] = time.split(' ');
+                        const [hour, minute] = hours.split(':');
+                        const timeSlotDate = new Date(selectedDate);
+                        timeSlotDate.setHours(hour === '12' ? 12 : (parseInt(hour) + (minutes.endsWith('PM') ? 12 : 0))); // Adjust for AM/PM
+                        timeSlotDate.setMinutes(minutes.endsWith('PM') ? parseInt(minute) : parseInt(minute)); // Set minutes
+
+                        // Compare the time slot with the current time
+                        if (isToday && timeSlotDate <= currentDate) {
+                            btn.classList.add('booked');
+                            btn.style.pointerEvents = 'none'; // Disable click
+                            btn.style.opacity = '0.5'; // Make it look disabled
+                        } else {
+                            btn.classList.remove('booked');
+                            btn.style.pointerEvents = 'auto'; // Enable click
+                            btn.style.opacity = '1'; // Reset opacity
+                        }
+                    });
+                }
+
+                // Function to select a time slot
+                window.selectTimeSlot = function(time) {
+                    document.getElementById('selectedTimeSlot').value = time;
+                    document.getElementById('time-slot-button').textContent = time;
+                    updateTimeSlots(); // Update the slots after selection
+                };
+            });
+        </script>
 </body>
 </html>

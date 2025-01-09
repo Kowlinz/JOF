@@ -357,9 +357,19 @@ $addonsResult = $conn->query($addonsQuery);
 
                         function updateTimeSlots(bookedSlots) {
                             const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
+                            const currentDate = new Date();
+                            const selectedDate = new Date(document.getElementById('date').value);
+                            const isToday = selectedDate.toDateString() === currentDate.toDateString();
+
                             timeSlotBtns.forEach(btn => {
                                 const time = btn.getAttribute('data-time');
-                                if (bookedSlots.includes(time)) {
+                                const [hours, minutes] = time.split(':');
+                                const timeSlotDate = new Date(selectedDate);
+                                timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (minutes.endsWith('PM') ? 12 : 0))); // Adjust for AM/PM
+                                timeSlotDate.setMinutes(minutes.endsWith('PM') ? parseInt(minutes) : parseInt(minutes)); // Set minutes
+
+                                // Compare the time slot with the current time
+                                if (bookedSlots.includes(time) || (isToday && timeSlotDate <= currentDate)) {
                                     btn.classList.add('booked');
                                     btn.disabled = true;
                                 } else {

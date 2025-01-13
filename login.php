@@ -59,34 +59,53 @@
                 </div>
 
                 <?php
-                        if (isset($_POST["Login"])) {
-                        $email = $_POST["email"];
-                        $password = $_POST["password"];
-                        
-                        require_once "database.php";
-                        
-                        // Check if user exists in the customer table
-                        $sql_customer = "SELECT * FROM customer_tbl WHERE email = '$email'";
-                        $result_customer = mysqli_query($conn, $sql_customer);
-                        $user_customer = mysqli_fetch_array($result_customer, MYSQLI_ASSOC);
-                        
-                        // Validate the user based on the role
-                        if ($user_customer) {
-                            if (password_verify($password, $user_customer["password"])) {
-                                $_SESSION["user"] = "customer";
-                                $_SESSION["customerID"] = $user_customer["customerID"];
-                                header("Location: index.php");
-                                die();
-
-                            } else {
-                                echo "<div class='alert alert-danger'>Invalid Credentials</div>";
-                            }
-
-                        } else {
-                            echo "<div class='alert alert-danger'>Email does not exist, register first</div>";
-                        }
+                    if (isset($_SESSION['status']))
+                    {
+                        ?>
+                        <div class = "alert alert-success">
+                            <h5><?= $_SESSION['status']; ?></h5>
+                        </div>
+                        <?php
+                        unset($_SESSION['status']);
                     }
-                ?>
+                        if (isset($_POST["Login"])) {
+                            $email = $_POST["email"];
+                            $password = $_POST["password"];
+        
+                            require_once "database.php";
+        
+                            // Query to check if the user exists and retrieve details
+                            $sql = "SELECT * FROM customer_tbl WHERE email = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("s", $email);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $user = $result->fetch_assoc();
+        
+                            if ($user) {
+                                if ($user['verify_status'] == "1") { // If email is verified
+                                    if (password_verify($password, $user["password"])) {
+                                        $_SESSION["user"] = "customer";
+                                        $_SESSION["customerID"] = $user["customerID"];
+                                        $_SESSION['auth_user'] = [
+                                            'firstName' => $user['firstName'],
+                                            'lastName' => $user['lastName'],
+                                            'email' => $user['email'],
+                                        ];
+                                        $_SESSION['status'] = "You are logged in successfully.";
+                                        header("Location: index.php");
+                                        exit();
+                                    } else {
+                                        echo "<div class='alert alert-danger'>Invalid credentials.</div>";
+                                    }
+                                } else {
+                                    echo "<div class='alert alert-warning'>Email not verified. Please check your email to verify your account.</div>";
+                                }
+                            } else {
+                                echo "<div class='alert alert-danger'>Email does not exist. Please register.</div>";
+                            }
+                        }
+                        ?>
 
                 <h2 class="login-header">Login</h2>
                 <form action="login.php" method="post">

@@ -27,7 +27,45 @@
                     </a>
                 </div>
 
-                <?php 
+                <?php   
+                    use PHPMailer\PHPMailer\PHPMailer;
+                    use PHPMailer\PHPMailer\SMTP;
+                    use PHPMailer\PHPMailer\Exception;
+                    
+                    //Load Composer's autoloader
+                    require 'vendor/autoload.php';
+
+                    function sendemail_verify($FirstName, $LastName, $email, $verify_token) {
+                        $mail = new PHPMailer(true);
+                    
+                        try {
+                            //$mail->SMTPDebug = SMTP::DEBUG_SERVER; // Enable for debugging
+                            $mail->isSMTP();
+                            $mail->Host = 'smtp.gmail.com';
+                            $mail->SMTPAuth = true;
+                            $mail->Username = 'yvescolinnaig@gmail.com'; // Your Gmail address
+                            $mail->Password = 'dkxm tibr xthx zmta';       // Your Gmail App Password
+                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                            $mail->Port = 587;
+                    
+                            $mail->setFrom('yvescolinnaig@gmail.com', "$FirstName $LastName");
+                            $mail->addAddress($email);
+                    
+                            $mail->isHTML(true);
+                            $mail->Subject = 'Email Verification from JOF';
+                            $mail->Body = "
+                                <h2>You have registered your email</h2>
+                                <h5>Verify your email address to login with the given link</h5>
+                                <br/><br/>
+                                <a href='http://localhost/JOF/verify_email.php?token=$verify_token'>Click Me</a>
+                            ";
+                    
+                            $mail->send();
+                        } catch (Exception $e) {
+                            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                        }
+                    }
+
                     // validate the submit button
                     if (isset($_POST["Register"])){
                         $FirstName = $_POST["FirstName"];
@@ -38,6 +76,7 @@
                         $contactNum = $_POST["contactNum"];
                         $password = $_POST["password"];
                         $RepeatPassword = $_POST["repeat_password"];
+                        $verify_token = md5(rand());
                         
                         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
@@ -79,16 +118,18 @@
                             }
                         } else {
                             require_once "database.php";
-                            $sql = "INSERT INTO customer_tbl (firstName, middleName, lastName, dateOfBirth, email, contactNum, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                            $sql = "INSERT INTO customer_tbl (firstName, middleName, lastName, dateOfBirth, email, contactNum, password, verify_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                             
                             // initializes a statement and returns an object suitable for mysqli_stmt_prepare()
                             $stmt = mysqli_stmt_init($conn); 
                             $preparestmt = mysqli_stmt_prepare($stmt, $sql);
                             
                             if ($preparestmt) {
-                                mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $dateOfBirth, $email, $contactNum, $passwordHash);
+                                sendemail_verify("$FirstName", "$LastName", "$email", "$verify_token");
+
+                                mysqli_stmt_bind_param($stmt, "ssssssss", $FirstName, $MiddleName, $LastName, $dateOfBirth, $email, $contactNum, $passwordHash, $verify_token);
                                 mysqli_stmt_execute($stmt);
-                                echo "<div class = 'alert alert-success'> You are registered succesfully! </div>";
+                                echo "<div class = 'alert alert-success'> You are registered succesfully! Please check your email for verification</div>";
                             } else {
                                 die("Something went wrong!");
                             }

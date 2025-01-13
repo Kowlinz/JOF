@@ -63,16 +63,23 @@
                     }
                 ?>
 
-                <h2 class="login-header">Password Reset</h2>
+                <h2 class="login-header">Change Password</h2>
                 <form action="forgot-password-code.php" method="post">
+                    <input type = "hidden" name = "password_token" value="<?php if(isset($_GET['token'])) {echo $_GET['token'];} ?>">
                     <div class="form-group">
-                        <input type="email" name="email" class="form-control" placeholder="Email" required>
+                        <label>Email Address:</label>
+                        <input type="email" name="email" value="<?php if(isset($_GET['email'])) {echo $_GET['email'];} ?>" class="form-control" placeholder="Enter Email Address" required>
                     </div>
-                    <div class="forgot-password">
-                        <a href="login.php">Back to Login</a>
-                    </div>
+                    <div class="form-group">
+                        <label>New Password:</label>
+                        <input type="password" name="new_password" class="form-control"  placeholder="Enter New Password" required> 
+                    </div> 
+                    <div class="form-group">
+                        <label>Confirm Password:</label>
+                        <input type="password" name="confirm_password" class="form-control" placeholder="Repeat New Password" required>
+                    </div> 
                     <div class="form-btn">
-                        <button type="submit" name="password_reset_link" class="btn btn-primary">Send Password Reset Link</button>
+                        <button type="submit" name="password_update" class="btn btn-primary">Update Password</button>
                     </div>
                 </form>
             </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 06, 2025 at 06:36 AM
+-- Generation Time: Jan 13, 2025 at 09:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,7 +39,7 @@ CREATE TABLE `addon_tbl` (
 --
 
 INSERT INTO `addon_tbl` (`addonID`, `addonName`, `addonPrice`, `addonDesc`) VALUES
-(1, 'Art Lining', '75', 'Ling');
+(1, 'Art Lining', '75', 'Add extra effect on your haircut');
 
 -- --------------------------------------------------------
 
@@ -91,17 +91,7 @@ CREATE TABLE `appointment_tbl` (
 --
 
 INSERT INTO `appointment_tbl` (`appointmentID`, `customerID`, `adminID`, `addonID`, `hcID`, `serviceID`, `status`, `date`, `timeSlot`, `remarks`, `reason`) VALUES
-(32, 8, NULL, 1, 8, 1, 'Completed', '2024-12-10', '2024-12-14 08:00:00', 'I prefer Adonis Canada Emit Naig as my barber', NULL),
-(34, 8, NULL, NULL, 7, 3, 'Completed', '2024-12-10', '2024-12-14 02:30:00', 'ADASDASDAS', NULL),
-(56, NULL, 1, NULL, NULL, 1, 'Completed', '2024-12-14', '2:30 PM', '', NULL),
-(58, NULL, 1, NULL, NULL, 2, 'Completed', '2024-12-14', '8:30 AM', '', NULL),
-(59, NULL, 1, NULL, NULL, 3, 'Completed', '2024-12-14', '4:30 PM', '', NULL),
-(60, NULL, 1, NULL, NULL, 3, 'Completed', '2024-12-14', '3:00 PM', '', NULL),
-(61, NULL, 1, NULL, NULL, 1, 'Pending', '2024-12-14', '5:00 PM', '', NULL),
-(62, NULL, 1, NULL, NULL, 2, 'Pending', '2024-12-14', '5:30 PM', '', NULL),
-(63, 3, NULL, 1, NULL, 3, 'Completed', '2024-12-15', '3:00 PM', '', NULL),
-(64, 3, NULL, 1, 1, 1, 'Pending', '2024-12-22', '1:00 PM', '', NULL),
-(65, 3, NULL, 1, 1, 1, 'Cancelled', '2024-12-21', '5:30 PM', '', '');
+(76, 11, NULL, 1, 6, 2, 'Completed', '2025-01-14', '8:00 AM', '', NULL);
 
 -- --------------------------------------------------------
 
@@ -127,8 +117,8 @@ CREATE TABLE `barbers_tbl` (
 --
 
 INSERT INTO `barbers_tbl` (`barberID`, `barbappsID`, `firstName`, `middleName`, `lastName`, `dateOfBirth`, `email`, `contactNum`, `password`, `availability`) VALUES
-(1, 0, 'Spade', 'fo', 'Jack', '2003-09-29', 'barber@jackoffades.com', '908390834', '$2y$10$5YlMe.LB.58FQFsIhxxmxeBVewgO4XaqLJCvp2vtJ/YFMlnaQuq3u', 'Unavailable'),
-(2, 0, 'Jho', 'Jhovan', 'Jhocelyn', '1995-12-01', 'jho@gmail.com', NULL, 'jhoyeh', 'Unavailable');
+(1, 0, 'Spade', 'fo', 'Jack', '2003-09-29', 'barber@jackoffades.com', '908390834', '$2y$10$5YlMe.LB.58FQFsIhxxmxeBVewgO4XaqLJCvp2vtJ/YFMlnaQuq3u', 'Available'),
+(2, NULL, 'Heart', 'of', 'Jack', '1998-07-15', 'barber1@jackoffades.com', '09123456789', '$2y$10$/YBM1xs7sU99nyKW7otZpebBeNp7UH7VwmeOfYWbAxEU9xmBVnoAe', 'Unavailable');
 
 -- --------------------------------------------------------
 
@@ -148,14 +138,7 @@ CREATE TABLE `barb_apps_tbl` (
 --
 
 INSERT INTO `barb_apps_tbl` (`barbappsID`, `appointmentID`, `adminID`, `barberID`) VALUES
-(2, 32, NULL, 1),
-(3, 34, NULL, 1),
-(4, 58, NULL, 1),
-(5, 59, NULL, 1),
-(6, 60, NULL, 1),
-(7, 61, NULL, 1),
-(8, 62, NULL, 1),
-(9, 63, NULL, 1);
+(16, 76, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -166,25 +149,24 @@ INSERT INTO `barb_apps_tbl` (`barbappsID`, `appointmentID`, `adminID`, `barberID
 CREATE TABLE `customer_tbl` (
   `customerID` int(11) NOT NULL,
   `firstName` varchar(255) DEFAULT NULL,
-  `middleName` varchar(255) DEFAULT NULL,
+  `middleName` varchar(255) NOT NULL,
   `lastName` varchar(255) DEFAULT NULL,
   `dateOfBirth` date DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `contactNum` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL
+  `password` varchar(255) DEFAULT NULL,
+  `verify_token` varchar(255) NOT NULL,
+  `verify_status` tinyint(2) NOT NULL DEFAULT 0 COMMENT '0=no, 1=yes'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customer_tbl`
 --
 
-INSERT INTO `customer_tbl` (`customerID`, `firstName`, `middleName`, `lastName`, `dateOfBirth`, `email`, `contactNum`, `password`) VALUES
-(3, 'Yves Colin', 'Emit', 'Naig ', '2024-02-13', 'emit@gmail.com', '2147483647', '$2y$10$rbswGHmIbizLPEUzDVlH0uD3PTEXBe2AkpViPRRZ/79lOXKOos1Lu'),
-(4, 'Hakdog', 'Palaman', 'Cheesedog', '2024-08-16', 'tinapay@yahoo.com', '2147483647', '$2y$10$k2PP6RyJhiOAEnkZ6tr9K.wt0jEZEVH9s1Ppm0QGFxFmIaFEs6Rii'),
-(5, 'What', 'The', 'Hil', '2001-02-12', 'yves@gmail.com', '2147483647', '$2y$10$.xGAaCOtrUgeAGfRM8x00O280EqDjBiC6m3kHe9UUZp.xLCwxHXJy'),
-(6, 'kirboink', 'gulapa', 'urada', '2006-09-05', 'asd@hasd.com', '09123456789', '$2y$10$j7VZVARkRse0/VFsmJUpwOH/pBkukE5M6xVmTWcZiwqE3ZIqgD/CK'),
-(7, 'prisis', 'ibun', 'siranu', '2004-02-16', 'prns@gmail.com', '0198722332', '$2y$10$YDcIPGuHIn.GS5QB7HjbDuknQvshi/HRjjTBrA30Ywd9qPv8myevq'),
-(8, 'Golem', 'Vs', 'Tyga', '2007-02-13', 'golem@gmail.com', '09738454390', '$2y$10$2ZHnGLDIWGWzbN882MSZN.BILQwr677GApQFpK.vnqcOlP5L1Lw7G');
+INSERT INTO `customer_tbl` (`customerID`, `firstName`, `middleName`, `lastName`, `dateOfBirth`, `email`, `contactNum`, `password`, `verify_token`, `verify_status`) VALUES
+(11, 'Yves Colin', 'Emit', 'Naig', '2004-02-13', 'emit@gmail.com', '09123456789', '$2y$10$L.gjsgdBcqviztimUfFRFOmXEl6ZXGYNU3QS7eALzcmXd9rBmppGe', '', 0),
+(12, 'Tigerl', '', 'Urada', '2004-12-02', 'yvescolinnaig@gmail.com', '09123456578', '$2y$10$pnZik/q/XSKp/KrqPCL6o.7d3h/1uiBd7uKRNN/sjsy7nrdyv..Vm', '', 1),
+(13, 'Tigerl', '', 'Urada', '2004-12-02', 'colinnaig@gmail.com', '09123456578', '$2y$10$3WqjBvbeSrnR8nPEQApxee4luw5SPL.NAHAWnUG08x/4EaEgRGzva', '5b14cf7b7e735736a9f796ec2218ead9', 1);
 
 -- --------------------------------------------------------
 
@@ -206,7 +188,7 @@ CREATE TABLE `earnings_tbl` (
 --
 
 INSERT INTO `earnings_tbl` (`earningsID`, `adminID`, `appointmentID`, `barberID`, `adminEarnings`, `barberEarnings`) VALUES
-(1, 1, 63, 1, 339.5, 339.5);
+(7, 1, 76, 1, 159.5, 159.5);
 
 -- --------------------------------------------------------
 
@@ -258,9 +240,10 @@ CREATE TABLE `service_tbl` (
 --
 
 INSERT INTO `service_tbl` (`serviceID`, `serviceName`, `servicePrice`, `serviceDesc`) VALUES
-(1, 'Jack\'s Haircut', '219', 'Haircut Only no special moves'),
-(2, 'Jack\'s Signature', '319 ', 'With pomade at malupit na facial'),
-(3, 'Jack\'s Facial ', '679', 'Facial wash boss');
+(1, 'Jack\'s Haircut', '219', 'Haircut Only'),
+(2, 'Jack\'s Signature', '319 ', 'With pomade and styling'),
+(3, 'Jack\'s Facial ', '679', 'Haircut, styling, and facial wash'),
+(4, 'Jack\'s Rebond', '900', 'Achieve silk, sleeky, straight hair');
 
 --
 -- Indexes for dumped tables
@@ -351,31 +334,31 @@ ALTER TABLE `admin_tbl`
 -- AUTO_INCREMENT for table `appointment_tbl`
 --
 ALTER TABLE `appointment_tbl`
-  MODIFY `appointmentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `appointmentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `barbers_tbl`
 --
 ALTER TABLE `barbers_tbl`
-  MODIFY `barberID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `barberID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `barb_apps_tbl`
 --
 ALTER TABLE `barb_apps_tbl`
-  MODIFY `barbappsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `barbappsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `customer_tbl`
 --
 ALTER TABLE `customer_tbl`
-  MODIFY `customerID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `customerID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `earnings_tbl`
 --
 ALTER TABLE `earnings_tbl`
-  MODIFY `earningsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `earningsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `haircut_tbl`
@@ -387,7 +370,7 @@ ALTER TABLE `haircut_tbl`
 -- AUTO_INCREMENT for table `service_tbl`
 --
 ALTER TABLE `service_tbl`
-  MODIFY `serviceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `serviceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

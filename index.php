@@ -22,6 +22,9 @@ if ($customerID) {
     $stmt->close();
     $conn->close();
 }
+
+// Include the landing text file
+include 'admin/landing_text.php';
 ?>
 
 <!DOCTYPE html>
@@ -34,6 +37,13 @@ if ($customerID) {
 	<link rel="icon" href="css/images/favicon.ico">
 	<link rel="stylesheet" href="css/style1.css">
 	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<style>
+		@media screen and (max-width: 1321px) {
+			.homepage-logo {
+				display: none;
+			}
+		}
+	</style>
   </head>
    
 <body>
@@ -124,18 +134,22 @@ if ($customerID) {
 		</div>
 
 		<div class="content">
-			<h4 class="mb-4">Welcome to Jack of Fades Barbershop!</h4>
-			<h1 class="mb-4">Affordable Price for <br> a high quality haircut</h1>
-			<h4 class="mb-5">Jack of Fades Barbershop <br> offers high quality customized haircuts.</h4>
-			<button class="mt-3" onclick="document.location='<?php echo $customerID ? 'customer/booking.php' : 'login.php'; ?>'" type="button">Book Now</button>
-			
-			<div class="Follow mt-5">
-				<a href="https://www.facebook.com/jackoffades1?mibextid=ZbWKwL" target="_blank"><i class='bx bxl-facebook-circle'></i></a>
-				<a href="https://www.instagram.com/jack_fades?igsh=cTl3MWF2dmZ1ZThm" target="_blank"><i class='bx bxl-instagram'></i></a>
-				<a href="https://www.tiktok.com/@jackoffades_barbershop?_t=8rkR3rPGF4T&_r=1" target="_blank"><i class='bx bxl-tiktok'></i></a>
-			</div>
-			<div class="barber-image-fixed">
-				<img src="css/images/barber-homepage.png" alt="Barber">
+			<div style="display: flex; justify-content: space-between; align-items: center;">
+				<div>
+					<h4 class="mb-4"><?php echo htmlspecialchars($welcomeText); ?></h4>
+					<h1 class="mb-4"><?php echo htmlspecialchars($headingText); ?></h1>
+					<h4 class="mb-5"><?php echo htmlspecialchars($subheadingText); ?></h4>
+					<button class="mt-3" onclick="document.location='<?php echo $customerID ? 'customer/booking.php' : 'login.php'; ?>'" type="button">Book Now</button>
+					
+					<div class="Follow mt-5">
+						<a href="https://www.facebook.com/jackoffades1?mibextid=ZbWKwL" target="_blank"><i class='bx bxl-facebook-circle'></i></a>
+						<a href="https://www.instagram.com/jack_fades?igsh=cTl3MWF2dmZ1ZThm" target="_blank"><i class='bx bxl-instagram'></i></a>
+						<a href="https://www.tiktok.com/@jackoffades_barbershop?_t=8rkR3rPGF4T&_r=1" target="_blank"><i class='bx bxl-tiktok'></i></a>
+					</div>
+				</div>
+				<div class="barber-image-fixed" style="margin-right: 300px; margin-top: -100px;">
+					<img src="css/images/JOF-Logo.png" alt="Jack of Fades Logo" style="width: 400px; height: auto;" class="homepage-logo">
+				</div>
 			</div>
 		</div>
 	</div>

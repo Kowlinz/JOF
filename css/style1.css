@@ -1493,3 +1493,10 @@ footer {
         margin-top: 60px !important;
     }
 }
+
+/* Add this with the other media queries */
+@media screen and (max-width: 1321px) {
+    .homepage-logo {
+        display: none;
+    }
+}

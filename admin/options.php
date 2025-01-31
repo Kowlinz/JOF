@@ -805,6 +805,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                         Confirm
                     </button>
                 </div>
+
+                <!-- Add this after the Add-ons section -->
+
+                <h1 class="dashboard mb-3">Edit Landing Page Text</h1>
+                <div class="services-container mb-4">
+                    <div class="card border-0 rounded-4">
+                        <div class="card-body">
+                            <!-- Welcome Message -->
+                            <div class="mb-4">
+                                <h5>Welcome Message</h5>
+                                <div class="d-flex align-items-center">
+                                    <span id="welcomeText" class="me-3">
+                                        <?php include 'landing_text.php'; echo htmlspecialchars($welcomeText); ?>
+                                    </span>
+                                    <button class="btn btn-warning btn-sm" onclick="editText('welcome')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Main Heading -->
+                            <div class="mb-4">
+                                <h5>Main Heading</h5>
+                                <div class="d-flex align-items-center">
+                                    <span id="headingText" class="me-3">
+                                        <?php echo htmlspecialchars($headingText); ?>
+                                    </span>
+                                    <button class="btn btn-warning btn-sm" onclick="editText('heading')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Subheading -->
+                            <div class="mb-4">
+                                <h5>Subheading</h5>
+                                <div class="d-flex align-items-center">
+                                    <span id="subheadingText" class="me-3">
+                                        <?php echo htmlspecialchars($subheadingText); ?>
+                                    </span>
+                                    <button class="btn btn-warning btn-sm" onclick="editText('subheading')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Text Modal -->
+                <div class="modal fade" id="editTextModal" tabindex="-1" aria-labelledby="editTextModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editTextModalLabel">Edit Text</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editTextForm">
+                                    <input type="hidden" id="textType" name="textType">
+                                    <div class="mb-3">
+                                        <label for="newText" class="form-label">New Text</label>
+                                        <input type="text" class="form-control" id="newText" name="newText" required>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-warning">Update Text</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1396,6 +1468,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             </div>
         </div>
     </nav>
+
+    <script>
+    // Add this to your existing JavaScript
+    function editText(type) {
+        const modal = new bootstrap.Modal(document.getElementById('editTextModal'));
+        const form = document.getElementById('editTextForm');
+        const textInput = document.getElementById('newText');
+        const textType = document.getElementById('textType');
+        
+        // Set current text as default value
+        textInput.value = document.getElementById(type + 'Text').innerText.trim();
+        textType.value = type;
+        
+        modal.show();
+    }
+
+    document.getElementById('editTextForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('action', 'update_text');
+        formData.append('type', document.getElementById('textType').value);
+        formData.append('text', document.getElementById('newText').value);
+        
+        fetch('update_landing_text.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the text on the page
+                document.getElementById(document.getElementById('textType').value + 'Text').innerText = document.getElementById('newText').value;
+                
+                // Close the modal
+                bootstrap.Modal.getInstance(document.getElementById('editTextModal')).hide();
+                
+                // Show success message
+                alert('Text updated successfully!');
+            } else {
+                alert('Error updating text: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the text.');
+        });
+    });
+    </script>
 
 </body>
 </html>

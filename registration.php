@@ -48,7 +48,7 @@
                             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                             $mail->Port = 587;
                     
-                            $mail->setFrom('jackoffadeswebsite@gmail.com', "$FirstName $LastName");
+                            $mail->setFrom('jackoffadeswebsite@gmail.com');
                             $mail->addAddress($email);
                     
                             $mail->isHTML(true);

@@ -269,6 +269,24 @@ $addonsResult = $conn->query($addonsQuery);
                     </div>
                 </div>
 
+                <!-- Error Modal -->
+                <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Please fill in all required fields (Date, Time Slot, and Service).</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <script>
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function(event) {
@@ -299,7 +317,9 @@ $addonsResult = $conn->query($addonsQuery);
 
                         // Validate required fields
                         if (!date || !timeSlot || !document.getElementById('service').value) {
-                            alert('Please fill in all required fields (Date, Time Slot, and Service)');
+                            // Show error modal instead of alert
+                            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                            errorModal.show();
                             return;
                         }
 

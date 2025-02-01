@@ -497,11 +497,10 @@ $addonsResult = $conn->query($addonsQuery);
                     <div class="time-slots-grid">
                         <?php 
                         $timeSlots = [
-                            '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM',
-                            '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-                            '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM',
-                            '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM',
-                            '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM'
+                            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
+                            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
+                            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
+                            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
                         ];
                         foreach ($timeSlots as $time): 
                         ?>

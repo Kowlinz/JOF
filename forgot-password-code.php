@@ -17,12 +17,12 @@ function send_password_reset($get_firstName, $get_lastName, $get_email, $token) 
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'yvescolinnaig@gmail.com'; // Your Gmail address
-        $mail->Password = 'dkxm tibr xthx zmta';       // Your Gmail App Password
+        $mail->Username = 'jackoffadeswebsite@gmail.com'; // Your Gmail address
+        $mail->Password = 'edol rcjc oakv imen';       // Your Gmail App Password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('yvescolinnaig@gmail.com', "$get_firstName $get_lastName");
+        $mail->setFrom('jackoffadeswebsite@gmail.com', "$get_firstName $get_lastName");
         $mail->addAddress($get_email);
 
         $mail->isHTML(true);

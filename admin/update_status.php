@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     if ($servicePrice && $barberID) {
                         // Split earnings into half
-                        $adminEarnings = $servicePrice / 2;
-                        $barberEarnings = $servicePrice / 2;
+                        $adminEarnings = $servicePrice * 0.6;
+                        $barberEarnings = $servicePrice * 0.4;
 
                         // Fetch the adminID from session
                         $adminID = 1;

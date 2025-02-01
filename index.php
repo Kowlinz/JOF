@@ -147,8 +147,8 @@ include 'admin/landing_text.php';
 						<a href="https://www.tiktok.com/@jackoffades_barbershop?_t=8rkR3rPGF4T&_r=1" target="_blank"><i class='bx bxl-tiktok'></i></a>
 					</div>
 				</div>
-				<div class="barber-image-fixed" style="margin-right: 300px; margin-top: -100px;">
-					<img src="css/images/JOF-Logo.png" alt="Jack of Fades Logo" style="width: 400px; height: auto;" class="homepage-logo">
+				<div class="barber-image-fixed" style="margin-right: 400px; margin-top: -80px;">
+					<img src="css/images/JOF-Logo.png" alt="Jack of Fades Logo" style="width: 320px; height: auto;" class="homepage-logo">
 				</div>
 			</div>
 		</div>

@@ -330,11 +330,13 @@
         $status = $_GET['status'];
         $message = $_GET['message'];
 
-        // JavaScript alert for success or error messages
+        // Display a JavaScript alert with the message
         echo "
         <script>
             window.onload = function() {
-                alert('$message'); // Show the message in the alert box
+                const modal = new bootstrap.Modal(document.getElementById('statusModal'));
+                document.getElementById('statusMessage').innerText = '$message';
+                modal.show();
             }
         </script>";
     }
@@ -359,7 +361,9 @@
             echo "
             <script>
                 window.onload = function() {
-                    alert('$message'); // Display the alert with the message
+                    const modal = new bootstrap.Modal(document.getElementById('statusModal'));
+                    document.getElementById('statusMessage').innerText = '$message';
+                    modal.show();
                 }
             </script>";
         }
@@ -572,5 +576,23 @@
         }
     });
 </script>
+
+<!-- Status Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusModalLabel">Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="statusMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

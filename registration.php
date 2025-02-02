@@ -20,7 +20,7 @@
     <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
         <div class="container">
             <div class="login-container fade-in">
-                <!-- Add back button -->
+
                 <div class="d-flex justify-content-start mb-4">
                     <a href="index.php" class="btn btn-warning text-dark fw-bold">
                         <i class="bi bi-arrow-left"></i> Back
@@ -43,7 +43,7 @@
                             $mail->isSMTP();
                             $mail->Host = 'smtp.gmail.com';
                             $mail->SMTPAuth = true;
-                            $mail->Username = 'jackoffadeswebsite@gmail.com'; // Your Gmail address
+                            $mail->Username = 'jackoffadeswebsite@gmail.com'; // Your Gmail Address
                             $mail->Password = 'edol rcjc oakv imen';       // Your Gmail App Password
                             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                             $mail->Port = 587;
@@ -71,7 +71,6 @@
                         $FirstName = $_POST["FirstName"];
                         $MiddleName = $_POST["MiddleName"];
                         $LastName = $_POST["LastName"];
-                        $dateOfBirth = $_POST["dateOfBirth"];
                         $email = $_POST["Email"];
                         $contactNum = $_POST["contactNum"];
                         $password = $_POST["password"];
@@ -82,7 +81,7 @@
 
                         $errors = array();
                         // validate if all fields are empty
-                        if (empty ($FirstName) OR empty ($LastName) OR empty ($dateOfBirth) OR empty ($email) OR empty ($password) OR empty ($RepeatPassword)) {
+                        if (empty ($FirstName) OR empty ($LastName) OR empty ($email) OR empty ($password) OR empty ($RepeatPassword)) {
                             array_push($errors, "All fields are required except Middle Name"); 
                         }
                         // validate if the email is not validated 
@@ -94,7 +93,7 @@
                             array_push($errors, "Password must be at least 8 characters long");
                         }
                         // check if password is the same 
-                        if(!$password = $RepeatPassword){
+                        if($password !== $RepeatPassword){
                             array_push($errors, "Password does not match");
                         }
                         // validate contact number length and numeric value
@@ -118,7 +117,7 @@
                             }
                         } else {
                             require_once "database.php";
-                            $sql = "INSERT INTO customer_tbl (firstName, middleName, lastName, dateOfBirth, email, contactNum, password, verify_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                            $sql = "INSERT INTO customer_tbl (firstName, middleName, lastName, email, contactNum, password, verify_token) VALUES (?, ?, ?, ?, ?, ?, ?)";
                             
                             // initializes a statement and returns an object suitable for mysqli_stmt_prepare()
                             $stmt = mysqli_stmt_init($conn); 
@@ -127,9 +126,15 @@
                             if ($preparestmt) {
                                 sendemail_verify("$FirstName", "$LastName", "$email", "$verify_token");
 
-                                mysqli_stmt_bind_param($stmt, "ssssssss", $FirstName, $MiddleName, $LastName, $dateOfBirth, $email, $contactNum, $passwordHash, $verify_token);
+                                mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash, $verify_token);
                                 mysqli_stmt_execute($stmt);
-                                echo "<div class = 'alert alert-success'> You are registered succesfully! Please check your email for verification</div>";
+                                    // Store success message in session
+                                    $_SESSION['status'] = "You are registered successfully! Please check your email for verification.";
+                                    $_SESSION['status_type'] = "success"; // Set alert type to success
+
+                                    // Redirect to login page
+                                    header("location: login.php");
+                                    exit(0);
                             } else {
                                 die("Something went wrong!");
                             }
@@ -152,10 +157,6 @@
                         </div> 
 
                         <div class="form-group">
-                            <input type="date" class="form-control" name="dateOfBirth" placeholder="Date of Birth" required>
-                        </div> 
-
-                        <div class="form-group">
                             <input type="email" class="form-control" name="Email" placeholder="Email" required>
                         </div>
 
@@ -164,11 +165,11 @@
                         </div> 
 
                         <div class="form-group">
-                            <input type="password" class="form-control" name="password" placeholder="Password" required> 
+                            <input type="password" class="form-control" name="password" placeholder="Password" required maxlength="20" oninput="limitPasswordLength(this)">
                         </div> 
 
                         <div class="form-group">
-                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password" required>
+                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password" required maxlength="20" oninput="limitPasswordLength(this)">
                         </div> 
 
                         <div class="form-btn">

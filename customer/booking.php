@@ -521,58 +521,59 @@ $addonsResult = $conn->query($addonsQuery);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="time-slots-grid">
-                    <?php 
-                    // Database connection
-                    $conn = new mysqli("localhost", "root", "", "jof_db");
+    <div class="time-slots-grid">
+        <?php 
+        // Database connection
+        $conn = new mysqli("localhost", "root", "", "jof_db");
 
-                    if ($conn->connect_error) {
-                        die("Connection failed: " . $conn->connect_error);
-                    }
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
 
-                    // Define time slots
-                    $timeSlots = [
-                        '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
-                        '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
-                        '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
-                        '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
-                    ];
+        // Define time slots
+        $timeSlots = [
+            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
+            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
+            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
+            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
+        ];
 
-                    // Get the count of available barbers
-                    $barbersQuery = "SELECT COUNT(*) AS total_barbers FROM barbers_tbl WHERE availability = 'available'";
-                    $barbersResult = $conn->query($barbersQuery);
-                    $barbersRow = $barbersResult->fetch_assoc();
-                    $totalBarbers = $barbersRow['total_barbers'];
+        // Get the count of available barbers
+        $barbersQuery = "SELECT COUNT(*) AS total_barbers FROM barbers_tbl WHERE availability = 'available'";
+        $barbersResult = $conn->query($barbersQuery);
+        $barbersRow = $barbersResult->fetch_assoc();
+        $totalBarbers = $barbersRow['total_barbers'];
 
-                    // Get the current time
-                    date_default_timezone_set('Asia/Manila'); // Set to your timezone
-                    $currentTime = date("H:i");
+        // Get the current time
+        date_default_timezone_set('Asia/Manila'); // Set to your timezone
+        $currentTime = date("H:i");
 
-                    foreach ($timeSlots as $time): 
-                        // Convert the slot time to 24-hour format
-                        $slotTime = date("H:i", strtotime($time));
+        foreach ($timeSlots as $time): 
+            // Convert the slot time to 24-hour format
+            $slotTime = date("H:i", strtotime($time));
 
-                        // Count how many barbers are already booked at this time
-                        $appointmentQuery = "SELECT COUNT(*) AS booked FROM appointment_tbl WHERE timeSlot = '$time'";
-                        $appointmentResult = $conn->query($appointmentQuery);
-                        $appointmentRow = $appointmentResult->fetch_assoc();
-                        $bookedBarbers = $appointmentRow['booked'];
+            // Count how many barbers are already booked at this time excluding cancelled ones
+            $appointmentQuery = "SELECT COUNT(*) AS booked FROM appointment_tbl WHERE timeSlot = '$time' AND status != 'Cancelled'";
+            $appointmentResult = $conn->query($appointmentQuery);
+            $appointmentRow = $appointmentResult->fetch_assoc();
+            $bookedBarbers = $appointmentRow['booked'];
 
-                        // Calculate remaining slots for this time
-                        $remainingSlots = $totalBarbers - $bookedBarbers;
-                        $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime); // Ensure time slot is in the future
-                    ?>
-                        <button class="time-slot-btn <?= $isAvailable ? 'available' : 'unavailable' ?>"
-                                role="button"
-                                data-time="<?= $time ?>"
-                                <?= $isAvailable ? "onclick=\"selectTimeSlot('$time')\"" : "disabled"; ?>>
-                            <?= $time ?>
-                        </button>
-                    <?php endforeach; ?>
+            // Calculate remaining slots for this time, including cancelled ones
+            $remainingSlots = $totalBarbers - $bookedBarbers;
+            $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime); // Ensure time slot is in the future
+        ?>
+            <button class="time-slot-btn <?= $isAvailable ? 'available' : 'unavailable' ?>"
+                    role="button"
+                    data-time="<?= $time ?>"
+                    <?= $isAvailable ? "onclick=\"selectTimeSlot('$time')\"" : "disabled"; ?>>
+                <?= $time ?>
+            </button>
+        <?php endforeach; ?>
 
-                    <?php $conn->close(); ?>
-                </div>
-            </div>
+        <?php $conn->close(); ?>
+    </div>
+</div>
+
         </div>
     </div>
 </div>

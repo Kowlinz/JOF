@@ -232,15 +232,15 @@ $pendingCount = mysqli_fetch_assoc($pendingResult)['pending_count'];
 $completedCount = mysqli_fetch_assoc($completedResult)['completed_count'];
 $cancelledCount = mysqli_fetch_assoc($cancelledResult)['cancelled_count'];
 
-// Today's Revenue
-$revenueQuery = "
-    SELECT SUM(s.servicePrice) AS total_revenue
-    FROM appointment_tbl a
-    JOIN service_tbl s ON a.serviceID = s.serviceID
+// Today's Admin Earnings
+$earningsQuery = "
+    SELECT SUM(e.adminEarnings) AS total_earnings
+    FROM earnings_tbl e
+    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
     WHERE DATE(a.date) = CURDATE() AND a.status = 'Completed'
 ";
-$revenueResult = mysqli_query($conn, $revenueQuery);
-$totalRevenue = mysqli_fetch_assoc($revenueResult)['total_revenue'] ?? "0.00";
+$earningsResult = mysqli_query($conn, $earningsQuery);
+$totalRevenue = mysqli_fetch_assoc($earningsResult)['total_earnings'] ?? "0.00";
 
 // Pending Customers
 $upcomingQuery = "

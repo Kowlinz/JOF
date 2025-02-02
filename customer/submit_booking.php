@@ -1,31 +1,36 @@
 <?php
 session_start();
+include 'db_connect.php';
 
-// Check if the user is logged in as a customer
+// Ensure the user is logged in as a customer
 if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "customer") {
     header("Location: ../login.php");
     exit();
 }
 
-// Include the database connection file
-include 'db_connect.php';
-
 // Get the logged-in customer's ID from the session
 $customerID = $_SESSION["customerID"];
 
-// Verify if the customer exists (optional check)
-$sql_customer = "SELECT customerID FROM customer_tbl WHERE customerID = '$customerID'";
-$result_customer = $conn->query($sql_customer);
+// Verify if the customer exists
+$sql_customer = "SELECT customerID FROM customer_tbl WHERE customerID = ?";
+$stmt_customer = $conn->prepare($sql_customer);
+$stmt_customer->bind_param("i", $customerID);
+$stmt_customer->execute();
+$result_customer = $stmt_customer->get_result();
 
-// Check if form is submitted via POST method
+if ($result_customer->num_rows === 0) {
+    echo "<script>alert('Error: Invalid customer.'); window.location.href = '../login.php';</script>";
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Retrieve form data
-    $date = isset($_POST['date']) ? $_POST['date'] : null;
-    $timeSlot = isset($_POST['timeSlot']) ? $_POST['timeSlot'] : null;
-    $serviceID = isset($_POST['service']) ? $_POST['service'] : null;
-    $addonID = isset($_POST['addon']) && !empty($_POST['addon']) ? $_POST['addon'] : null;
-    $hcID = isset($_POST['haircut']) && !empty($_POST['haircut']) ? $_POST['haircut'] : null;
-    $remarks = isset($_POST['remarks']) ? $_POST['remarks'] : null;
+    $date = $_POST['date'] ?? null;
+    $timeSlot = $_POST['timeSlot'] ?? null;
+    $serviceID = $_POST['service'] ?? null;
+    $addonID = !empty($_POST['addon']) ? $_POST['addon'] : null;
+    $hcID = !empty($_POST['haircut']) ? $_POST['haircut'] : null;
+    $remarks = $_POST['remarks'] ?? null;
 
     // Validate required fields (Date, Time, Service)
     if (!$date || !$timeSlot || !$serviceID) {
@@ -33,30 +38,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Check if the selected time slot for the selected date is already booked and not canceled
-    $sql_check = "SELECT * FROM appointment_tbl WHERE date = '$date' AND timeSlot = '$timeSlot' AND status != 'Cancelled'";
-    $result_check = $conn->query($sql_check);
+    // Count available barbers
+    $sql_barbers = "SELECT COUNT(*) AS totalBarbers FROM barbers_tbl WHERE availability = 'available'";
+    $result_barbers = $conn->query($sql_barbers);
+    $row_barbers = $result_barbers->fetch_assoc();
+    $totalBarbers = $row_barbers['totalBarbers'] ?? 0;
 
-    if ($result_check->num_rows > 0) {
-        echo "<script>alert('Error: This time slot is already booked.'); window.history.back();</script>";
+    // Count booked appointments for the selected date and time
+    $sql_check = "SELECT COUNT(*) AS bookedSlots FROM appointment_tbl WHERE date = ? AND timeSlot = ? AND status != 'Cancelled'";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bind_param("ss", $date, $timeSlot);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+    $row_check = $result_check->fetch_assoc();
+    $bookedSlots = $row_check['bookedSlots'] ?? 0;
+
+    // Validate if slots are still available
+    if ($bookedSlots >= $totalBarbers) {
+        echo "<script>alert('Error: This time slot is fully booked.'); window.history.back();</script>";
         exit();
     }
 
-    // Default status for the appointment is "Pending"
+    // Default status for the appointment
     $status = "Pending";
 
-    // Insert into the appointment_tbl
-    $sql = "INSERT INTO appointment_tbl (customerID, date, timeSlot, serviceID, addonID, hcID, remarks, status) 
-    VALUES ('$customerID', '$date', '$timeSlot', '$serviceID', " . ($addonID !== null ? "'$addonID'" : "NULL") . ", " . ($hcID !== null ? "'$hcID'" : "NULL") . ", '$remarks', '$status')";
+    // Insert the appointment into the database
+    $sql_insert = "INSERT INTO appointment_tbl (customerID, date, timeSlot, serviceID, addonID, hcID, remarks, status) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt_insert = $conn->prepare($sql_insert);
+    $stmt_insert->bind_param("issiiiss", 
+        $customerID, $date, $timeSlot, $serviceID, 
+        $addonID, $hcID, $remarks, $status
+    );
 
-    if ($conn->query($sql) === TRUE) {
-        // Redirect to appointment.php after successful booking
+    if ($stmt_insert->execute()) {
+        // Redirect after successful booking
         header("Location: appointment.php");
         exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt_insert->error;
     }
 
+    // Close all statements
+    $stmt_customer->close();
+    $stmt_check->close();
+    $stmt_insert->close();
     $conn->close();
 }
 ?>

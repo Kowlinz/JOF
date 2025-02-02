@@ -62,6 +62,7 @@ if(isset($_POST['password_reset_link']))
         {
             send_password_reset($get_firstName, $get_lastName, $get_email, $token);
             $_SESSION['status'] = "Password reset link has been sent to your email";
+            $_SESSION['status_type'] = "success"; // Set alert to success
             header("location: forgot-password.php"); 
             exit(0);
 
@@ -69,6 +70,7 @@ if(isset($_POST['password_reset_link']))
         else
         {
             $_SESSION['status'] = "Something went wrong";
+            $_SESSION['status_type'] = "danger"; // Set alert to danger
             header("location: forgot-password.php"); 
             exit(0);
         }
@@ -76,7 +78,8 @@ if(isset($_POST['password_reset_link']))
     else
     {
         $_SESSION['status'] = "No email found";
-        header("location: forgot-password.php"); 
+        $_SESSION['status_type'] = "danger"; // Set alert to danger
+        header("location: forgot-password.php");
         exit(0);
     }
 }
@@ -90,6 +93,15 @@ if (isset($_POST['password_update'])) {
 
     if (!empty($token)) {
         if (!empty($email) && !empty($new_password) && !empty($confirm_password)) {
+            
+            // Check if password is at least 8 characters long
+                if (strlen($new_password) < 8) {
+                    $_SESSION['status'] = "Password must be at least 8 characters long";
+                    $_SESSION['status_type'] = "danger"; // Set alert to danger
+                    header("location: password-change.php?token=$token&email=$email");
+                    exit(0);
+                }
+
             // Check if token is valid
             $check_token = "SELECT verify_token FROM customer_tbl WHERE verify_token='$token'";
             $check_token_run = mysqli_query($conn, $check_token);
@@ -108,30 +120,36 @@ if (isset($_POST['password_update'])) {
                         $update_to_new_token_run = mysqli_query($conn, $update_to_new_token);
 
                         $_SESSION['status'] = "New password has been successfully updated";
+                        $_SESSION['status_type'] = "success"; // Set alert to success
                         header("location: login.php");
                         exit(0);
                     } else {
                         $_SESSION['status'] = "Did not update password, something went wrong";
+                        $_SESSION['status_type'] = "danger"; // Set alert to danger
                         header("location: password-change.php?token=$token&email=$email");
                         exit(0);
                     }
                 } else {
-                    $_SESSION['status'] = "Password and Confirm password do not match";
+                    $_SESSION['status'] = "Password does not match";
+                    $_SESSION['status_type'] = "danger"; // Set alert to danger
                     header("location: password-change.php?token=$token&email=$email");
                     exit(0);
                 }
             } else {
-                $_SESSION['status'] = "Invalid Token";
+                $_SESSION['status'] = "This link is already used";
+                $_SESSION['status_type'] = "danger"; // Set alert to danger
                 header("location: password-change.php?token=$token&email=$email");
                 exit(0);
             }
         } else {
             $_SESSION['status'] = "All fields are required";
+            $_SESSION['status_type'] = "danger"; // Set alert to danger
             header("location: password-change.php?token=$token&email=$email");
             exit(0);
         }
     } else {
         $_SESSION['status'] = "No token found";
+        $_SESSION['status_type'] = "danger"; // Set alert to danger
         header("location: forgot-password.php");
         exit(0);
     }

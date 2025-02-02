@@ -51,17 +51,19 @@
 
             <div class="login-container">
 
-                <?php
-                    if (isset ($_SESSION['status']))
-                    {
-                        ?>
-                        <div class="alert alert-success">
-                            <p><?= $_SESSION['status']; ?></p>
-                        </div>
-                        <?php
-                        unset($_SESSION['status']);
-                    }
+            <?php
+            if (isset($_SESSION['status'])) {
+                // Default to "success" if status_type is not set
+                $alertType = isset($_SESSION['status_type']) ? $_SESSION['status_type'] : "success";
                 ?>
+                <div class="alert alert-<?= $alertType ?> alert-dismissible fade show" role="alert">
+                    <p><?= $_SESSION['status']; ?></p>
+                </div>
+                <?php
+                unset($_SESSION['status']);
+                unset($_SESSION['status_type']); // Unset the type to prevent persistent styling
+            }
+            ?>
 
                 <h2 class="login-header">Password Reset</h2>
                 <form action="forgot-password-code.php" method="post">

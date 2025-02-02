@@ -449,8 +449,7 @@ include 'db_connect.php';
             <div class="list-group list-group-flush mx-3 mt-5">
                 <div class="avatar-container text-center">
                     <img src="css/images/jof_logo_black.png" alt="logo" width="55" height="55" class="logo mb-4">
-                    <img src="css/images/barber.jpg" alt="Avatar" width="140" height="140" style="border: 5px solid #000000; border-radius: 50%;" class="avatar">
-                    <h5 class="mt-3">Barber</h5>
+                    <h5 class="mt-3" style="font-weight: bold; font-size: 20px;">Barber</h5>
                 </div>
                 <a href="b_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>

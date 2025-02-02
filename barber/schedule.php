@@ -337,6 +337,7 @@ include 'db_connect.php';
                 <i class="fas fa-bars"></i>
             </button>
         </div>
+        <div class="col-md-12 ms-5">
             <div class="card border-0 rounded-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                     <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Upcoming Customers</h4>
@@ -430,8 +431,7 @@ include 'db_connect.php';
         <div class="list-group list-group-flush mx-3 mt-5">
             <div class="avatar-container text-center">
                 <img src="css/images/jof_logo_black.png" alt="logo" width="55" height="55" class="logo mb-4">
-                <img src="css/images/barber.jpg" alt="Avatar" width="140" height="140" style="border: 5px solid #000000; border-radius: 50%;" class="avatar">
-                <h5 class="mt-3">Barber</h5>
+                <h5 class="mt-3" style="font-weight: bold; font-size: 20px;">Barber</h5>
             </div>
             <a href="b_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
                 <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>

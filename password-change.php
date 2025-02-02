@@ -51,24 +51,25 @@
 
             <div class="login-container">
 
-                <?php
-                    if (isset ($_SESSION['status']))
-                    {
-                        ?>
-                        <div class="alert alert-success">
-                            <p><?= $_SESSION['status']; ?></p>
-                        </div>
-                        <?php
-                        unset($_SESSION['status']);
-                    }
+            <?php
+            if (isset($_SESSION['status'])) {
+                // Default to "success" if status_type is not set
+                $alertType = isset($_SESSION['status_type']) ? $_SESSION['status_type'] : "success";
                 ?>
+                <div class="alert alert-<?= $alertType ?> alert-dismissible fade show" role="alert">
+                    <p><?= $_SESSION['status']; ?></p>
+                </div>
+                <?php
+                unset($_SESSION['status']);
+                unset($_SESSION['status_type']); // Unset the type to prevent persistent styling
+            }
+            ?>
 
                 <h2 class="login-header">Change Password</h2>
                 <form action="forgot-password-code.php" method="post">
                     <input type = "hidden" name = "password_token" value="<?php if(isset($_GET['token'])) {echo $_GET['token'];} ?>">
                     <div class="form-group">
-                        <label>Email Address:</label>
-                        <input type="email" name="email" value="<?php if(isset($_GET['email'])) {echo $_GET['email'];} ?>" class="form-control" placeholder="Enter Email Address" required>
+                        <input type="hidden" name="email" value="<?php if(isset($_GET['email'])) {echo $_GET['email'];} ?>" class="form-control" placeholder="Enter Email Address">
                     </div>
                     <div class="form-group">
                         <label>New Password:</label>

@@ -269,6 +269,24 @@ $addonsResult = $conn->query($addonsQuery);
                     </div>
                 </div>
 
+                <!-- Error Modal -->
+                <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Please fill in all required fields (Date, Time Slot, and Service).</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <script>
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function(event) {
@@ -299,7 +317,9 @@ $addonsResult = $conn->query($addonsQuery);
 
                         // Validate required fields
                         if (!date || !timeSlot || !document.getElementById('service').value) {
-                            alert('Please fill in all required fields (Date, Time Slot, and Service)');
+                            // Show error modal instead of alert
+                            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                            errorModal.show();
                             return;
                         }
 
@@ -497,11 +517,10 @@ $addonsResult = $conn->query($addonsQuery);
                     <div class="time-slots-grid">
                         <?php 
                         $timeSlots = [
-                            '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM',
-                            '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-                            '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM',
-                            '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM',
-                            '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM'
+                            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
+                            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
+                            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
+                            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
                         ];
                         foreach ($timeSlots as $time): 
                         ?>

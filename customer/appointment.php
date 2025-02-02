@@ -198,17 +198,17 @@ $result = $conn->query($sql);
             $statusText = $row['status']; // Default status to show
 
             // Check if the status is Pending and the time has passed
-            if ($row['status'] == 'Pending' && $row['date'] > $currentTime) {
+            if ($row['status'] == 'Pending' && $row['date'] < $currentTime) {
                 $statusText = 'Missed Appointment'; // Display "Missed Appointment" if the time has passed
                 $statusClass = 'status-missed'; // Apply the status class for "Missed Appointment"
                 
                 // If you want to change the status in the database to "Cancelled" you can update it here (optional).
-                $updateSql = "UPDATE appointment_tbl SET status='Cancelled' WHERE appointmentID = ?";
+                $updateSql = "UPDATE appointment_tbl SET status='Missed' WHERE appointmentID = ?";
                 $stmt = $conn->prepare($updateSql);
                 $stmt->bind_param("i", $row['appointmentID']);
                 $stmt->execute();
                 $stmt->close();
-                
+
             } else {
                 // Handle normal statuses
                 switch($row['status']) {
@@ -230,7 +230,7 @@ $result = $conn->query($sql);
             echo "<td>" . $row['timeSlot'] . "</td>";
             echo "<td class='" . $statusClass . "'>" . $statusText . "</td>";
             
-            if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed") {
+            if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed" && $row['status'] !== "Missed") {
                 echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
                 "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
                 $row['appointmentID'] . ", `" . 

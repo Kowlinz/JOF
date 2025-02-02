@@ -463,7 +463,7 @@
                                                         <form action='assign_barber.php' method='POST'>
                                                             <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
                                                             <select name='barberID' class='form-select' onchange='this.form.submit()'>
-                                                                <option value=''>Select Barber</option>";
+                                                                <option value='' disabled selected hidden>Select Barber</option>";
                                                                 // Loop through all barbers to display them in the dropdown
                                                                 foreach ($barbers as $barber) {
                                                                     // Check if the barber is assigned to this appointment

@@ -215,7 +215,7 @@
     </style>
 </head>
 <body>
-    <?php
+<?php
 
 include 'db_connect.php';
 
@@ -231,6 +231,12 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
 $pendingCount = mysqli_fetch_assoc($pendingResult)['pending_count'];
 $completedCount = mysqli_fetch_assoc($completedResult)['completed_count'];
 $cancelledCount = mysqli_fetch_assoc($cancelledResult)['cancelled_count'];
+
+// Fetch the number of pending appointments
+$notificationQuery = "SELECT COUNT(*) AS pending_count FROM appointment_tbl WHERE status = 'Pending'";
+$notificationResult = mysqli_query($conn, $notificationQuery);
+$notificationData = mysqli_fetch_assoc($notificationResult);
+$pendingCount = $notificationData['pending_count'];
 
 // Today's Admin Earnings
 $earningsQuery = "
@@ -466,8 +472,12 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
             <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
         </a>
         <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
-            <i class="fa-solid fa-users fa-fw me-3"></i><span>Appointment</span>
-        </a>
+                    <i class="fa-solid fa-users fa-fw me-3"></i>
+                    <span>Appointment</span>
+                    <?php if ($pendingCount > 0): ?>
+                        <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                    <?php endif; ?>
+                </a>
         <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple">
             <i class="fa-solid fa-clock-rotate-left fa-fw me-3"></i><span>History</span>
         </a>

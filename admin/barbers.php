@@ -6,6 +6,12 @@ if (!isset($_SESSION["user"])) {
 
 include 'db_connect.php';
 
+// Fetch the number of pending appointments
+$notificationQuery = "SELECT COUNT(*) AS pending_count FROM appointment_tbl WHERE status = 'Pending'";
+$notificationResult = mysqli_query($conn, $notificationQuery);
+$notificationData = mysqli_fetch_assoc($notificationResult);
+$pendingCount = $notificationData['pending_count'];
+
 // Query to fetch barber data
 $sql = "SELECT * FROM barbers_tbl";
 $result = $conn->query($sql);
@@ -325,6 +331,16 @@ $result = $conn->query($sql);
                                                 echo "</form>";
                                                 echo "</td>";
 
+                                                // Delete Icon Form
+                                                echo "<td>";
+                                                echo "<form method='POST' action='delete_barber.php' onsubmit='return confirmDelete();' style='display: inline;'>";
+                                                echo "<input type='hidden' name='barberID' value='" . $row['barberID'] . "'>";
+                                                echo "<button type='submit' class='btn btn-link text-danger p-0' style='border: none; background: none;'>";  
+                                                echo "<i class='fa-solid fa-trash-alt fa-lg'></i>";
+                                                echo "</button>";
+                                                echo "</form>";
+                                                echo "</td>";
+
                                                 echo "</tr>";
                                             }
                                         } else {
@@ -353,9 +369,15 @@ $result = $conn->query($sql);
                 <a href="a_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
                 </a>
+
                 <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
-                    <i class="fa-solid fa-users fa-fw me-3"></i><span>Appointment</span>
+                    <i class="fa-solid fa-users fa-fw me-3"></i>
+                    <span>Appointment</span>
+                    <?php if ($pendingCount > 0): ?>
+                        <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                    <?php endif; ?>
                 </a>
+
                 <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-clock-rotate-left fa-fw me-3"></i><span>History</span>
                 </a>
@@ -403,6 +425,12 @@ $result = $conn->query($sql);
                 toggleButton.setAttribute('onclick', 'toggleSidebar()');
             }
         });
+    </script>
+
+    <script>
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete this barber?");
+        }
     </script>
 </body>
 </html>

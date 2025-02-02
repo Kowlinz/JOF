@@ -6,6 +6,12 @@ if (!isset($_SESSION["user"])) {
 
 include 'db_connect.php';
 
+// Fetch the number of pending appointments
+$notificationQuery = "SELECT COUNT(*) AS pending_count FROM appointment_tbl WHERE status = 'Pending'";
+$notificationResult = mysqli_query($conn, $notificationQuery);
+$notificationData = mysqli_fetch_assoc($notificationResult);
+$pendingCount = $notificationData['pending_count'];
+
 // Handle all POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'delete_haircut') {
@@ -1707,9 +1713,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 <a href="a_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
                 </a>
+
                 <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
-                    <i class="fa-solid fa-users fa-fw me-3"></i><span>Appointment</span>
+                    <i class="fa-solid fa-users fa-fw me-3"></i>
+                    <span>Appointment</span>
+                    <?php if ($pendingCount > 0): ?>
+                        <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                    <?php endif; ?>
                 </a>
+                
                 <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-clock-rotate-left fa-fw me-3"></i><span>History</span>
                 </a>

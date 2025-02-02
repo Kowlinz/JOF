@@ -394,7 +394,15 @@
     </style>
 </head>
 <body>
-    <?php include 'db_connect.php'; ?>
+    <?php include 'db_connect.php'; 
+    
+    // Fetch the number of pending appointments
+    $notificationQuery = "SELECT COUNT(*) AS pending_count FROM appointment_tbl WHERE status = 'Pending'";
+    $notificationResult = mysqli_query($conn, $notificationQuery);
+    $notificationData = mysqli_fetch_assoc($notificationResult);
+    $pendingCount = $notificationData['pending_count'];
+
+    ?>
 
     <!-- Add the mobile toggle button -->
     <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
@@ -405,11 +413,16 @@
         <div class="container-xxl">
             <h1 class="dashboard mb-5 ms-5">Appointments History</h1>
 
+
+
             <!-- Cancelled Appointments Row -->
             <div class="row mb-4 ms-5">
                 <div class="col-md-12">
                     <div class="card p-3">
-                        <h4 class="fw-bold mb-8">Cancelled</h4>
+                        <div class="d-flex justify-content-between align-items-center ms-5 mb-3">
+                            <h2 class="fw-bold">Cancelled</h2>
+                            <button class="btn btn-danger" onclick="confirmDeletion('cancelled')">Delete Cancelled</button>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead>
@@ -460,7 +473,8 @@
                 <div class="col-md-12">
                     <div class="card p-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="fw-bold">Previous Customers</h4>
+                                <h2 class="fw-bold mb-">Previous Customer</h2>
+                                <button class="btn btn-danger" onclick="confirmDeletion('previous_customer')">Delete Previous Customers</button>
                             <!-- <h4>Total: <?php echo $countData['total_previous'] ?? '0'; ?></h4> -->
                         </div>
                         <div class="card-body">
@@ -543,9 +557,15 @@
                 <a href="a_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
                 </a>
+
                 <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
-                    <i class="fa-solid fa-users fa-fw me-3"></i><span>Appointment</span>
+                    <i class="fa-solid fa-users fa-fw me-3"></i>
+                    <span>Appointment</span>
+                    <?php if ($pendingCount > 0): ?>
+                        <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                    <?php endif; ?>
                 </a>
+
                 <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple active">
                     <i class="fa-solid fa-clock-rotate-left fa-fw me-3"></i><span>History</span>
                 </a>
@@ -591,5 +611,14 @@
             }
         });
     </script>
+
+    <script>
+    function confirmDeletion(type) {
+        if (confirm("This should be done after the service hours. Are you sure you want to delete all data? This action cannot be undone.")) {
+            window.location.href = `delete_data.php?table=${type}`; // Redirect to a delete script
+        }
+    }
+    </script>
+
 </body>
 </html>

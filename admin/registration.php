@@ -29,7 +29,6 @@
                         $FirstName = $_POST["FirstName"];
                         $MiddleName = $_POST["MiddleName"];
                         $LastName = $_POST["LastName"];
-                        $dateOfBirth = $_POST["dateOfBirth"];
                         $email = $_POST["Email"];
                         $contactNum = $_POST["contactNum"];
                         $password = $_POST["password"];
@@ -39,7 +38,7 @@
 
                         $errors = array();
                         // validate if all fields are empty
-                        if (empty ($FirstName) OR empty ($MiddleName) OR empty ($LastName) OR empty ($dateOfBirth) OR empty ($email) OR empty ($contactNum) OR empty ($password) OR empty ($RepeatPassword)) {
+                        if (empty ($FirstName) OR empty ($MiddleName) OR empty ($LastName) OR empty ($email) OR empty ($contactNum) OR empty ($password) OR empty ($RepeatPassword)) {
                             array_push($errors, "All fields are required"); 
                         }
                         // validate if the email is not validated 
@@ -51,7 +50,7 @@
                             array_push($errors, "Password must be at least 8 characters long");
                         }
                         // check if password is the same 
-                        if(!$password = $RepeatPassword){
+                        if($password !== $RepeatPassword){
                             array_push($errors, "Password does not match");
                         }
 
@@ -71,14 +70,14 @@
                             }
                         } else {
                             require_once "db_connect.php";
-                            $sql = "INSERT INTO barbers_tbl (firstName, middleName, lastName, dateOfBirth, email, contactNum, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                            $sql = "INSERT INTO barbers_tbl (firstName, middleName, lastName, email, contactNum, password) VALUES (?, ?, ?, ?, ?, ?)";
                             
                             // initializes a statement and returns an object suitable for mysqli_stmt_prepare()
                             $stmt = mysqli_stmt_init($conn); 
                             $preparestmt = mysqli_stmt_prepare($stmt, $sql);
                             
                             if ($preparestmt) {
-                                mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $dateOfBirth, $email, $contactNum, $passwordHash);
+                                mysqli_stmt_bind_param($stmt, "ssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash);
                                 mysqli_stmt_execute($stmt);
                                 echo "<div class = 'alert alert-success'> You are registered succesfully! </div>";
                             } else {
@@ -98,7 +97,7 @@
                         </div> 
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="MiddleName" placeholder="Middle Name" required>
+                            <input type="text" class="form-control" name="MiddleName" placeholder="Middle Name">
                         </div> 
 
                         <div class="form-group">
@@ -106,23 +105,19 @@
                         </div> 
 
                         <div class="form-group">
-                            <input type="date" class="form-control" name="dateOfBirth" placeholder="Date of Birth" required>
-                        </div> 
-
-                        <div class="form-group">
                             <input type="email" class="form-control" name="Email" placeholder="Email" required>
                         </div>
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="contactNum" placeholder="Contact Number" required>
+                            <input type="tel" class="form-control" name="contactNum" placeholder="Contact Number" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
                         </div> 
 
                         <div class="form-group">
-                            <input type="password" class="form-control" name="password" placeholder="Password" required> 
+                            <input type="password" class="form-control" name="password" placeholder="Password" required maxlength="20" oninput="limitPasswordLength(this)">
                         </div> 
 
                         <div class="form-group">
-                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password" required>
+                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password" required maxlength="20" oninput="limitPasswordLength(this)">
                         </div> 
 
                         <div class="form-btn">

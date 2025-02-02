@@ -195,6 +195,30 @@ if ($result->num_rows > 0) {
         $statusClass = '';
         $statusText = $row['status'];  // Default to the current status
 
+        // Fetch the service and addon details for the current appointment
+        $serviceID = $row['serviceID'];
+        $addonID = $row['addonID'];
+
+        // Query to get the service and add-on names
+        $serviceSql = "SELECT serviceName FROM service_tbl WHERE serviceID = ?";
+        $addonSql = "SELECT addonName FROM addon_tbl WHERE addonID = ?";
+
+        // Fetch the service name
+        $serviceStmt = $conn->prepare($serviceSql);
+        $serviceStmt->bind_param("i", $serviceID);
+        $serviceStmt->execute();
+        $serviceStmt->bind_result($serviceName);
+        $serviceStmt->fetch();
+        $serviceStmt->close();
+
+        // Fetch the add-on name
+        $addonStmt = $conn->prepare($addonSql);
+        $addonStmt->bind_param("i", $addonID);
+        $addonStmt->execute();
+        $addonStmt->bind_result($addonName);
+        $addonStmt->fetch();
+        $addonStmt->close();
+
         // Check if the status is "Pending" and the current time has passed the appointment time
         if ($row['status'] == 'Pending' && $row['date'] > $currentTime) {
             // Update status to "Missed Appointment"
@@ -237,7 +261,9 @@ if ($result->num_rows > 0) {
             "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
             $row['appointmentID'] . ", `" . 
             htmlspecialchars($row['date']) . "`, `" . 
-            htmlspecialchars($row['timeSlot']) . "`)'>Cancel</button></td>";
+            htmlspecialchars($row['timeSlot']) . "`, `" . 
+            htmlspecialchars($serviceName) . "`, `" . 
+            htmlspecialchars($addonName) . "`)'>Cancel</button></td>";
         } else {
             echo "<td></td>";
         }
@@ -261,9 +287,10 @@ if ($result->num_rows > 0) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Service: <span id="serviceName"></span></p>
                         <p>Date: <span id="appointmentDate"></span></p>
                         <p>Time: <span id="appointmentTime"></span></p>
+                        <p>Service: <span id="serviceName"></span></p>
+                        <p>Add-On: <span id="addonName"></span></p>
                         <div class="mb-3">
                         <label for="cancelReason" class="form-label">Reason for Cancellation</label>
                         <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (optional)">
@@ -278,23 +305,24 @@ if ($result->num_rows > 0) {
         </div>
 
 
-        <script>
-        // Function to handle appointment cancellation
-        function openCancelModal(appointmentID, date, time) {
-            document.getElementById('appointmentDate').textContent = date;
-            document.getElementById('appointmentTime').textContent = time;
+<script>
+// Function to handle appointment cancellation and populate modal
+function openCancelModal(appointmentID, date, time, serviceName, addonName) {
+    document.getElementById('appointmentDate').textContent = date;
+    document.getElementById('appointmentTime').textContent = time;
+    document.getElementById('serviceName').textContent = serviceName ? serviceName : 'No service selected';
+    document.getElementById('addonName').textContent = addonName ? addonName : 'No add-on selected';
 
-            // Set up the Confirm button to handle the cancellation
-            const confirmButton = document.getElementById('confirmCancelButton');
-                confirmButton.onclick = function () {
-                const reason = document.getElementById('cancelReason').value;
+    // Set up the Confirm button to handle the cancellation
+    const confirmButton = document.getElementById('confirmCancelButton');
+    confirmButton.onclick = function () {
+        const reason = document.getElementById('cancelReason').value;
 
-                // No validation needed anymore for the reason (allow empty reason)
-                // Redirect to cancellation PHP script with parameters
-                window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
-            };
-        }
-        </script>
+        // Redirect to cancellation PHP script with parameters
+        window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
+    };
+}
+</script>
 
         <script>
             // JavaScript to toggle mobile menu

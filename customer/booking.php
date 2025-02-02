@@ -111,7 +111,6 @@ $addonsResult = $conn->query($addonsQuery);
         color: #555;
         cursor: not-allowed;
     }
-
     </style>
 </head>
 <body>

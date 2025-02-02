@@ -135,3 +135,21 @@ h2 {
   margin-left: 200px;
   padding: 1px 30px;
 }
+
+/* Update the avatar-container styling */
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.avatar-container .logo {
+    margin-bottom: 10px; /* Reduced from 20px since there's no avatar */
+}
+
+.avatar-container h5 {
+    margin-top: 5px; /* Reduced from 10px since there's no avatar */
+    text-align: center;
+}

@@ -37,7 +37,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/table.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" type="image/png" href="css/images/favicon-32x32.png">
+    <link rel="icon" href="../css/images/favicon.ico">
     <title>Earnings</title>
     <style>
         body {
@@ -416,7 +416,6 @@
         <div class="list-group list-group-flush mx-3 mt-5">
             <div class="avatar-container">
                 <img src="css/images/jof_logo_black.png" alt="logo" width="55" height="55" class="logo">
-                <img src="css/images/admin.jpg" alt="Avatar" width="140" height="140" style="border: 5px solid #000000; border-radius: 50%;" class="avatar">
                 <h5>Admin</h5>
             </div>
             <a href="a_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">

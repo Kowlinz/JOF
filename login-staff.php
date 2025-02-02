@@ -27,8 +27,10 @@ if (isset($_SESSION["user"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jack of Fades | Staff Login</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/login.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" href="css/images/favicon.ico">
 </head>
 <body>
     <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
@@ -96,8 +98,9 @@ if (isset($_SESSION["user"])) {
                     <div class="form-group">
                         <input type="email" name="email" class="form-control" placeholder="Email" required>
                     </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    <div class="form-group position-relative">
+                        <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password" required>
+                        <i class="bi bi-eye-slash password-toggle" id="togglePassword"></i>
                     </div>
                     <div class="form-btn">
                         <input type="submit" value="Login" name="Login" class="btn btn-primary">
@@ -107,18 +110,35 @@ if (isset($_SESSION["user"])) {
         </div>
     </div>
 
+    <style>
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .password-toggle:hover {
+            color: #000;
+        }
+    </style>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.querySelector('.menu-btn');
-        const menuDropdown = document.querySelector('.menu-dropdown');
-        const menuClose = document.querySelector('.menu-close');
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('passwordInput');
 
-        menuBtn.addEventListener('click', function() {
-            menuDropdown.classList.add('show');
-        });
-
-        menuClose.addEventListener('click', function() {
-            menuDropdown.classList.remove('show');
+        togglePassword.addEventListener('click', function() {
+            // Toggle the password input type
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle the eye icon
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
         });
     });
     </script>

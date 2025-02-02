@@ -15,10 +15,6 @@ include 'db_connect.php';
 $servicesQuery = "SELECT * FROM service_tbl";
 $servicesResult = $conn->query($servicesQuery);
 
-// Fetch haircuts from the database
-$haircutsQuery = "SELECT * FROM haircut_tbl";
-$haircutsResult = $conn->query($haircutsQuery);
-
 // Fetch add-ons from the database
 $addonsQuery = "SELECT * FROM addon_tbl";
 $addonsResult = $conn->query($addonsQuery);
@@ -116,15 +112,6 @@ $addonsResult = $conn->query($addonsQuery);
                             </button>
                             <input type="hidden" name="service" id="service" value="">
                         </div>
-
-                        <!-- Add-On Dropdown -->
-                        <div class="mb-3">
-                            <label for="addon" class="form-label text-white">Add-on:</label>
-                            <button type="button" class="form-control text-center" id="addon-button" data-bs-toggle="modal" data-bs-target="#addonsModal">
-                                Choose Add-on
-                            </button>
-                            <input type="hidden" name="addon" id="addon" value="">
-                        </div>
                     </div>
 
                     <div class="col-md-4">
@@ -136,19 +123,13 @@ $addonsResult = $conn->query($addonsQuery);
                             </button>
                             <input type="hidden" name="timeSlot" id="selectedTimeSlot">
                         </div>
-
-                        <!-- Haircut Dropdown -->
+                        <!-- Add-On Dropdown -->
                         <div class="mb-3">
-                            <label for="haircut" class="form-label text-white">Haircut:</label>
-                            <button type="button" class="form-control text-center" id="haircut-button" data-bs-toggle="modal" data-bs-target="#haircutsModal">
-                                Choose Haircut
+                            <label for="addon" class="form-label text-white">Add-on:</label>
+                            <button type="button" class="form-control text-center" id="addon-button" data-bs-toggle="modal" data-bs-target="#addonsModal">
+                                Choose Add-on
                             </button>
-                            <input type="hidden" name="haircut" id="haircut" value="">
-                        </div>
-                        <!-- Remarks Dropdown -->
-                        <div class="mb-3">
-                            <label for="remarks" class="form-label text-white">Remarks:</label>
-                            <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="ex. I prefer Jonathan as my Barber."></textarea>
+                            <input type="hidden" name="addon" id="addon" value="">
                         </div>
                     </div>
                 </div>
@@ -198,33 +179,6 @@ $addonsResult = $conn->query($addonsQuery);
                                  onclick="selectService(<?= $service['serviceID'] ?>, '<?= addslashes($service['serviceName']) ?>', <?= $service['servicePrice'] ?>)">
                                 <div class="service-name"><?= $service['serviceName'] ?></div>
                                 <div class="service-price"><?= number_format($service['servicePrice'], 0) ?> PHP</div>
-                            </div>
-                        <?php endwhile; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Haircuts Modal -->
-    <div class="modal fade" id="haircutsModal" tabindex="-1" aria-labelledby="haircutsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="haircutsModalLabel">Choose Haircut</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="services-list">
-                        <?php 
-                        $haircutsResult->data_seek(0);
-                        while ($haircut = $haircutsResult->fetch_assoc()): 
-                        ?>
-                            <div class="service-item" 
-                                 role="button"
-                                 data-haircut-id="<?= $haircut['hcID'] ?>"
-                                 onclick="selectHaircut(<?= $haircut['hcID'] ?>, '<?= addslashes($haircut['hcName']) ?>')">
-                                <div class="service-name"><?= $haircut['hcName'] ?></div>
                             </div>
                         <?php endwhile; ?>
                     </div>
@@ -403,13 +357,6 @@ $addonsResult = $conn->query($addonsQuery);
             document.getElementById('service').value = serviceId;
             document.getElementById('service-button').textContent = `${serviceName} - ${servicePrice} PHP`;
             const modal = bootstrap.Modal.getInstance(document.getElementById('servicesModal'));
-            modal.hide();
-        }
-
-        function selectHaircut(haircutId, haircutName) {
-            document.getElementById('haircut').value = haircutId;
-            document.getElementById('haircut-button').textContent = haircutName;
-            const modal = bootstrap.Modal.getInstance(document.getElementById('haircutsModal'));
             modal.hide();
         }
 

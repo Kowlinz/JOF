@@ -83,16 +83,12 @@ $addonsResult = $conn->query($addonsQuery);
         color: black;
         font-weight: bold;
         cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .time-slot-btn:hover {
-        background-color: #FFD700;
+        transition: background-color 0.3s ease;
     }
 
     .time-slot-btn.selected {
-        background-color: #D3D3D3;
-        color: black;
+        background-color: black;
+        color: #FFDE59;
     }
 
     .time-slot-btn.booked {
@@ -103,6 +99,17 @@ $addonsResult = $conn->query($addonsQuery);
 
     .time-slot-btn.booked:hover {
         background-color: #D3D3D3;
+    }
+
+    .available {
+        background-color: #FFDE59; /* Green for available */
+        color: black;
+    }
+
+    .unavailable {
+        background-color: #d6d6d6; /* Light gray for unavailable */
+        color: #555;
+        cursor: not-allowed;
     }
     </style>
 </head>
@@ -507,35 +514,69 @@ $addonsResult = $conn->query($addonsQuery);
     </div>
 
     <div class="modal fade" id="timeSlotModal" tabindex="-1" aria-labelledby="timeSlotModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="timeSlotModalLabel">Choose Time Slot</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="time-slots-grid">
-                        <?php 
-                        $timeSlots = [
-                            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
-                            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
-                            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
-                            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
-                        ];
-                        foreach ($timeSlots as $time): 
-                        ?>
-                            <button class="time-slot-btn" 
-                                    role="button"
-                                    data-time="<?= $time ?>"
-                                    onclick="selectTimeSlot('<?= $time ?>')">
-                                <?= $time ?>
-                            </button>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="timeSlotModalLabel">Choose Time Slot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+    <div class="time-slots-grid">
+        <?php 
+        // Database connection
+        $conn = new mysqli("localhost", "root", "", "jof_db");
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Define time slots
+        $timeSlots = [
+            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
+            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
+            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
+            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
+        ];
+
+        // Get the count of available barbers
+        $barbersQuery = "SELECT COUNT(*) AS total_barbers FROM barbers_tbl WHERE availability = 'available'";
+        $barbersResult = $conn->query($barbersQuery);
+        $barbersRow = $barbersResult->fetch_assoc();
+        $totalBarbers = $barbersRow['total_barbers'];
+
+        // Get the current time
+        date_default_timezone_set('Asia/Manila'); // Set to your timezone
+        $currentTime = date("H:i");
+
+        foreach ($timeSlots as $time): 
+            // Convert the slot time to 24-hour format
+            $slotTime = date("H:i", strtotime($time));
+
+            // Count how many barbers are already booked at this time excluding cancelled ones
+            $appointmentQuery = "SELECT COUNT(*) AS booked FROM appointment_tbl WHERE timeSlot = '$time' AND status != 'Cancelled'";
+            $appointmentResult = $conn->query($appointmentQuery);
+            $appointmentRow = $appointmentResult->fetch_assoc();
+            $bookedBarbers = $appointmentRow['booked'];
+
+            // Calculate remaining slots for this time, including cancelled ones
+            $remainingSlots = $totalBarbers - $bookedBarbers;
+            $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime); // Ensure time slot is in the future
+        ?>
+            <button class="time-slot-btn <?= $isAvailable ? 'available' : 'unavailable' ?>"
+                    role="button"
+                    data-time="<?= $time ?>"
+                    <?= $isAvailable ? "onclick=\"selectTimeSlot('$time')\"" : "disabled"; ?>>
+                <?= $time ?>
+            </button>
+        <?php endforeach; ?>
+
+        <?php $conn->close(); ?>
+    </div>
+</div>
+
         </div>
     </div>
+</div>
 
     <script>
     function selectService(serviceId, serviceName, servicePrice) {

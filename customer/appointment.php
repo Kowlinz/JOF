@@ -188,64 +188,62 @@ $result = $conn->query($sql);
                 </thead>
                 <tbody>
                 <?php
-// Set timezone
-date_default_timezone_set('Asia/Manila'); // Adjust based on your location
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Get current time
+            $currentTime = date('Y-m-d H:i:s');
+            
+            // Set default status class
+            $statusClass = '';
+            $statusText = $row['status']; // Default status to show
 
-$currentDate = date("Y-m-d"); // Get current date
-$currentTime = date("H:i:s"); // Get current time
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $statusClass = '';
-        $appointmentDate = $row['date'];
-        $appointmentTime = date("H:i:s", strtotime($row['timeSlot'])); // Convert timeSlot to 24-hour format
-
-        // Check if the appointment time has passed and the status is still "Pending"
-        if (($appointmentDate < $currentDate || ($appointmentDate == $currentDate && $appointmentTime < $currentTime)) 
-            && $row['status'] === "Pending") {
-            // Update status to "Completed"
-            $updateQuery = "UPDATE appointment_tbl SET status = 'Completed' WHERE appointmentID = " . $row['appointmentID'];
-            $conn->query($updateQuery);
-            $row['status'] = "Missed Appointment"; // Reflect change in display
+            // Check if the status is Pending and the time has passed
+            if ($row['status'] == 'Pending' && $row['date'] > $currentTime) {
+                $statusText = 'Missed Appointment'; // Display "Missed Appointment" if the time has passed
+                $statusClass = 'status-missed'; // Apply the status class for "Missed Appointment"
+                
+                // If you want to change the status in the database to "Cancelled" you can update it here (optional).
+                $updateSql = "UPDATE appointment_tbl SET status='Cancelled' WHERE appointmentID = ?";
+                $stmt = $conn->prepare($updateSql);
+                $stmt->bind_param("i", $row['appointmentID']);
+                $stmt->execute();
+                $stmt->close();
+                
+            } else {
+                // Handle normal statuses
+                switch($row['status']) {
+                    case 'Completed':
+                        $statusClass = 'status-completed';
+                        break;
+                    case 'Cancelled':
+                        $statusClass = 'status-cancelled';
+                        break;
+                    case 'Pending':
+                        $statusClass = 'status-pending';
+                        break;
+                }
+            }
+            
+            // Display row with updated status
+            echo "<tr>";
+            echo "<td>" . $row['date'] . "</td>";
+            echo "<td>" . $row['timeSlot'] . "</td>";
+            echo "<td class='" . $statusClass . "'>" . $statusText . "</td>";
+            
+            if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed") {
+                echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
+                "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
+                $row['appointmentID'] . ", `" . 
+                $row['date'] . "`, `" . 
+                $row['timeSlot'] . "`)'>Cancel</button></td>";
+            } else {
+                echo "<td></td>";
+            }
+            echo "</tr>";
         }
-
-        // Assign CSS class based on status
-        switch($row['status']) {
-            case 'Completed':
-                $statusClass = 'status-completed';
-                break;
-            case 'Cancelled':
-                $statusClass = 'status-cancelled';
-                break;
-            case 'Pending':
-                $statusClass = 'status-pending';
-                break;
-            case 'Missed Appointment':
-                $statusClass = 'status-cancelled';
-                break;    
-        }
-
-        // Display appointment details
-        echo "<tr>";
-        echo "<td>" . $row['date'] . "</td>";
-        echo "<td>" . $row['timeSlot'] . "</td>";
-        echo "<td class='" . $statusClass . "'>" . $row['status'] . "</td>";
-
-        // Show "Cancel" button only for pending appointments
-        if ($row['status'] === "Pending") {
-            echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
-            "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
-            $row['appointmentID'] . ", `" . 
-            $row['date'] . "`, `" . 
-            $row['timeSlot'] . "`)'>Cancel</button></td>";
-        } else {
-            echo "<td></td>";
-        }
-        echo "</tr>";
+    } else {
+        echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
     }
-} else {
-    echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
-}
 ?>
 
                 </tbody>

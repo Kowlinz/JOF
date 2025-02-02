@@ -577,8 +577,6 @@ $addonsResult = $conn->query($addonsQuery);
     </div>
 </div>
 
-
-
     <script>
     function selectService(serviceId, serviceName, servicePrice) {
         // Update the hidden input

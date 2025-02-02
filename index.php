@@ -43,6 +43,21 @@ include 'admin/landing_text.php';
 				display: none;
 			}
 		}
+		
+		/* New CSS for fade-in animation */
+		.fade-in {
+			opacity: 0;
+			animation: fadeIn ease-in 1s forwards;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+			to {
+				opacity: 1;
+			}
+		}
 	</style>
   </head>
    
@@ -134,7 +149,7 @@ include 'admin/landing_text.php';
 		</div>
 		<!-- Move the logo here, below the navbar -->
 		<div class="barber-image-fixed" style="margin-top: -70px; margin-right: 300px; text-align: center;">
-			<img src="css/images/JOF-Logo.png" alt="Jack of Fades Logo" style="width: 350px; height: auto;" class="homepage-logo">
+			<img src="css/images/JOF-Logo.png" alt="Jack of Fades Logo" style="width: 350px; height: auto;" class="homepage-logo fade-in">
 		</div>
 		<div class="content">
 			<div style="display: flex; justify-content: space-between; align-items: center;">

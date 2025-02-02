@@ -21,7 +21,7 @@ include 'db_connect.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/table.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" type="image/png" href="css/images/favicon-32x32.png">
+    <link rel="icon" href="../css/images/favicon.ico">
     <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <title>Schedule</title>
@@ -337,6 +337,7 @@ include 'db_connect.php';
                 <i class="fas fa-bars"></i>
             </button>
         </div>
+        <div class="col-md-12 ms-5">
             <div class="card border-0 rounded-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                     <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Upcoming Customers</h4>
@@ -430,8 +431,7 @@ include 'db_connect.php';
         <div class="list-group list-group-flush mx-3 mt-5">
             <div class="avatar-container text-center">
                 <img src="css/images/jof_logo_black.png" alt="logo" width="55" height="55" class="logo mb-4">
-                <img src="css/images/barber.jpg" alt="Avatar" width="140" height="140" style="border: 5px solid #000000; border-radius: 50%;" class="avatar">
-                <h5 class="mt-3">Barber</h5>
+                <h5 class="mt-3" style="font-weight: bold; font-size: 20px;">Barber</h5>
             </div>
             <a href="b_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
                 <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>

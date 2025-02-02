@@ -114,8 +114,9 @@ if (isset($_POST["Login"])) {
                     <div class="form-group">
                         <input type="email" name="email" class="form-control" placeholder="Email" required>
                     </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    <div class="form-group position-relative">
+                        <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password" required>
+                        <i class="bi bi-eye-slash password-toggle" id="togglePassword"></i>
                     </div>
                     <div class="forgot-password">
                         <a href="forgot-password.php">Forgot Password?</a>
@@ -147,6 +148,19 @@ if (isset($_POST["Login"])) {
                 transform: translateY(0); 
             }
         }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .password-toggle:hover {
+            color: #000;
+        }
     </style>
 
     <script>
@@ -168,6 +182,20 @@ if (isset($_POST["Login"])) {
             if (!menuDropdown.contains(event.target) && !menuBtn.contains(event.target)) {
                 menuDropdown.classList.remove('show');
             }
+        });
+
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('passwordInput');
+
+        togglePassword.addEventListener('click', function() {
+            // Toggle the password input type
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle the eye icon
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
         });
     });
     </script>

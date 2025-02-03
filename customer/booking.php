@@ -20,12 +20,12 @@ function getBookedTimeSlots($conn, $date) {
     $stmt->bind_param("s", $date);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     $bookedSlots = array();
     while($row = $result->fetch_assoc()) {
         $bookedSlots[] = $row['timeSlot'];
     }
-    
+
     return $bookedSlots;
 }
 
@@ -83,7 +83,7 @@ $addonsResult = $conn->query($addonsQuery);
         color: black;
         font-weight: bold;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s;
     }
 
     .time-slot-btn.selected {
@@ -102,12 +102,12 @@ $addonsResult = $conn->query($addonsQuery);
     }
 
     .available {
-        background-color: #FFDE59; /* Green for available */
+        background-color: #FFDE59;
         color: black;
     }
 
     .unavailable {
-        background-color: #d6d6d6; /* Light gray for unavailable */
+        background-color: #d6d6d6;
         color: #555;
         cursor: not-allowed;
     }
@@ -149,7 +149,7 @@ $addonsResult = $conn->query($addonsQuery);
                         onclick="document.location='booking.php'" 
                         type="button" 
                         style="background-color: #000000; color: #FFDE59; border-radius: 12px;">Book Now</button>
-                        
+
                     <div class="dropdown">
                         <div class="user-header d-flex align-items-center" id="userDropdown">
                             <div class="user-icon">
@@ -164,7 +164,7 @@ $addonsResult = $conn->query($addonsQuery);
                             <a href="../logout.php" class="dropdown-item">Logout</a>
                         </div>
                     </div>
-                    
+
                     <script>
                         // JavaScript to toggle dropdown visibility
                         const dropdownToggle = document.getElementById('userDropdown');
@@ -412,7 +412,7 @@ $addonsResult = $conn->query($addonsQuery);
                         if (btn && btn.classList.contains('booked')) {
                             return; // Don't allow selection of booked slots
                         }
-                        
+
                         // Rest of your existing selectTimeSlot function...
                     }
                 </script>
@@ -514,31 +514,24 @@ $addonsResult = $conn->query($addonsQuery);
     </div>
 
     <div class="modal fade" id="timeSlotModal" tabindex="-1" aria-labelledby="timeSlotModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="timeSlotModalLabel">Choose Time Slot</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-    <div class="time-slots-grid">
-        <?php 
-        // Database connection
-        $conn = new mysqli("localhost", "root", "", "jof_db");
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="timeSlotModalLabel">Choose Time Slot</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="time-slots-grid">
+                        <?php
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        // Define time slots
-        $timeSlots = [
-            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
-            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
-            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
-            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
-        ];
-
-        // Get the count of available barbers
+                        // Define time slots
+                        $timeSlots = [
+                            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
+                            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
+                            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
+                            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
+                        ];
+                        // Get the count of available barbers
         $barbersQuery = "SELECT COUNT(*) AS total_barbers FROM barbers_tbl WHERE availability = 'available'";
         $barbersResult = $conn->query($barbersQuery);
         $barbersRow = $barbersResult->fetch_assoc();
@@ -562,41 +555,46 @@ $addonsResult = $conn->query($addonsQuery);
             $remainingSlots = $totalBarbers - $bookedBarbers;
             $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime); // Ensure time slot is in the future
         ?>
-            <button class="time-slot-btn <?= $isAvailable ? 'available' : 'unavailable' ?>"
-                    role="button"
-                    data-time="<?= $time ?>"
-                    <?= $isAvailable ? "onclick=\"selectTimeSlot('$time')\"" : "disabled"; ?>>
-                <?= $time ?>
-            </button>
+            <button class="time-slot-btn <?php echo ($remainingSlots > 0) ? '' : 'booked'; ?>"
+        role="button"
+        data-time="<?php echo htmlspecialchars($time); ?>"
+        <?php if ($remainingSlots > 0): ?>
+            onclick="selectTimeSlot('<?php echo htmlspecialchars($time); ?>')"
+        <?php else: ?>
+            disabled
+        <?php endif; ?>>
+    <?php echo htmlspecialchars($time); ?>
+</button>
+
         <?php endforeach; ?>
 
         <?php $conn->close(); ?>
-    </div>
-</div>
 
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
     <script>
     function selectService(serviceId, serviceName, servicePrice) {
         // Update the hidden input
         document.getElementById('service').value = serviceId;
-        
+
         // Update the button text
         document.getElementById('service-button').textContent = `${serviceName} - ${servicePrice} PHP`;
-        
+
         // Remove selected class from all items
         document.querySelectorAll('.service-item').forEach(item => {
             item.classList.remove('selected');
         });
-        
+
         // Add selected class to clicked item using data attribute
         const selectedItem = document.querySelector(`.service-item[data-service-id="${serviceId}"]`);
         if (selectedItem) {
             selectedItem.classList.add('selected');
         }
-        
+
         // Close the modal
         const servicesModal = bootstrap.Modal.getInstance(document.getElementById('servicesModal'));
         servicesModal.hide();
@@ -606,7 +604,7 @@ $addonsResult = $conn->query($addonsQuery);
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize the modal
         const servicesModal = new bootstrap.Modal(document.getElementById('servicesModal'));
-        
+
         // Add click handler for close button
         const closeButton = document.querySelector('#servicesModal .btn-close');
         if (closeButton) {
@@ -626,21 +624,21 @@ $addonsResult = $conn->query($addonsQuery);
     function selectHaircut(haircutId, haircutName) {
         // Update the hidden input
         document.getElementById('haircut').value = haircutId;
-        
+
         // Update the button text
         document.getElementById('haircut-button').textContent = haircutName;
-        
+
         // Remove selected class from all items
         document.querySelectorAll('#haircutsModal .service-item').forEach(item => {
             item.classList.remove('selected');
         });
-        
+
         // Add selected class to clicked item
         const selectedItem = document.querySelector(`#haircutsModal .service-item[data-haircut-id="${haircutId}"]`);
         if (selectedItem) {
             selectedItem.classList.add('selected');
         }
-        
+
         // Close the modal
         const haircutsModal = bootstrap.Modal.getInstance(document.getElementById('haircutsModal'));
         haircutsModal.hide();
@@ -650,7 +648,7 @@ $addonsResult = $conn->query($addonsQuery);
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize the modal
         const haircutsModal = new bootstrap.Modal(document.getElementById('haircutsModal'));
-        
+
         // Add click handler for close button
         const closeButton = document.querySelector('#haircutsModal .btn-close');
         if (closeButton) {
@@ -670,25 +668,25 @@ $addonsResult = $conn->query($addonsQuery);
     function selectAddon(addonId, addonName, addonPrice) {
         // Update the hidden input
         document.getElementById('addon').value = addonId;
-        
+
         // Update the button text
         if (addonId === '') {
             document.getElementById('addon-button').textContent = 'No Add-on';
         } else {
             document.getElementById('addon-button').textContent = `${addonName} - ${addonPrice} PHP`;
         }
-        
+
         // Remove selected class from all items
         document.querySelectorAll('#addonsModal .service-item').forEach(item => {
             item.classList.remove('selected');
         });
-        
+
         // Add selected class to clicked item
         const selectedItem = document.querySelector(`#addonsModal .service-item[data-addon-id="${addonId}"]`);
         if (selectedItem) {
             selectedItem.classList.add('selected');
         }
-        
+
         // Close the modal
         const addonsModal = bootstrap.Modal.getInstance(document.getElementById('addonsModal'));
         addonsModal.hide();
@@ -698,7 +696,7 @@ $addonsResult = $conn->query($addonsQuery);
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize the modal
         const addonsModal = new bootstrap.Modal(document.getElementById('addonsModal'));
-        
+
         // Add click handler for close button
         const closeButton = document.querySelector('#addonsModal .btn-close');
         if (closeButton) {
@@ -720,24 +718,24 @@ $addonsResult = $conn->query($addonsQuery);
         if (btn && btn.classList.contains('booked')) {
             return; // Don't allow selection of booked slots
         }
-        
+
         // Update the hidden input
         document.getElementById('selectedTimeSlot').value = time;
-        
+
         // Update the button text
         document.getElementById('time-slot-button').textContent = time;
-        
+
         // Remove selected class from all buttons
         document.querySelectorAll('.time-slot-btn').forEach(btn => {
             btn.classList.remove('selected');
         });
-        
+
         // Add selected class to clicked button
         const selectedBtn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
         if (selectedBtn) {
             selectedBtn.classList.add('selected');
         }
-        
+
         // Close the modal
         const timeSlotModal = bootstrap.Modal.getInstance(document.getElementById('timeSlotModal'));
         timeSlotModal.hide();
@@ -747,7 +745,7 @@ $addonsResult = $conn->query($addonsQuery);
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize the modal
         const timeSlotModal = new bootstrap.Modal(document.getElementById('timeSlotModal'));
-        
+
         // Add click handler for close button
         const closeButton = document.querySelector('#timeSlotModal .btn-close');
         if (closeButton) {

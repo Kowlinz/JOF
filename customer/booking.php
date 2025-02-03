@@ -347,44 +347,40 @@ $addonsResult = $conn->query($addonsQuery);
                     });
 
                     document.addEventListener('DOMContentLoaded', function() {
-    // Initialize flatpickr
-    const dateInput = flatpickr("#date", {
-        dateFormat: "Y-m-d",
-        minDate: "today",
-        onChange: function(selectedDates, dateStr) {
-            // When date is selected, fetch booked slots
-            fetchBookedSlots(dateStr);
-        }
-    });
+                        // Initialize flatpickr
+                        const dateInput = flatpickr("#date", {
+                            dateFormat: "Y-m-d",
+                            minDate: "today",
+                            onChange: function(selectedDates, dateStr) {
+                                // When date is selected, fetch booked slots
+                                fetchBookedSlots(dateStr);
+                            }
+                        });
 
-    function fetchBookedSlots(date) {
-        fetch(`get_booked_slots.php?date=${date}`)
-            .then(response => response.json())
-            .then(bookedSlots => {
-                updateTimeSlots(bookedSlots);
-            })
-            .catch(error => console.error('Error:', error));
-    }
+                        function fetchBookedSlots(date) {
+                            fetch(`get_booked_slots.php?date=${date}`)
+                                .then(response => response.json())
+                                .then(bookedSlots => {
+                                    updateTimeSlots(bookedSlots);
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
 
-    function updateTimeSlots(bookedSlots) {
-        const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
-        const currentDate = new Date();
-        const selectedDate = new Date(document.getElementById('date').value);
-        const isToday = selectedDate.toDateString() === currentDate.toDateString();
+                        function updateTimeSlots(bookedSlots) {
+                            const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
+                            const currentDate = new Date();
+                            const selectedDate = new Date(document.getElementById('date').value);
+                            const isToday = selectedDate.toDateString() === currentDate.toDateString();
 
-        timeSlotBtns.forEach(btn => {
-            const time = btn.getAttribute('data-time');
-            const [hours, minutes] = time.split(':');
-            const timeSlotDate = new Date(selectedDate);
-            timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (minutes.endsWith('PM') ? 12 : 0))); // Adjust for AM/PM
-            timeSlotDate.setMinutes(minutes.endsWith('PM') ? parseInt(minutes) : parseInt(minutes)); // Set minutes
-
-            // Compare the time slot with the current time and booked slots
-            const remainingSlots = parseInt(btn.getAttribute('data-remaining-slots'), 10);
-        
-        });
-    }
-});
+                            timeSlotBtns.forEach(btn => {
+                                const time = btn.getAttribute('data-time');
+                                const [hours, minutes] = time.split(':');
+                                const timeSlotDate = new Date(selectedDate);
+                                timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (minutes.endsWith('PM') ? 12 : 0))); // Adjust for AM/PM
+                                timeSlotDate.setMinutes(minutes.endsWith('PM') ? parseInt(minutes) : parseInt(minutes)); // Set minutes
+                            });
+                        }
+                    });
 
                     function selectTimeSlot(time) {
                         const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);

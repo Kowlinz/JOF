@@ -3,7 +3,17 @@
     if (!isset($_SESSION["user"])) {
         header("Location: ../login-staff.php");
     }
-    
+
+    include 'db_connect.php'; // Make sure the database is connected
+
+    // Fetch all distinct dates that have pending appointments
+    $appointmentsQuery = "SELECT DISTINCT date FROM appointment_tbl WHERE status = 'Pending'";
+    $appointmentsResult = mysqli_query($conn, $appointmentsQuery);
+
+    $appointmentDates = [];
+    while ($row = mysqli_fetch_assoc($appointmentsResult)) {
+        $appointmentDates[] = $row['date'];
+    }
 ?>
 
 <!DOCTYPE html>
@@ -383,12 +393,18 @@
             </div>
         </div>
 
-        <!-- Bottom Section: Upcoming Customers -->
+        <!-- Upcoming Customers -->
         <div class="row ms-5">
             <div class="col-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold">Upcoming Customers</h4>
+                            <!-- Date Picker for Filtering -->
+                            <div class="mb-3">
+                                <input type="date" id="appointmentDate" class="form-control" 
+                                    value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
+                                    onchange="filterAppointments()">
+                            </div>
                         <?php
                             $countQuery = "
                                 SELECT COUNT(*) AS total_upcoming
@@ -417,7 +433,7 @@
                             </thead>
                             <tbody>
                                 <?php
-                                    // Modified query to include barberID from the barb_apps_tbl table
+                                    $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
                                     $upcomingQuery = "
                                         SELECT 
                                             a.appointmentID,
@@ -439,10 +455,20 @@
                                         LEFT JOIN 
                                             barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
                                         WHERE 
-                                            a.date AND a.status = 'Pending'
-                                        ORDER BY 
-                                            a.timeSlot ASC
-                                    ";
+                                            a.status = 'Pending'";
+
+                                    // Add date filtering if a date is selected
+                                    if (!empty($selectedDate)) {
+                                        $upcomingQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                                    }
+
+                                    $upcomingQuery .= " ORDER BY a.timeSlot ASC";
+
+                                    $upcomingResult = mysqli_query($conn, $upcomingQuery);
+
+                                    if (!$upcomingResult) {
+                                        die("Query Error: " . mysqli_error($conn)); // Debugging line
+                                    }
                                     $upcomingResult = mysqli_query($conn, $upcomingQuery);
 
                                     // Modified query to fetch only available barbers
@@ -563,6 +589,26 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 <script src="js/calendar.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let appointmentDates = <?php echo json_encode($appointmentDates); ?>;
+        
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            let date = day.getAttribute('data-date'); // Assuming your calendar days have `data-date`
+            if (appointmentDates.includes(date)) {
+                day.innerHTML += `<span class="badge bg-danger ms-1">!</span>`;
+            }
+        });
+    });
+</script>
+
+<script>
+    function filterAppointments() {
+        let selectedDate = document.getElementById("appointmentDate").value;
+        window.location.href = "appointments.php?date=" + selectedDate;
+    }
+</script>
 
 <script>
     function toggleSidebar() {

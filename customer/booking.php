@@ -341,64 +341,91 @@ $addonsResult = $conn->query($addonsQuery);
                         document.getElementById('form1').submit();
                     });
 
-                    // Add this to initialize the confirmation modal
                     document.addEventListener('DOMContentLoaded', function() {
-                        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-                    });
+    const dateInput = flatpickr("#date", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+            fetchBookedSlots(dateStr);
+        }
+    });
 
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // Initialize flatpickr
-                        const dateInput = flatpickr("#date", {
-                            dateFormat: "Y-m-d",
-                            minDate: "today",
-                            onChange: function(selectedDates, dateStr) {
-                                // When date is selected, fetch booked slots
-                                fetchBookedSlots(dateStr);
-                            }
-                        });
+    function fetchBookedSlots(date) {
+        fetch(`get_booked_slots.php?date=${date}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTimeSlots(data.bookedSlots, data.totalBarbers);
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
-                        function fetchBookedSlots(date) {
-                            fetch(`get_booked_slots.php?date=${date}`)
-                                .then(response => response.json())
-                                .then(bookedSlots => {
-                                    updateTimeSlots(bookedSlots);
-                                })
-                                .catch(error => console.error('Error:', error));
-                        }
+    function updateTimeSlots(bookedSlots, totalBarbers) {
+    const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
+    const currentDate = new Date();
+    const selectedDate = new Date(document.getElementById('date').value);
+    const isToday = selectedDate.toDateString() === currentDate.toDateString();
 
-                        function updateTimeSlots(bookedSlots) {
-                            const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
-                            const currentDate = new Date();
-                            const selectedDate = new Date(document.getElementById('date').value);
-                            const isToday = selectedDate.toDateString() === currentDate.toDateString();
+    timeSlotBtns.forEach(btn => {
+        const time = btn.getAttribute('data-time');
 
-                            timeSlotBtns.forEach(btn => {
-                                const time = btn.getAttribute('data-time');
-                                const [hours, minutes] = time.split(':');
-                                const timeSlotDate = new Date(selectedDate);
-                                timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (minutes.endsWith('PM') ? 12 : 0))); // Adjust for AM/PM
-                                timeSlotDate.setMinutes(minutes.endsWith('PM') ? parseInt(minutes) : parseInt(minutes)); // Set minutes
+        // Get how many barbers are already booked at this time slot
+        const bookedCount = bookedSlots[time] || 0;
+        const remainingSlots = totalBarbers - bookedCount;
 
-                                // Compare the time slot with the current time
-                                if (bookedSlots.includes(time) || (isToday && timeSlotDate <= currentDate)) {
-                                    btn.classList.add('booked');
-                                    btn.disabled = true;
-                                } else {
-                                    btn.classList.remove('booked');
-                                    btn.disabled = false;
-                                }
-                            });
-                        }
-                    });
+        // Convert slot time to 24-hour format
+        const [hours, minutes] = time.split(':');
+        const timeSlotDate = new Date(selectedDate);
+        timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (time.includes('PM') ? 12 : 0)));
+        timeSlotDate.setMinutes(parseInt(minutes));
+
+        // Disable slot if all barbers are booked or if the time is in the past
+        if (remainingSlots <= 0 || (isToday && timeSlotDate <= currentDate)) {
+            btn.classList.add('booked');
+            btn.disabled = true;
+        } else {
+            btn.classList.remove('booked');
+            btn.disabled = false;
+        }
+
+        // Debugging log to check values
+        console.log(`Time: ${time}, Booked: ${bookedCount}, Total Barbers: ${totalBarbers}, Remaining: ${remainingSlots}`);
+    });
+}
+});
+
 
                     function selectTimeSlot(time) {
-                        const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
-                        if (btn && btn.classList.contains('booked')) {
-                            return; // Don't allow selection of booked slots
-                        }
-                        
-                        // Rest of your existing selectTimeSlot function...
-                    }
+    console.log("Attempting to select time slot:", time); // Debugging log
+
+    const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
+    
+    if (btn && btn.classList.contains('booked')) {
+        console.log("This time slot is already booked.");
+        return; // Don't allow selection of booked slots
+    }
+
+    // Update the hidden input
+    document.getElementById('selectedTimeSlot').value = time;
+    
+    // Update the button text
+    document.getElementById('time-slot-button').textContent = time;
+    
+    // Remove selected class from all buttons
+    document.querySelectorAll('.time-slot-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+
+    // Add selected class to clicked button
+    if (btn) {
+        btn.classList.add('selected');
+        console.log("Time slot selected:", time);
+    }
+
+    // Close the modal
+    const timeSlotModal = bootstrap.Modal.getInstance(document.getElementById('timeSlotModal'));
+    timeSlotModal.hide();
+}
+
                 </script>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -506,57 +533,64 @@ $addonsResult = $conn->query($addonsQuery);
             </div>
             <div class="modal-body">
     <div class="time-slots-grid">
-        <?php 
-        // Database connection
-        $conn = new mysqli("localhost", "root", "", "jof_db");
+    <?php 
+// Database connection
+$conn = new mysqli("localhost", "root", "", "jof_db");
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-        // Define time slots
-        $timeSlots = [
-            '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
-            '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
-            '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
-            '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
-        ];
+// Define time slots
+$timeSlots = [
+    '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
+    '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
+    '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
+    '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
+];
 
-        // Get the count of available barbers
-        $barbersQuery = "SELECT COUNT(*) AS total_barbers FROM barbers_tbl WHERE availability = 'available'";
-        $barbersResult = $conn->query($barbersQuery);
-        $barbersRow = $barbersResult->fetch_assoc();
-        $totalBarbers = $barbersRow['total_barbers'];
+// Get the count of available barbers
+$barbersQuery = "SELECT COUNT(*) AS total_barbers FROM barbers_tbl WHERE availability = 'available'";
+$barbersResult = $conn->query($barbersQuery);
+$barbersRow = $barbersResult->fetch_assoc();
+$totalBarbers = (int) $barbersRow['total_barbers']; // Ensure integer
 
-        // Get the current time
-        date_default_timezone_set('Asia/Manila'); // Set to your timezone
-        $currentTime = date("H:i");
+// Get the current time
+date_default_timezone_set('Asia/Manila'); // Set to your timezone
+$currentTime = date("H:i");
 
-        foreach ($timeSlots as $time): 
-            // Convert the slot time to 24-hour format
-            $slotTime = date("H:i", strtotime($time));
+foreach ($timeSlots as $time): 
+    // Convert the slot time to 24-hour format
+    $slotTime = date("H:i", strtotime($time));
 
-            // Count how many barbers are already booked at this time excluding cancelled ones
-            $appointmentQuery = "SELECT COUNT(*) AS booked FROM appointment_tbl WHERE timeSlot = '$time' AND status != 'Cancelled'";
-            $appointmentResult = $conn->query($appointmentQuery);
-            $appointmentRow = $appointmentResult->fetch_assoc();
-            $bookedBarbers = $appointmentRow['booked'];
+    // Check booked barbers per time slot
+$appointmentQuery = "SELECT COUNT(*) AS booked FROM appointment_tbl WHERE timeSlot = '$time' AND status != 'Cancelled'";
+$appointmentResult = $conn->query($appointmentQuery);
+$appointmentRow = $appointmentResult->fetch_assoc();
+$bookedBarbers = (int) $appointmentRow['booked'];
 
-            // Calculate remaining slots for this time, including cancelled ones
-            $remainingSlots = $totalBarbers - $bookedBarbers;
-            $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime); // Ensure time slot is in the future
-        ?>
-            <button class="time-slot-btn <?php echo ($remainingSlots > 0) ? '' : 'booked'; ?>" role="button" data-time="<?php echo htmlspecialchars($time); ?>"
-                <?php if ($remainingSlots > 0): ?>
-                    onclick="selectTimeSlot('<?php echo htmlspecialchars($time); ?>')"
-                <?php else: ?>
-                    disabled
-                <?php endif; ?>>
-                <?php echo htmlspecialchars($time); ?>
-            </button>
-        <?php endforeach; ?>
+// Calculate remaining slots
+$remainingSlots = $totalBarbers - $bookedBarbers;
 
-        <?php $conn->close(); ?>
+// Ensure time slot is in the future AND has available barbers
+$isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime);
+?>
+<button 
+    class="time-slot-btn <?php echo ($isAvailable ? '' : 'booked'); ?>" 
+    role="button" 
+    data-time="<?php echo htmlspecialchars($time); ?>"
+    <?php if ($isAvailable): ?>
+        onclick="selectTimeSlot('<?php echo htmlspecialchars($time); ?>')"
+    <?php else: ?>
+        disabled
+    <?php endif; ?>
+>
+    <?php echo htmlspecialchars($time); ?>
+</button>
+<?php endforeach; ?>
+
+<?php $conn->close(); ?>
+
     </div>
 </div>
 
@@ -731,17 +765,13 @@ $addonsResult = $conn->query($addonsQuery);
 
     // Initialize the time slot modal when the document is ready
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the modal
-        const timeSlotModal = new bootstrap.Modal(document.getElementById('timeSlotModal'));
-        
-        // Add click handler for close button
-        const closeButton = document.querySelector('#timeSlotModal .btn-close');
-        if (closeButton) {
-            closeButton.addEventListener('click', function() {
-                timeSlotModal.hide();
-            });
-        }
+    document.querySelectorAll('.time-slot-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            selectTimeSlot(this.getAttribute('data-time'));
+        });
     });
+});
+
 
     // Clear selection when modal is closed
     document.getElementById('timeSlotModal').addEventListener('hidden.bs.modal', function () {

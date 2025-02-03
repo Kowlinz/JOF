@@ -378,6 +378,15 @@ $addonsResult = $conn->query($addonsQuery);
                                 const timeSlotDate = new Date(selectedDate);
                                 timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (minutes.endsWith('PM') ? 12 : 0))); // Adjust for AM/PM
                                 timeSlotDate.setMinutes(minutes.endsWith('PM') ? parseInt(minutes) : parseInt(minutes)); // Set minutes
+
+                                // Compare the time slot with the current time
+                                if (bookedSlots.includes(time) || (isToday && timeSlotDate <= currentDate)) {
+                                    btn.classList.add('booked');
+                                    btn.disabled = true;
+                                } else {
+                                    btn.classList.remove('booked');
+                                    btn.disabled = false;
+                                }
                             });
                         }
                     });
@@ -537,15 +546,13 @@ $addonsResult = $conn->query($addonsQuery);
             $remainingSlots = $totalBarbers - $bookedBarbers;
             $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime); // Ensure time slot is in the future
         ?>
-            <button class="time-slot-btn <?php echo ($remainingSlots > 0) ? '' : 'booked'; ?>"
-        role="button"
-        data-time="<?php echo htmlspecialchars($time); ?>"
-        <?php if ($remainingSlots > 0): ?>
-            onclick="selectTimeSlot('<?php echo htmlspecialchars($time); ?>')"
-        <?php else: ?>
-            disabled
-        <?php endif; ?>>
-        <?php echo htmlspecialchars($time); ?>
+            <button class="time-slot-btn <?php echo ($remainingSlots > 0) ? '' : 'booked'; ?>" role="button" data-time="<?php echo htmlspecialchars($time); ?>"
+                <?php if ($remainingSlots > 0): ?>
+                    onclick="selectTimeSlot('<?php echo htmlspecialchars($time); ?>')"
+                <?php else: ?>
+                    disabled
+                <?php endif; ?>>
+                <?php echo htmlspecialchars($time); ?>
             </button>
         <?php endforeach; ?>
 

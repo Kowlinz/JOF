@@ -183,420 +183,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="../css/images/favicon.ico">
     <link rel="stylesheet" href="css/table.css">
-    <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <title>Options</title>
-    <style>
-        body {
-            background-color: #090909;
-        }
-        .dashboard {
-            color: white;
-        }
-        /* Sidebar styling */
-        .sidebar {
-            background-color: #F3CD32 !important;
-            min-height: 100vh;
-        }
-        .list-group-item {
-            background-color: transparent !important;
-            border: none !important;
-            color: black !important;
-            border-radius: 10px !important;
-            margin-bottom: 5px;
-        }
-        .list-group-item:hover {
-            background-color: rgba(0, 0, 0, 0.1) !important;
-        }
-        .list-group-item.active {
-            background-color: black !important;
-            color: #F3CD32 !important;
-            border-radius: 10px !important;
-        }
-        .list-group-item.active i,
-        .list-group-item.active span {
-            color: #F3CD32 !important;
-        }
-        /* Avatar container styling */
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
-        }
-        .avatar-container .logo {
-            margin-bottom: 20px;
-        }
-        .avatar-container img.avatar {
-            display: block;
-            margin: 0 auto;
-        }
-        .avatar-container h5 {
-            margin-top: 10px;
-            text-align: center;
-        }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 12px;
-            max-width: 800px;
-        }
-        .haircut-item img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .haircut-item p {
-            color: black;
-            margin-top: 8px;
-            font-weight: 500;
-        }
-        .delete-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            border-radius: 50%;
-            padding: 5px 10px;
-        }
-        .nav-tabs {
-            border-bottom: none;
-        }
-        .nav-tabs .nav-link {
-            color: #F3CD32;
-            position: relative;
-            background-color: transparent;
-            border: none;
-        }
-        .nav-tabs .nav-link.active {
-            color: #F3CD32;
-            background-color: transparent;
-        }
-        .nav-tabs .nav-link:hover {
-            background-color: transparent;
-            color: #F3CD32;
-        }
-        .nav-tabs .nav-link.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -5px;
-            height: 2px;
-            background-color: #F3CD32;
-        }
-        .modal-content {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .modal-header {
-            background-color: #F3CD32;
-            color: black;
-        }
-        .modal-title {
-            font-weight: bold;
-        }
-        .form-control,
-        .form-select {
-            border: 2px solid #F3CD32;
-            border-radius: 5px;
-        }
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #F3CD32;
-            box-shadow: 0 0 0 0.25rem rgba(243, 205, 50, 0.25);
-        }
-        .btn-warning {
-            background-color: #F3CD32;
-            border-color: #F3CD32;
-            color: black;
-            font-weight: bold;
-        }
-        .btn-warning:hover {
-            background-color: #e0b91d;
-            border-color: #e0b91d;
-        }
-        /* Dark mode styles for the modal */
-        .modal-content {
-            background-color: #1f1f1f;
-            color: #fff;
-        }
-        .modal-header {
-            background-color: #1f1f1f;
-            border-bottom: 1px solid #444;
-        }
-        .modal-title {
-            color: #fff;
-        }
-        .form-label {
-            color: #fff;
-        }
-        .form-control,
-        .form-select {
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #444;
-        }
-        .form-control:focus,
-        .form-select:focus {
-            background-color: #333;
-            color: #fff;
-            border-color: #F3CD32;
-            box-shadow: 0 0 0 0.25rem rgba(243, 205, 50, 0.25);
-        }
-        .btn-close {
-            filter: invert(1) grayscale(100%) brightness(200%);
-        }
-        .services-container {
-            max-width: 800px;
-        }
-        .btn-active {
-            background-color: gray !important;
-            border-color: gray !important;
-            color: white !important;
-        }
-        /* Add these new styles for layout management */
-        .main-content {
-            margin-left: 260px; /* Increased width of sidebar */
-            padding: 20px;
-        }
-
-        /* Media query for smaller screens */
-        @media (max-width: 991.98px) {
-            .main-content {
-                margin-left: 0;
-            }
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: -240px; /* Hide sidebar by default on mobile */
-                width: 240px;
-                z-index: 1000;
-                transition: left 0.3s ease;
-            }
-            .sidebar.show {
-                left: 0;
-            }
-        }
-
-        /* Add a container for all the content */
-        .content-wrapper {
-            position: relative;
-            min-height: 100vh;
-        }
-
-        /* Mobile toggle button styling */
-        .mobile-toggle {
-            position: fixed;
-            top: 25px;
-            left: 20px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: none;
-            color: #F3CD32;
-            font-size: 24px;
-        }
-
-        /* Show toggle button only on smaller screens */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-        }
-
-        /* Adjust main content area to account for sidebar */
-        .container-xxl {
-            padding-left: 260px; /* Width of sidebar + some padding */
-            width: 100%;
-            transition: padding-left 0.3s ease;
-        }
-
-        /* Sidebar positioning */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            z-index: 999;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .container-xxl {
-                padding-left: 15px; /* Reset padding on mobile */
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-        }
-
-        /* Adjust margin for content */
-        @media (min-width: 992px) and (max-width: 1680px) {
-            .ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            .dashboard.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Gallery section adjustments */
-            .haircut-gallery {
-                margin-right: 15px;
-            }
-            
-            /* Services section adjustments */
-            .services-container {
-                margin-right: 15px;
-            }
-            
-            /* Table section adjustments */
-            .table-responsive {
-                margin-right: 15px;
-            }
-            
-            /* Card adjustments */
-            .card {
-                margin-right: 15px;
-            }
-        }
-
-        /* Update mobile styles */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-            
-            /* Adjust containers on mobile */
-            .haircut-gallery,
-            .services-container {
-                margin: 0 10px;
-            }
-            
-            /* Adjust table container on mobile */
-            .table-responsive {
-                margin: 0;
-                padding: 0;
-            }
-            
-            .card {
-                margin: 0 10px;
-            }
-            
-            /* Adjust buttons on mobile */
-            .btn-warning {
-                font-size: 14px;
-                padding: 6px 12px;
-            }
-            
-            /* Adjust gallery grid on mobile */
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 10px;
-            }
-            
-            /* Adjust modal content on mobile */
-            .modal-dialog {
-                margin: 10px;
-            }
-            
-            .modal-body {
-                padding: 15px;
-            }
-            
-            /* Adjust nav tabs on mobile */
-            .nav-tabs {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .nav-tabs .nav-link {
-                white-space: nowrap;
-                padding: 8px 12px;
-            }
-        }
-
-        /* Modal centering styles */
-        .modal-dialog {
-            display: flex;
-            align-items: center;
-            min-height: calc(100% - 1rem);
-            margin: 0.5rem auto;
-        }
-
-        .modal-content {
-            width: 100%;
-            max-width: 500px; /* or your preferred max-width */
-            margin: auto;
-        }
-
-        /* Responsive modal adjustments */
-        @media (max-width: 576px) {
-            .modal-dialog {
-                margin: 0.5rem;
-                min-height: calc(100% - 1rem);
-            }
-
-            .modal-content {
-                max-width: 100%;
-            }
-        }
-
-        /* Remove the existing mobile modal styles */
-        @media (max-width: 991.98px) {
-            /* Remove or comment out this section */
-            /*.modal-dialog {
-                margin: 10px;
-            }*/
-        }
-    </style>
 </head>
 <body>
     <div class="body d-flex py-3 mt-5">
@@ -672,45 +261,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 </div>
 
                 <div class="services-container">
-                    <table class="table table-striped" style="border-radius: 8px; overflow: hidden;">
-                        <thead>
-                            <tr>
-                                <th>Service Name</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th class="actions-column" style="display: none;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            // Fetch services from the database
-                            $sql = "SELECT * FROM service_tbl";
-                            $result = $conn->query($sql);
+                    <div class="card border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <td>Service Name</td>
+                                            <td>Description</td>
+                                            <td>Price</td>
+                                            <td class="actions-column" style="display: none;">Actions</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Fetch services from the database
+                                        $sql = "SELECT * FROM service_tbl";
+                                        $result = $conn->query($sql);
 
-                            while ($row = $result->fetch_assoc()) {
-                                ?>
-                                <tr>
-                                    <td><?php echo $row['serviceName']; ?></td>
-                                    <td><?php echo $row['serviceDesc']; ?></td>
-                                    <td>₱<?php echo $row['servicePrice']; ?></td>
-                                    <td class="actions-column" style="display: none;">
-                                        <button class="btn btn-danger btn-sm delete-service-btn" data-id="<?php echo $row['serviceID']; ?>">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                        <button class="btn btn-warning btn-sm edit-service-btn" 
-                                            data-id="<?php echo $row['serviceID']; ?>" 
-                                            data-name="<?php echo $row['serviceName']; ?>" 
-                                            data-desc="<?php echo $row['serviceDesc']; ?>"
-                                            data-price="<?php echo $row['servicePrice']; ?>">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <?php
-                            }
-                            ?>
-                        </tbody>
-                    </table>
+                                        while ($row = $result->fetch_assoc()) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['serviceName']; ?></td>
+                                                <td><?php echo $row['serviceDesc']; ?></td>
+                                                <td>₱<?php echo $row['servicePrice']; ?></td>
+                                                <td class="actions-column" style="display: none;">
+                                                    <button class="btn btn-danger btn-sm delete-service-btn" data-id="<?php echo $row['serviceID']; ?>">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <button class="btn btn-warning btn-sm edit-service-btn" 
+                                                        data-id="<?php echo $row['serviceID']; ?>" 
+                                                        data-name="<?php echo $row['serviceName']; ?>" 
+                                                        data-desc="<?php echo $row['serviceDesc']; ?>"
+                                                        data-price="<?php echo $row['servicePrice']; ?>">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <button class="btn btn-warning mt-3" id="confirmServicesEditBtn" style="display: none;">
                         Confirm
                     </button>
@@ -806,10 +401,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                 <table class="table table-hover align-middle mb-0" style="width: 100%;">
                                     <thead>
                                         <tr>
-                                            <th>Add-on Name</th>
-                                            <th>Description</th>
-                                            <th>Price</th>
-                                            <th class="actions-column" style="display: none;">Actions</th>
+                                            <td>Add-on Name</td>
+                                            <td>Description</td>
+                                            <td>Price</td>
+                                            <td class="actions-column" style="display: none;">Actions</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -850,12 +445,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                     </button>
                 </div>
 
-                <!-- Add this after the Add-ons section -->
-
                 <h1 class="dashboard mb-3">Edit Landing Page Text</h1>
-                <div class="services-container mb-4">
+                <div class="services-container">
                     <div class="card border-0 rounded-4">
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <!-- Welcome Message -->
                             <div class="mb-4">
                                 <h5>Welcome Message</h5>
@@ -1333,20 +926,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Edit Services button functionality
         document.getElementById('editServicesBtn').addEventListener('click', function() {
-            const actionsColumn = document.querySelectorAll('.services-container > .table .actions-column');
+            // Target only the first services-container after the Edit Services button
+            const servicesTable = this.closest('.d-flex').nextElementSibling;
+            const actionsColumn = servicesTable.querySelectorAll('.actions-column');
             const confirmBtn = document.getElementById('confirmServicesEditBtn');
             
             actionsColumn.forEach(column => {
                 column.style.display = column.style.display === 'none' ? 'table-cell' : 'none';
             });
-
-            // Toggle the Confirm button
+            
             confirmBtn.style.display = confirmBtn.style.display === 'none' ? 'block' : 'none';
 
-            // Change the color of the Edit Services button
             this.classList.toggle('btn-active');
-            
-            // Update button text color when active
             if (this.classList.contains('btn-active')) {
                 this.style.color = 'white';
             } else {
@@ -1356,17 +947,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Update the Confirm button functionality
         document.getElementById('confirmServicesEditBtn').addEventListener('click', function() {
-            const actionsColumn = document.querySelectorAll('.services-container > .table .actions-column');
+            // Target only the first services-container after the Edit Services button
+            const servicesTable = document.getElementById('editServicesBtn').closest('.d-flex').nextElementSibling;
+            const actionsColumn = servicesTable.querySelectorAll('.actions-column');
             const editBtn = document.getElementById('editServicesBtn');
             
             actionsColumn.forEach(column => {
-                column.style.display = 'none'; // Hide action buttons
+                column.style.display = 'none';
             });
-
-            // Hide the Confirm button
-            this.style.display = 'none';
             
-            // Remove active state from Edit button
+            this.style.display = 'none';
             editBtn.classList.remove('btn-active');
             editBtn.style.color = 'black';
         });
@@ -1573,20 +1163,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Edit Add-ons button functionality
         document.getElementById('editAddonsBtn').addEventListener('click', function() {
-            const actionsColumn = document.querySelectorAll('.services-container .card .table .actions-column');
+            // Target only the first services-container after the Edit Add-ons button
+            const addonsTable = this.closest('.d-flex').nextElementSibling;
+            const actionsColumn = addonsTable.querySelectorAll('.actions-column');
             const confirmBtn = document.getElementById('confirmAddonsEditBtn');
             
             actionsColumn.forEach(column => {
                 column.style.display = column.style.display === 'none' ? 'table-cell' : 'none';
             });
 
-            // Toggle the Confirm button
             confirmBtn.style.display = confirmBtn.style.display === 'none' ? 'block' : 'none';
 
-            // Change the color of the Edit Add-ons button
             this.classList.toggle('btn-active');
-            
-            // Update button text color when active
             if (this.classList.contains('btn-active')) {
                 this.style.color = 'white';
             } else {
@@ -1596,18 +1184,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Confirm Add-ons button functionality
         document.getElementById('confirmAddonsEditBtn').addEventListener('click', function() {
-            const actionsColumn = document.querySelectorAll('.services-container .card .table .actions-column');
+            // Target only the first services-container after the Edit Add-ons button
+            const addonsTable = document.getElementById('editAddonsBtn').closest('.d-flex').nextElementSibling;
+            const actionsColumn = addonsTable.querySelectorAll('.actions-column');
             const editBtn = document.getElementById('editAddonsBtn');
             
-            // Hide action buttons
             actionsColumn.forEach(column => {
                 column.style.display = 'none';
             });
 
-            // Hide the Confirm button
             this.style.display = 'none';
-
-            // Remove active state from Edit button
             editBtn.classList.remove('btn-active');
             editBtn.style.color = 'black';
         });
@@ -1713,11 +1299,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                     <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
                 </a>
 
-                <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
-                    <i class="fa-solid fa-users fa-fw me-3"></i>
-                    <span>Appointment</span>
+                <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple d-flex align-items-center justify-content-between">
+                    <div>
+                        <i class="fa-solid fa-users fa-fw me-3"></i>
+                        <span>Appointment</span>
+                    </div>
                     <?php if ($pendingCount > 0): ?>
-                        <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                        <span class="badge bg-danger rounded-pill"><?php echo $pendingCount; ?></span>
                     <?php endif; ?>
                 </a>
                 

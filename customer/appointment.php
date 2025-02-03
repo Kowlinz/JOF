@@ -188,62 +188,90 @@ $result = $conn->query($sql);
                 </thead>
                 <tbody>
                 <?php
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            // Get current time
-            $currentTime = date('Y-m-d H:i:s');
-            
-            // Set default status class
-            $statusClass = '';
-            $statusText = $row['status']; // Default status to show
+if ($result->num_rows > 0) {
+    $currentTime = date('Y-m-d H:i:s'); // Get current time once to avoid repeating it
+    
+    while ($row = $result->fetch_assoc()) {
+        $statusClass = '';
+        $statusText = $row['status'];  // Default to the current status
 
-            // Check if the status is Pending and the time has passed
-            if ($row['status'] == 'Pending' && $row['date'] < $currentTime) {
-                $statusText = 'Missed Appointment'; // Display "Missed Appointment" if the time has passed
-                $statusClass = 'status-Missed Appointment'; // Apply the status class for "Missed Appointment"
-                
-                // If you want to change the status in the database to "Cancelled" you can update it here (optional).
-                $updateSql = "UPDATE appointment_tbl SET status='Missed Appointment' WHERE appointmentID = ?";
-                $stmt = $conn->prepare($updateSql);
-                $stmt->bind_param("i", $row['appointmentID']);
-                $stmt->execute();
-                $stmt->close();
+        // Fetch the service and addon details for the current appointment
+        $serviceID = $row['serviceID'];
+        $addonID = $row['addonID'];
 
-            } else {
-                // Handle normal statuses
-                switch($row['status']) {
-                    case 'Completed':
-                        $statusClass = 'status-completed';
-                        break;
-                    case 'Cancelled':
-                        $statusClass = 'status-cancelled';
-                        break;
-                    case 'Pending':
-                        $statusClass = 'status-pending';
-                        break;
-                }
-            }
+        // Query to get the service and add-on names
+        $serviceSql = "SELECT serviceName FROM service_tbl WHERE serviceID = ?";
+        $addonSql = "SELECT addonName FROM addon_tbl WHERE addonID = ?";
+
+        // Fetch the service name
+        $serviceStmt = $conn->prepare($serviceSql);
+        $serviceStmt->bind_param("i", $serviceID);
+        $serviceStmt->execute();
+        $serviceStmt->bind_result($serviceName);
+        $serviceStmt->fetch();
+        $serviceStmt->close();
+
+        // Fetch the add-on name
+        $addonStmt = $conn->prepare($addonSql);
+        $addonStmt->bind_param("i", $addonID);
+        $addonStmt->execute();
+        $addonStmt->bind_result($addonName);
+        $addonStmt->fetch();
+        $addonStmt->close();
+
+        // Check if the status is "Pending" and the current time has passed the appointment time
+        if ($row['status'] == 'Pending' && $row['date'] > $currentTime) {
+            // Update status to "Missed Appointment"
+            $statusText = 'Missed Appointment';
+            $statusClass = 'status-missed';  // Apply class for "Missed Appointment"
             
-            // Display row with updated status
-            echo "<tr>";
-            echo "<td>" . $row['date'] . "</td>";
-            echo "<td>" . $row['timeSlot'] . "</td>";
-            echo "<td class='" . $statusClass . "'>" . $statusText . "</td>";
-            
-            if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed" && $row['status'] !== "Missed Appointment") {
-                echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
-                "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
-                $row['appointmentID'] . ", `" . 
-                $row['date'] . "`, `" . 
-                $row['timeSlot'] . "`)'>Cancel</button></td>";
-            } else {
-                echo "<td></td>";
+            // Update the status in the database to "Missed Appointment"
+            $updateSql = "UPDATE appointment_tbl SET status='Missed Appointment' WHERE appointmentID = ?";
+            $stmt = $conn->prepare($updateSql);
+            $stmt->bind_param("i", $row['appointmentID']);
+            $stmt->execute();
+            $stmt->close();
+        } else {
+            // Switch class for regular statuses
+            switch ($row['status']) {
+                case 'Completed':
+                    $statusClass = 'status-completed';
+                    break;
+                case 'Cancelled':
+                    $statusClass = 'status-cancelled';
+                    break;
+                case 'Pending':
+                    $statusClass = 'status-pending';
+                    break;
+                case 'Missed Appointment':
+                    $statusClass = 'status-missed';
+                    break;
             }
-            echo "</tr>";
         }
-    } else {
-        echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
+        
+        // Safe output with htmlspecialchars to prevent XSS
+        echo "<tr>";
+        echo "<td>" . htmlspecialchars($row['date']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['timeSlot']) . "</td>";
+        echo "<td class='" . $statusClass . "'>" . htmlspecialchars($statusText) . "</td>";
+        
+        // Only show cancel button for Pending appointments
+        if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed" && $row['status'] !== "Missed Appointment") {
+            echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
+            "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
+            $row['appointmentID'] . ", `" . 
+            htmlspecialchars($row['date']) . "`, `" . 
+            htmlspecialchars($row['timeSlot']) . "`, `" . 
+            htmlspecialchars($serviceName) . "`, `" . 
+            htmlspecialchars($addonName) . "`)'>Cancel</button></td>";
+        } else {
+            echo "<td></td>";
+        }
+        echo "</tr>";
     }
+} else {
+    echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
+}
 ?>
 
                 </tbody>
@@ -259,9 +287,10 @@ $result = $conn->query($sql);
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Service: <span id="serviceName"></span></p>
                         <p>Date: <span id="appointmentDate"></span></p>
                         <p>Time: <span id="appointmentTime"></span></p>
+                        <p>Service: <span id="serviceName"></span></p>
+                        <p>Add-On: <span id="addonName"></span></p>
                         <div class="mb-3">
                         <label for="cancelReason" class="form-label">Reason for Cancellation</label>
                         <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (optional)">
@@ -276,23 +305,24 @@ $result = $conn->query($sql);
         </div>
 
 
-        <script>
-        // Function to handle appointment cancellation
-        function openCancelModal(appointmentID, date, time) {
-            document.getElementById('appointmentDate').textContent = date;
-            document.getElementById('appointmentTime').textContent = time;
+<script>
+// Function to handle appointment cancellation and populate modal
+function openCancelModal(appointmentID, date, time, serviceName, addonName) {
+    document.getElementById('appointmentDate').textContent = date;
+    document.getElementById('appointmentTime').textContent = time;
+    document.getElementById('serviceName').textContent = serviceName ? serviceName : 'No service selected';
+    document.getElementById('addonName').textContent = addonName ? addonName : 'No add-on selected';
 
-            // Set up the Confirm button to handle the cancellation
-            const confirmButton = document.getElementById('confirmCancelButton');
-                confirmButton.onclick = function () {
-                const reason = document.getElementById('cancelReason').value;
+    // Set up the Confirm button to handle the cancellation
+    const confirmButton = document.getElementById('confirmCancelButton');
+    confirmButton.onclick = function () {
+        const reason = document.getElementById('cancelReason').value;
 
-                // No validation needed anymore for the reason (allow empty reason)
-                // Redirect to cancellation PHP script with parameters
-                window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
-            };
-        }
-        </script>
+        // Redirect to cancellation PHP script with parameters
+        window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
+    };
+}
+</script>
 
         <script>
             // JavaScript to toggle mobile menu

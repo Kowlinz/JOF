@@ -69,6 +69,8 @@ if (isset($_SESSION["user"])) {
                             if (password_verify($password, $user_barber["password"])) {
                                 $_SESSION["user"] = "barber";
                                 $_SESSION["barberID"] = $user_barber["barberID"];
+                                $_SESSION['firstName'] = $user_barber['firstName'];
+                                $_SESSION['lastName'] = $user_barber['lastName'];                                
                                 header("Location: ./barber/b_dashboard.php");
                                 die();
 

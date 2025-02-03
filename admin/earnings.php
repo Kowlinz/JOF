@@ -43,311 +43,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/table.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <link rel="icon" href="../css/images/favicon.ico">
     <title>Earnings</title>
-    <style>
-        body {
-            background-color: #090909;
-        }
-        .dashboard {
-            color: white;
-        }
-        /* Sidebar styling */
-        .sidebar {
-            background-color: #F3CD32 !important;
-            min-height: 100vh;
-        }
-        .list-group-item {
-            background-color: transparent !important;
-            border: none !important;
-            color: black !important;
-            border-radius: 10px !important;
-            margin-bottom: 5px;
-        }
-        .list-group-item:hover {
-            background-color: rgba(0, 0, 0, 0.1) !important;
-        }
-        .list-group-item.active {
-            background-color: black !important;
-            color: #F3CD32 !important;
-            border-radius: 10px !important;
-        }
-        .list-group-item.active i,
-        .list-group-item.active span {
-            color: #F3CD32 !important;
-        }
-        /* Logo and Avatar container styling */
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
-        }
-        .avatar-container .logo {
-            margin-bottom: 20px;
-        }
-        .avatar-container img.avatar {
-            display: block;
-            margin: 0 auto;
-        }
-        .avatar-container h5 {
-            margin-top: 10px;
-            text-align: center;
-        }
-        /* Mobile toggle button styling */
-        .mobile-toggle {
-            position: fixed;
-            top: 25px;
-            left: 20px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: none;
-            color: #F3CD32;
-            font-size: 24px;
-        }
-
-        /* Show toggle button only on smaller screens */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-        }
-        .alert {
-            background-color: white !important;
-            border-radius: 15px !important;
-            padding: 20px !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .stat-icon {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-        .stat-icon.revenue { 
-            color: #F3CD32; 
-        }
-        .h5 { 
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        .h6 {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            margin: 0;
-        }
-        .card {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .card-header {
-            border-bottom: 1px solid #eee;
-        }
-        .card-header h4 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #000;
-        }
-        /* Responsive text styles */
-        .h5 {
-            font-size: clamp(14px, 2vw, 16px);
-            word-wrap: break-word;
-        }
-        
-        .h6 {
-            font-size: clamp(18px, 2.5vw, 24px);
-        }
-        
-        /* Responsive card styles */
-        .alert {
-            padding: clamp(15px, 3vw, 20px) !important;
-        }
-        
-        @media (max-width: 576px) {
-            .stat-icon {
-                font-size: 20px;
-                margin-right: 10px;
-            }
-            
-            .alert {
-                margin: 0 -10px;
-            }
-        }
-
-        /* Responsive table styles */
-        @media screen and (max-width: 712px) {
-            .table-responsive {
-                display: block;
-                width: 100%;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .card {
-                margin: 0 -15px;
-                border-radius: 0 !important;
-            }
-
-            .card-body {
-                padding: 10px;
-            }
-
-            table {
-                white-space: nowrap;
-                font-size: 14px;
-            }
-
-            /* Adjust column widths for better mobile view */
-            table th, table td {
-                min-width: 100px;
-                padding: 8px !important;
-            }
-
-            /* Make sure the money columns don't wrap */
-            table th:nth-child(1), 
-            table td:nth-child(1),
-            table th:nth-child(2), 
-            table td:nth-child(2),
-            table th:nth-child(4), 
-            table td:nth-child(4) {
-                min-width: 120px;
-            }
-        }
-
-        /* Adjust main content area to account for sidebar */
-        .container-xxl {
-            padding-left: 260px; /* Width of sidebar + some padding */
-            width: 100%;
-            transition: padding-left 0.3s ease;
-        }
-
-        /* Sidebar positioning */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            z-index: 999;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .container-xxl {
-                padding-left: 15px; /* Reset padding on mobile */
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-        }
-
-        /* Adjust margin for content */
-        @media (min-width: 992px) and (max-width: 1680px) {
-            .ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            .dashboard.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Stats card adjustments */
-            .row.g-1.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Table section adjustments */
-            .row.g-3.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Card adjustments */
-            .card {
-                margin-right: 15px;
-            }
-            
-            /* Alert adjustments */
-            .alert {
-                margin-right: 15px;
-            }
-        }
-
-        /* Update mobile styles */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-            
-            /* Adjust table container on mobile */
-            .table-responsive {
-                margin: 0;
-                padding: 0;
-            }
-            
-            .card {
-                margin: 0 10px;
-            }
-            
-            /* Adjust alert on mobile */
-            .alert {
-                margin: 0 10px 15px 10px;
-            }
-            
-            /* Adjust stats card spacing */
-            .row.g-1.mb-5 {
-                margin: 0 0 20px 0;
-            }
-            
-            /* Ensure proper spacing for earnings table */
-            .row.g-3.mb-5 {
-                margin: 0;
-            }
-        }
-    </style>
 </head>
 <body>
     <?php include 'db_connect.php'; ?>
@@ -360,37 +59,37 @@
     <div class="body d-flex py-3 mt-5">
       <div class="container-xxl">
         <h1 class="dashboard mb-5 ms-5">Earnings</h1>
-        <div class="row g-1 mb-5 ms-5">
-    <div class="col-md-4 col-sm-6">
-        <div class="alert mb-0">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon revenue">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                </div>
-                <div class="flex-fill text-wrap">
-                    <div class="h5">Today's Admin Earnings</div>
-                    <div class="h6">₱<?= number_format($totalAdminEarnings, 2) ?></div>
+        <div class="row g-3 mb-3 ms-5">
+            <div class="col-md-4 col-sm-6">
+                <div class="alert mb-0">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon revenue">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <div class="flex-fill text-wrap">
+                            <div class="h5">Today's Admin Earnings</div>
+                            <div class="h6">₱<?= number_format($totalAdminEarnings, 2) ?></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-        <div class="row g-3 mb-5 ms-5">
+        <div class="row ms-5">
             <div class="col-md-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0 fw-bold">Today</h4>
+                        <h2 class="fw-bold">Today</h2>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
                                 <thead>
                                     <tr>
-                                        <th>Total</th>
-                                        <th>My Earnings</th>
-                                        <th>Barber Name</th>
-                                        <th>Barber Earnings</th>
-                                        <th>Time</th>
+                                        <td>Total</td>
+                                        <td>My Earnings</td>
+                                        <td>Barber Name</td>
+                                        <td>Barber Earnings</td>
+                                        <td>Time</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -428,12 +127,14 @@
                 <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
             </a>
 
-            <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
+            <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple d-flex align-items-center justify-content-between">
+                <div>
                     <i class="fa-solid fa-users fa-fw me-3"></i>
                     <span>Appointment</span>
-                    <?php if ($pendingCount > 0): ?>
-                        <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
-                    <?php endif; ?>
+                </div>
+                <?php if ($pendingCount > 0): ?>
+                    <span class="badge bg-danger rounded-pill"><?php echo $pendingCount; ?></span>
+                <?php endif; ?>
             </a>
 
             <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple">

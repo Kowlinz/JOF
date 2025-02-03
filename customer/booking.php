@@ -247,11 +247,11 @@ $addonsResult = $conn->query($addonsQuery);
                             <div class="modal-body">
                                 <p><strong>Date:</strong> <span id="confirmDate"></span></p>
                                 <p><strong>Time:</strong> <span id="confirmTimeSlot"></span></p>
+                                <p><strong>Haircut:</strong> <span id="confirmHaircut"></span></p>
+                                <p style="margin-bottom: 25px;"><strong>Remarks:</strong> <span id="confirmRemarks"></span></p>
                                 <p><strong>Service:</strong> <span id="confirmService"></span></p>
                                 <p><strong>Add-on:</strong> <span id="confirmAddon"></span></p>
-                                <p><strong>Haircut:</strong> <span id="confirmHaircut"></span></p>
-                                <p><strong>Remarks:</strong> <span id="confirmRemarks"></span></p>
-                                <p><strong>Total Price:</strong> <span id="confirmTotalPrice">319 PHP</span></p>
+                                <p><strong>Total Price:</strong> <span id="confirmTotalPrice" style="background-color: #FFDE59; padding: 5px 10px; border-radius: 5px; display: inline-block; font-weight: bold;">319 PHP</span></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" id="confirmBooking" class="btn btn-confirm">Confirm</button>
@@ -325,8 +325,8 @@ $addonsResult = $conn->query($addonsQuery);
                         document.getElementById('confirmDate').innerText = formattedDate;
                         document.getElementById('confirmTimeSlot').innerText = timeSlot;
                         document.getElementById('confirmService').innerText = service;
-                        document.getElementById('confirmAddon').innerText = addon === 'Choose Add-on' ? 'None' : addon;
-                        document.getElementById('confirmHaircut').innerText = haircut === 'Choose Haircut' ? 'None' : haircut;
+                        document.getElementById('confirmAddon').innerText = (addon === 'Choose Add-on' || !document.getElementById('addon').value) ? 'None' : addon;
+                        document.getElementById('confirmHaircut').innerText = (haircut === 'Choose Haircut' || !document.getElementById('haircut').value) ? 'None' : haircut;
                         document.getElementById('confirmRemarks').innerText = remarks || 'None';
                         document.getElementById('confirmTotalPrice').innerText = `${totalPrice} PHP`;
 

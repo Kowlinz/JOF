@@ -13,206 +13,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/table.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <link rel="icon" href="../css/images/favicon.ico">
     <title>Admin Dashboard</title>
-    <style>
-        body {
-            background-color: #090909;
-        }
-        .dashboard {
-            color: white;
-        }
-        /* Sidebar styling */
-        .sidebar {
-            background-color: #F3CD32 !important;
-            min-height: 100vh;
-        }
-        .list-group-item {
-            background-color: transparent !important;
-            border: none !important;
-            color: black !important;
-            border-radius: 10px !important;
-            margin-bottom: 5px;
-        }
-        .list-group-item:hover {
-            background-color: rgba(0, 0, 0, 0.1) !important;
-        }
-        .list-group-item.active {
-            background-color: black !important;
-            color: #F3CD32 !important;
-            border-radius: 10px !important;
-        }
-        .list-group-item.active i,
-        .list-group-item.active span {
-            color: #F3CD32 !important;
-        }
-        .alert {
-            background-color: white !important;
-            border-radius: 15px !important;
-            padding: 20px !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .alert-warning, .alert-success, .alert-danger {
-            background-color: white !important;
-            border: none !important;
-            color: black !important;
-        }
-        .stat-icon {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-        .stat-icon.pending { color: #FFDE59; }
-        .stat-icon.completed { color: #FFDE59; }
-        .stat-icon.cancelled { color: #FF0000; }
-        .stat-icon.revenue { color: #FFDE59; }
-        .h5 { 
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        .h6 {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            margin: 0;
-        }
-        /* Logo and Avatar container styling */
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
-        }
-        .avatar-container .logo {
-            margin-bottom: 20px;
-        }
-        .avatar-container img.avatar {
-            display: block;
-            margin: 0 auto;
-        }
-        .avatar-container h5 {
-            margin-top: 10px;
-            text-align: center;
-        }
-        .card {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .card-header {
-            border-bottom: 1px solid #eee;
-        }
-        .card-header h4 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #000;
-        }
-        .table {
-            margin-bottom: 0;
-        }
-        .table thead th {
-            border-bottom: 1px solid #eee;
-            color: #000;
-            font-weight: 600;
-            padding: 12px 8px;
-        }
-        .table tbody td {
-            padding: 12px 8px;
-            border-bottom: 1px solid #eee;
-            color: #333;
-        }
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        .table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-        /* Mobile toggle button styling */
-        .mobile-toggle {
-            position: fixed;
-            top: 25px;
-            left: 20px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: none;
-            color: #F3CD32;
-            font-size: 24px;
-        }
-
-        /* Show toggle button only on smaller screens */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-        }
-
-        /* Adjust main content area to account for sidebar */
-        .container-xxl {
-            padding-left: 260px; /* Width of sidebar + some padding */
-            width: 100%;
-            transition: padding-left 0.3s ease;
-        }
-
-        /* Sidebar positioning */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            z-index: 999;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .container-xxl {
-                padding-left: 15px; /* Reset padding on mobile */
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-        }
-
-        /* Adjust margin for stats cards */
-        @media (min-width: 992px) and (max-width: 1680px) {
-            .row.g-3.mb-3 {
-                margin-left: 0 !important;
-            }
-            
-            .ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            .dashboard.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-        }
-    </style>
 </head>
 <body>
 <?php
@@ -331,7 +135,7 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
                             <i class="fa-solid fa-users"></i>
                         </div>
                         <div class="flex-fill">
-                            <div class="h5">Pending Customers</div>
+                            <div class="h5 pending-label">Pending Customers</div>
                             <div class="h6"><?php echo $pendingCount; ?></div>
                         </div>
                     </div>
@@ -384,36 +188,38 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
             <div class="col-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white">
-                        <h4 class="mb-0">Upcoming Customers Today</h4>
+                        <h2 class="fw-bold">Upcoming Customers Today</h2>
                     </div>
                     <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th width="10%">#</th>
-                                    <th width="60%">Name</th>
-                                    <th width="30%">Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    $counter = 1;
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Name</td>
+                                        <td>Time</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                        $counter = 1;
 
-                                    if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
-                                        while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                                            echo "<tr>";
-                                            echo "<td>{$counter}</td>";
-                                            echo "<td>{$row['fullName']}</td>";
-                                            echo "<td>{$row['timeSlot']}</td>";
-                                            echo "</tr>";
-                                            $counter++;
+                                        if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
+                                            while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                                echo "<tr>";
+                                                echo "<td>{$counter}</td>";
+                                                echo "<td>{$row['fullName']}</td>";
+                                                echo "<td>{$row['timeSlot']}</td>";
+                                                echo "</tr>";
+                                                $counter++;
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='3' class='text-center'>No upcoming appointments found.</td></tr>";
                                         }
-                                    } else {
-                                        echo "<tr><td colspan='3' class='text-center'>No upcoming appointments found.</td></tr>";
-                                    }
-                                ?>
-                            </tbody>
-                        </table>
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -424,34 +230,36 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
             <div class="col-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white">
-                        <h4 class="mb-0">Previous Customers Today</h4>
+                        <h2 class="fw-bold">Previous Customers Today</h2>
                     </div>
                     <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Time</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php
-                            if ($previousResult && mysqli_num_rows($previousResult) > 0) {
-                                while ($row = mysqli_fetch_assoc($previousResult)) {
-                                    echo "<tr>";
-                                    echo "<td>{$row['fullName']}</td>";
-                                    echo "<td>{$row['timeSlot']}</td>";
-                                    echo "<td>{$row['date']}</td>";
-                                    echo "</tr>";
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>Time</td>
+                                        <td>Date</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                if ($previousResult && mysqli_num_rows($previousResult) > 0) {
+                                    while ($row = mysqli_fetch_assoc($previousResult)) {
+                                        echo "<tr>";
+                                        echo "<td>{$row['fullName']}</td>";
+                                        echo "<td>{$row['timeSlot']}</td>";
+                                        echo "<td>{$row['date']}</td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='3' class='text-center'>No completed appointments found.</td></tr>";
                                 }
-                            } else {
-                                echo "<tr><td colspan='3' class='text-center'>No completed appointments found.</td></tr>";
-                            }
-                            ?>
+                                ?>
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -470,13 +278,15 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
         <a href="a_dashboard.php" class="list-group-item list-group-item-action py-2 ripple active">
             <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
         </a>
-        <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple">
-                    <i class="fa-solid fa-users fa-fw me-3"></i>
-                    <span>Appointment</span>
-                    <?php if ($pendingCount > 0): ?>
-                        <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
-                    <?php endif; ?>
-                </a>
+        <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple d-flex align-items-center justify-content-between">
+            <div>
+                <i class="fa-solid fa-users fa-fw me-3"></i>
+                <span>Appointment</span>
+            </div>
+            <?php if ($pendingCount > 0): ?>
+                <span class="badge bg-danger rounded-pill"><?php echo $pendingCount; ?></span>
+            <?php endif; ?>
+        </a>
         <a href="a_history.php" class="list-group-item list-group-item-action py-2 ripple">
             <i class="fa-solid fa-clock-rotate-left fa-fw me-3"></i><span>History</span>
         </a>

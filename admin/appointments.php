@@ -21,316 +21,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="css/table.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="css/table.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <link rel="icon" href="../css/images/favicon.ico">
-    <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <title>Appointments</title>
-    <style>
-        body {
-            background-color: #090909;
-        }
-        .dashboard {
-            color: white;
-        }
-        /* Sidebar styling */
-        .sidebar {
-            background-color: #F3CD32 !important;
-            min-height: 100vh;
-        }
-        .list-group-item {
-            background-color: transparent !important;
-            border: none !important;
-            color: black !important;
-            border-radius: 10px !important;
-            margin-bottom: 5px;
-        }
-        .list-group-item:hover {
-            background-color: rgba(0, 0, 0, 0.1) !important;
-        }
-        .list-group-item.active {
-            background-color: black !important;
-            color: #F3CD32 !important;
-            border-radius: 10px !important;
-        }
-        .list-group-item.active i,
-        .list-group-item.active span {
-            color: #F3CD32 !important;
-        }
-        /* Avatar container styling */
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
-        }
-        .avatar-container .logo {
-            margin-bottom: 20px;
-        }
-        .avatar-container img.avatar {
-            display: block;
-            margin: 0 auto;
-        }
-        .avatar-container h5 {
-            margin-top: 10px;
-            text-align: center;
-        }
-        /* Add these date picker styles */
-        .dropdown-menu {
-            padding: 8px 0 !important;
-            background: white !important;
-            border: 1px solid rgba(0,0,0,.15) !important;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-            min-width: 120px !important;
-        }
-        .calendar-container {
-            background: white;
-            border-radius: 4px;
-            padding: 15px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        }
-        .btn-secondary {
-            background-color: #F3CD32;
-            border-color: #F3CD32;
-            color: black;
-        }
-        .btn-secondary:hover {
-            background-color: #dbb82e;
-            border-color: #dbb82e;
-            color: black;
-        }
-        /* Ensure dropdown menu shows properly */
-        .dropdown-menu.show {
-            display: block !important;
-        }
-        /* Table responsiveness styles */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        @media (max-width: 768px) {
-            .table-responsive {
-                margin: 0 -15px;
-            }
-            
-            .card {
-                border-radius: 0;
-            }
-            
-            .container-xxl {
-                padding: 0 15px;
-            }
-        }
-        /* Add these calendar responsive styles */
-        @media screen and (max-width: 768px) {
-            .calendar-container {
-                transform: scale(0.95);
-                transform-origin: top left;
-                margin-bottom: 15px;
-            }
-            
-            .dropdown-menu {
-                width: 290px !important;
-                padding: 10px !important;
-                margin-top: 5px !important;
-            }
-            
-            .calendar-header {
-                padding: 15px !important;
-            }
-            
-            .calendar-body {
-                padding: 10px !important;
-            }
-            
-            .calendar-weekdays li, 
-            .calendar-dates li {
-                font-size: 14px;
-                height: 40px;
-                width: 40px;
-                line-height: 40px;
-            }
-            
-            .calendar-navigation span {
-                font-size: 22px;
-            }
-
-            .calendar-current-date {
-                font-size: 16px;
-            }
-        }
-
-        @media screen and (max-width: 576px) {
-            .calendar-container {
-                transform: scale(0.85);
-                margin-bottom: 25px;
-            }
-            
-            .dropdown-menu {
-                width: 260px !important;
-                padding: 15px !important;
-            }
-            
-            .calendar-weekdays li, 
-            .calendar-dates li {
-                font-size: 12px;
-            }
-        }
-
-        /* Add new styles for very small screens */
-        @media screen and (max-width: 505px) {
-            .calendar-container {
-                transform: scale(0.8);
-                margin-bottom: 30px;
-            }
-            
-            .dropdown-menu {
-                width: 240px !important;
-                margin-left: -20px;
-                padding: 20px !important;
-                min-height: 380px;
-            }
-            
-            .calendar-weekdays li, 
-            .calendar-dates li {
-                font-size: 11px;
-                height: 30px;
-                width: 30px;
-                line-height: 30px;
-            }
-            
-            .calendar-header {
-                padding: 8px !important;
-            }
-            
-            .calendar-navigation span {
-                font-size: 18px;
-            }
-            
-            .calendar-current-date {
-                font-size: 14px;
-            }
-        }
-
-        /* Add this to ensure the dropdown has enough space */
-        .dropdown {
-            margin-bottom: 50px;
-        }
-
-        /* Mobile toggle button styling */
-        .mobile-toggle {
-            position: fixed;
-            top: 25px;
-            left: 20px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: none;
-            color: #F3CD32;
-            font-size: 24px;
-        }
-
-        /* Show toggle button only on smaller screens */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-        }
-
-        /* Adjust main content area to account for sidebar */
-        .container-xxl {
-            padding-left: 260px; /* Width of sidebar + some padding */
-            width: 100%;
-            transition: padding-left 0.3s ease;
-        }
-
-        /* Sidebar positioning */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            z-index: 999;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .container-xxl {
-                padding-left: 15px; /* Reset padding on mobile */
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-        }
-
-        /* Adjust margin for content */
-        @media (min-width: 992px) and (max-width: 1680px) {
-            .ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            .dashboard.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Calendar section adjustments */
-            .row.ms-5.mb-4 {
-                margin-left: 0 !important;
-            }
-            
-            /* Table section adjustments */
-            .row.ms-5 {
-                margin-left: 0 !important;
-            }
-        }
-
-        /* Add these new styles for the dropdown items */
-        .dropdown-item {
-            padding: 8px 16px;
-            color: #212529;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .dropdown-item i {
-            width: 16px;
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
     <?php include 'db_connect.php'; 
@@ -398,64 +96,70 @@
             <div class="col-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0 fw-bold">Upcoming Customers</h4>
+                        <h2 class="fw-bold">Upcoming Customers</h2>
+                        <div class="d-flex align-items-center gap-3">
                             <!-- Date Picker for Filtering -->
-                            <div class="mb-3">
+                            <div class="mb-0">
                                 <input type="date" id="appointmentDate" class="form-control" 
                                     value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
                                     onchange="filterAppointments()">
                             </div>
-                        <?php
-                            $countQuery = "
-                                SELECT COUNT(*) AS total_upcoming
-                                FROM appointment_tbl a
-                                LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                                WHERE a.date AND a.status = 'Pending'
-                            ";
-                            $countResult = mysqli_query($conn, $countQuery);
-                            $countData = mysqli_fetch_assoc($countResult);
-                            $totalUpcoming = $countData['total_upcoming'];
-                        ?>
-                        <h4>Total: <?php echo $totalUpcoming; ?></h4>
+                            <?php
+                                $countQuery = "
+                                    SELECT COUNT(*) AS total_upcoming
+                                    FROM appointment_tbl a
+                                    LEFT JOIN customer_tbl c ON a.customerID = c.customerID
+                                    WHERE a.status = 'Pending'
+                                ";
+                                if (isset($_GET['date'])) {
+                                    $countQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $_GET['date']) . "'";
+                                }
+                                $countResult = mysqli_query($conn, $countQuery);
+                                $countData = mysqli_fetch_assoc($countResult);
+                                $totalUpcoming = $countData['total_upcoming'];
+                            ?>
+                            <h4 class="mb-0">Total: <?php echo $totalUpcoming; ?></h4>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Service</th>
-                                    <th>Barber</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
-                                    $upcomingQuery = "
-                                        SELECT 
-                                            a.appointmentID,
-                                            a.date,
-                                            a.timeSlot,
-                                            a.status,
-                                            CASE 
-                                                WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-                                                ELSE 'Walk In' 
-                                            END AS fullName,
-                                            s.serviceName, 
-                                            ba.barberID
-                                        FROM 
-                                            appointment_tbl a
-                                        LEFT JOIN 
-                                            customer_tbl c ON a.customerID = c.customerID
-                                        LEFT JOIN 
-                                            service_tbl s ON a.serviceID = s.serviceID
-                                        LEFT JOIN 
-                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
-                                        WHERE 
-                                            a.status = 'Pending'";
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Name</td>
+                                        <td>Date</td>
+                                        <td>Time</td>
+                                        <td>Service</td>
+                                        <td>Barber</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                        $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
+                                        $upcomingQuery = "
+                                            SELECT 
+                                                a.appointmentID,
+                                                a.date,
+                                                a.timeSlot,
+                                                a.status,
+                                                CASE 
+                                                    WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
+                                                    ELSE 'Walk In' 
+                                                END AS fullName,
+                                                s.serviceName, 
+                                                ba.barberID
+                                            FROM 
+                                                appointment_tbl a
+                                            LEFT JOIN 
+                                                customer_tbl c ON a.customerID = c.customerID
+                                            LEFT JOIN 
+                                                service_tbl s ON a.serviceID = s.serviceID
+                                            LEFT JOIN 
+                                                barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
+                                            WHERE 
+                                                a.status = 'Pending'";
 
                                     // Add date filtering if a date is selected
                                     if (!empty($selectedDate)) {
@@ -507,29 +211,9 @@
                                                         </form>
                                                     </td>
                                                     <td>
-                                                        <div class='dropdown'>
-                                                            <i class='fas fa-ellipsis-v' style='cursor: pointer;' data-bs-toggle='dropdown'></i>
-                                                            <ul class='dropdown-menu'>
-                                                                <li>
-                                                                    <form action='update_status.php' method='POST' style='display: inline;'>
-                                                                        <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
-                                                                        <input type='hidden' name='status' value='Completed'>
-                                                                        <button type='submit' class='dropdown-item'>
-                                                                            <i class='fas fa-check text-success'></i> Done
-                                                                        </button>
-                                                                    </form>
-                                                                </li>
-                                                                <li>
-                                                                    <form action='update_status.php' method='POST' style='display: inline;'>
-                                                                        <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
-                                                                        <input type='hidden' name='status' value='Cancelled'>
-                                                                        <button type='submit' class='dropdown-item'>
-                                                                            <i class='fas fa-times text-danger'></i> Cancel
-                                                                        </button>
-                                                                    </form>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
+                                                        <button type='button' class='btn btn-link' onclick='openStatusModal({$row['appointmentID']})'>
+                                                            <i class='fas fa-ellipsis-v'></i>
+                                                        </button>
                                                     </td>
                                                 </tr>";
                                                 $counter++;
@@ -558,11 +242,13 @@
                 <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>
             </a>
 
-            <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple active">
-                <i class="fa-solid fa-users fa-fw me-3"></i>
-                <span>Appointment</span>
+            <a href="appointments.php" class="list-group-item list-group-item-action py-2 ripple active d-flex align-items-center justify-content-between">
+                <div>
+                    <i class="fa-solid fa-users fa-fw me-3"></i>
+                    <span>Appointment</span>
+                </div>
                 <?php if ($pendingCount > 0): ?>
-                    <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                    <span class="badge bg-danger rounded-pill"><?php echo $pendingCount; ?></span>
                 <?php endif; ?>
             </a>
             
@@ -640,17 +326,32 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="statusModalLabel">Status</h5>
+                <h5 class="modal-title" id="statusModalLabel">Update Appointment Status</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="statusMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form id="statusForm" action="update_status.php" method="POST">
+                    <input type="hidden" id="appointmentID" name="appointmentID">
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success" name="status" value="Completed">
+                            <i class="fas fa-check me-2"></i>Mark as Done
+                        </button>
+                        <button type="submit" class="btn btn-danger" name="status" value="Cancelled">
+                            <i class="fas fa-times me-2"></i>Cancel Appointment
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function openStatusModal(appointmentId) {
+    document.getElementById('appointmentID').value = appointmentId;
+    const modal = new bootstrap.Modal(document.getElementById('statusModal'));
+    modal.show();
+}
+</script>
 </body>
 </html>

@@ -13,22 +13,6 @@ $customerID = $_SESSION["customerID"];
 // Database connection
 include 'db_connect.php';
 
-// Create a function to get booked time slots for a specific date
-function getBookedTimeSlots($conn, $date) {
-    $sql = "SELECT timeSlot FROM appointment_tbl WHERE date = ? AND status != 'Cancelled'";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $date);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    $bookedSlots = array();
-    while($row = $result->fetch_assoc()) {
-        $bookedSlots[] = $row['timeSlot'];
-    }
-    
-    return $bookedSlots;
-}
-
 // Fetch customer's firstName if not in session
 if (!isset($_SESSION['firstName'])) {
     $sql = "SELECT firstName FROM customer_tbl WHERE customerID = ?";

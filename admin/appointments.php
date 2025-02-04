@@ -100,25 +100,10 @@
                         <div class="d-flex align-items-center gap-3">
                             <!-- Date Picker for Filtering -->
                             <div class="mb-0">
-                                <input type="date" id="appointmentDate" class="form-control" 
-                                    value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
-                                    onchange="filterAppointments()">
+                            <input type="date" id="appointmentDate" class="form-control" 
+                            value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
+                            oninput="filterAppointments()">
                             </div>
-                            <?php
-                                $countQuery = "
-                                    SELECT COUNT(*) AS total_upcoming
-                                    FROM appointment_tbl a
-                                    LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                                    WHERE a.status = 'Pending'
-                                ";
-                                if (isset($_GET['date'])) {
-                                    $countQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $_GET['date']) . "'";
-                                }
-                                $countResult = mysqli_query($conn, $countQuery);
-                                $countData = mysqli_fetch_assoc($countResult);
-                                $totalUpcoming = $countData['total_upcoming'];
-                            ?>
-                            <h4 class="mb-0">Total: <?php echo $totalUpcoming; ?></h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -290,10 +275,17 @@
 </script>
 
 <script>
-    function filterAppointments() {
+let timeout = null;
+
+function filterAppointments() {
+    clearTimeout(timeout); // Clear previous timeout to avoid multiple reloads
+    timeout = setTimeout(() => {
         let selectedDate = document.getElementById("appointmentDate").value;
-        window.location.href = "appointments.php?date=" + selectedDate;
-    }
+        if (selectedDate.length === 10) { // Ensure full date is entered
+            window.location.href = "appointments.php?date=" + selectedDate;
+        }
+    }, 800); // Delay execution to allow typing
+}
 </script>
 
 <script>

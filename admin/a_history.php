@@ -44,6 +44,12 @@
                     <div class="card p-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h2 class="fw-bold">Previous Customers</h2>
+                            <!-- Date Picker for Filtering -->
+                            <div class="mb-0">
+                                <input type="date" id="appointmentDate" class="form-control" 
+                                value="<?php echo isset($_GET['appointment_date']) ? $_GET['appointment_date'] : ''; ?>" 
+                                oninput="filterAppointments()">
+                            </div>
                             <button type="button" class="btn btn-delete" 
                                     onclick="confirmDeletion('previous_customer')" 
                                     >
@@ -64,6 +70,9 @@
                                     </thead>
                                     <tbody>
                                         <?php
+                                            $selectedDate = isset($_GET['appointment_date']) ? $_GET['appointment_date'] : null;
+
+                                            // Default query to fetch previous completed appointments
                                             $completedQuery = "SELECT 
                                                 a.appointmentID,
                                                 a.date,
@@ -87,13 +96,21 @@
                                             LEFT JOIN 
                                                 barbers_tbl b ON b.barberID = ba.barberID
                                             WHERE 
-                                                a.date AND a.status = 'Completed'
-                                            GROUP BY
-                                                a.appointmentID
-                                            ORDER BY 
-                                                a.timeSlot DESC";
+                                                a.status = 'Completed'";
 
+                                            // Add date filtering if a date is selected
+                                            if (!empty($selectedDate)) {
+                                                $completedQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                                            }
+
+                                            $completedQuery .= " ORDER BY a.timeSlot ASC";
+
+                                            // Execute the query to get the results
                                             $completedResult = mysqli_query($conn, $completedQuery);
+
+                                            if (!$completedResult) {
+                                                die("Query Error: " . mysqli_error($conn)); // Debugging line
+                                            }
                                             
                                             if ($completedResult && mysqli_num_rows($completedResult) > 0) {
                                                 while ($row = mysqli_fetch_assoc($completedResult)) {
@@ -124,11 +141,17 @@
                     <div class="card p-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h2 class="fw-bold">Cancelled</h2>
+                            <!-- Date Picker for Filtering -->
+                            <div class="mb-0">
+                                <input type="date" id="cancelledDate" class="form-control" 
+                                value="<?php echo isset($_GET['cancelled_date']) ? $_GET['cancelled_date'] : ''; ?>"
+                                oninput="filterCancelledAppointments()">
+                            </div>
                             <button type="button" class="btn btn-delete" 
                                     onclick="confirmDeletion('cancelled')" 
                                     >
                                 <i class="fa-solid fa-trash-alt fa-lg"></i>
-                            </button>
+                            </button> 
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -143,15 +166,27 @@
                                     </thead>
                                     <tbody>
                                             <?php
+                                                $selectedCancelledDate = isset($_GET['cancelled_date']) ? $_GET['cancelled_date'] : null;
                                                 // Modify the query to select only cancelled appointments for the current date
                                                 $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
                                                 FROM appointment_tbl a
                                                 LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                                                WHERE a.status = 'Cancelled' 
-                                                AND a.date";
-                                                
+                                                WHERE a.status = 'Cancelled'";
+
+                                                if (!empty($selectedCancelledDate)) {
+                                                    $cancelledQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedCancelledDate) . "'";
+                                                }
+
+                                                $cancelledQuery .= " ORDER BY a.timeSlot ASC";
+
+                                                $cancelledResult = mysqli_query($conn, $cancelledQuery);
+
+                                                if (!$cancelledResult) {
+                                                    die("Query Error: " . mysqli_error($conn)); // Debugging line
+                                                }
                                                 $cancelledResult = mysqli_query($conn, $cancelledQuery);
                                                 
+
                                                 if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
                                                     while ($row = mysqli_fetch_assoc($cancelledResult)) {
                                                         // Check if firstName or lastName is null (for admin bookings)
@@ -223,6 +258,44 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="js/calendar.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let appointmentDates = <?php echo json_encode($appointmentDates); ?>;
+            
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                let date = day.getAttribute('data-date'); // Assuming your calendar days have `data-date`
+                if (appointmentDates.includes(date)) {
+                    day.innerHTML += `<span class="badge bg-danger ms-1">!</span>`;
+                }
+            });
+        });
+    </script>
+
+    <script> // Filtering previous appointments
+    let timeout = null;
+
+    function filterAppointments() {
+        clearTimeout(timeout); // Clear previous timeout to avoid multiple reloads
+        timeout = setTimeout(() => {
+            let selectedDate = document.getElementById("appointmentDate").value;
+            if (selectedDate.length === 10) { // Ensure full date is entered
+                window.location.href = "a_history.php?appointment_date=" + selectedDate;
+            }
+        }, 800); // Delay execution to allow typing
+    }
+
+    function filterCancelledAppointments() {
+        clearTimeout(timeout); // Clear previous timeout to avoid multiple reloads
+        timeout = setTimeout(() => {
+            let selectedDate = document.getElementById("cancelledDate").value;
+            if (selectedDate.length === 10) { // Ensure full date is entered
+                window.location.href = "a_history.php?cancelled_date=" + selectedDate;
+            }
+        }, 800); // Delay execution to allow typing
+    }
+    </script>
+
     <script>
         // Initialize Bootstrap dropdowns
         document.addEventListener('DOMContentLoaded', function() {

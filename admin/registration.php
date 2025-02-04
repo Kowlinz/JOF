@@ -33,12 +33,12 @@
                         $contactNum = $_POST["contactNum"];
                         $password = $_POST["password"];
                         $RepeatPassword = $_POST["repeat_password"];
-                        
+
                         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
                         $errors = array();
                         // validate if all fields are empty
-                        if (empty ($FirstName) OR empty ($MiddleName) OR empty ($LastName) OR empty ($email) OR empty ($contactNum) OR empty ($password) OR empty ($RepeatPassword)) {
+                        if (empty ($FirstName) OR empty ($LastName) OR empty ($email) OR empty ($contactNum) OR empty ($password) OR empty ($RepeatPassword)) {
                             array_push($errors, "All fields are required"); 
                         }
                         // validate if the email is not validated 
@@ -70,14 +70,16 @@
                             }
                         } else {
                             require_once "db_connect.php";
-                            $sql = "INSERT INTO barbers_tbl (firstName, middleName, lastName, email, contactNum, password) VALUES (?, ?, ?, ?, ?, ?)";
+                            $sql = "INSERT INTO barbers_tbl (firstName, middleName, lastName, email, contactNum, password, availability) VALUES (?, ?, ?, ?, ?, ?, ?)";
                             
                             // initializes a statement and returns an object suitable for mysqli_stmt_prepare()
                             $stmt = mysqli_stmt_init($conn); 
                             $preparestmt = mysqli_stmt_prepare($stmt, $sql);
                             
                             if ($preparestmt) {
-                                mysqli_stmt_bind_param($stmt, "ssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash);
+                                $Availability = "Available";
+
+                                mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash, $Availability);
                                 mysqli_stmt_execute($stmt);
                                 echo "<div class = 'alert alert-success'> You are registered succesfully! </div>";
                             } else {

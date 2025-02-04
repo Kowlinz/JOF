@@ -7,16 +7,24 @@ if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "barber") {
     exit();
 }
 
-// Get the logged-in barber's ID from the session
 $barberID = $_SESSION["barberID"];
 
 include 'db_connect.php';
 
-    // Fetch the number of pending appointments
-    $notificationQuery = "SELECT COUNT(*) AS pending_count FROM barb_apps_tbl WHERE barberID = '$barberID'";
-    $notificationResult = mysqli_query($conn, $notificationQuery);
-    $notificationData = mysqli_fetch_assoc($notificationResult);
-    $pendingCount = $notificationData['pending_count'];
+    // Fetch the number of pending appointments and their status
+$notificationQuery = "
+SELECT COUNT(*) AS pending_count 
+FROM barb_apps_tbl AS b 
+JOIN appointment_tbl AS a 
+ON b.appointmentID = a.appointmentID 
+WHERE b.barberID = '$barberID' 
+AND a.status = 'Pending'
+";
+
+$notificationResult = mysqli_query($conn, $notificationQuery);
+$notificationData = mysqli_fetch_assoc($notificationResult);
+$pendingCount = $notificationData['pending_count'];
+
 
     // Query to get the barber's full name
     $barberQuery = "SELECT firstName, lastName FROM barbers_tbl WHERE barberID = '$barberID'";
@@ -446,7 +454,7 @@ include 'db_connect.php';
         <div class="list-group list-group-flush mx-3 mt-5">
             <div class="avatar-container text-center">
                 <img src="css/images/jof_logo_black.png" alt="logo" width="55" height="55" class="logo mb-4">
-                <h5 class="mt-3" style="font-weight: bold; font-size: 20px;">Barber: <?php echo $barberFullName; ?></h5> <!-- Display Barber's Name -->
+                <h5 class="mt-3" style="font-weight: bold; font-size: 20px;"><?php echo $barberFullName; ?></h5> <!-- Display Barber's Name -->
             </div>
             <a href="b_dashboard.php" class="list-group-item list-group-item-action py-2 ripple">
                 <i class="fa-solid fa-border-all fa-fw me-3"></i><span>Dashboard</span>

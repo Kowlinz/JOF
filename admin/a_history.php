@@ -38,68 +38,6 @@
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
             <h1 class="dashboard mb-5 ms-5">Appointments History</h1>
-
-
-
-            <!-- Cancelled Appointments Row -->
-            <div class="row mb-4 ms-5">
-                <div class="col-md-12">
-                    <div class="card p-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h2 class="fw-bold">Cancelled</h2>
-                            <button type="button" class="btn btn-delete" 
-                                    onclick="confirmDeletion('cancelled')" 
-                                    >
-                                <i class="fa-solid fa-trash-alt fa-lg"></i>
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Date</td>
-                                            <td>Time</td>
-                                            <td>Reason</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                            <?php
-                                                // Modify the query to select only cancelled appointments for the current date
-                                                $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
-                                                FROM appointment_tbl a
-                                                LEFT JOIN customer_tbl c ON a.customerID = c.customerID
-                                                WHERE a.status = 'Cancelled' 
-                                                AND a.date";
-                                                
-                                                $cancelledResult = mysqli_query($conn, $cancelledQuery);
-                                                
-                                                if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
-                                                    while ($row = mysqli_fetch_assoc($cancelledResult)) {
-                                                        // Check if firstName or lastName is null (for admin bookings)
-                                                        $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
-                                                        $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
-                                                
-                                                        echo "<tr>
-                                                                <td>{$firstName} {$lastName}</td>
-                                                                <td>{$row['date']}</td>
-                                                                <td>{$row['timeSlot']}</td>
-                                                                <td>{$row['reason']}</td>
-                                                            </tr>";
-                                                    }
-                                                } else {
-                                                    echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
-                                                }
-                                            ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Previous Customers Row -->
             <div class="row mb-4 ms-5">
                 <div class="col-md-12">
@@ -177,6 +115,67 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+
+            <!-- Cancelled Appointments Row -->
+            <div class="row mb-4 ms-5">
+                <div class="col-md-12">
+                    <div class="card p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="fw-bold">Cancelled</h2>
+                            <button type="button" class="btn btn-delete" 
+                                    onclick="confirmDeletion('cancelled')" 
+                                    >
+                                <i class="fa-solid fa-trash-alt fa-lg"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Date</td>
+                                            <td>Time</td>
+                                            <td>Reason</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                            <?php
+                                                // Modify the query to select only cancelled appointments for the current date
+                                                $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
+                                                FROM appointment_tbl a
+                                                LEFT JOIN customer_tbl c ON a.customerID = c.customerID
+                                                WHERE a.status = 'Cancelled' 
+                                                AND a.date";
+                                                
+                                                $cancelledResult = mysqli_query($conn, $cancelledQuery);
+                                                
+                                                if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
+                                                    while ($row = mysqli_fetch_assoc($cancelledResult)) {
+                                                        // Check if firstName or lastName is null (for admin bookings)
+                                                        $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
+                                                        $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
+                                                
+                                                        echo "<tr>
+                                                                <td>{$firstName} {$lastName}</td>
+                                                                <td>{$row['date']}</td>
+                                                                <td>{$row['timeSlot']}</td>
+                                                                <td>{$row['reason']}</td>
+                                                            </tr>";
+                                                    }
+                                                } else {
+                                                    echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
+                                                }
+                                            ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>

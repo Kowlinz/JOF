@@ -386,22 +386,6 @@ include 'db_connect.php';
                 <div class="card border-0 rounded-4"> 
                     <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                         <h4 class="ms-2 mt-2 fw-bold" style="color: black;">Previous Customers</h4>
-                        <h4 style="color: black;">Total: <?php
-                            // Query to count the number of completed appointments
-                            $countQuery = "
-                                SELECT COUNT(*) AS total_previous
-                                FROM barb_apps_tbl ba
-                                JOIN appointment_tbl a ON ba.appointmentID = a.appointmentID
-                                WHERE a.date AND a.status = 'Completed'
-                            ";
-                            $countResult = mysqli_query($conn, $countQuery);
-                            if ($countResult) {
-                                $countData = mysqli_fetch_assoc($countResult);
-                                echo $countData['total_previous'];
-                            } else {
-                                echo "0"; // In case of an error, show 0
-                            }
-                        ?></h4>
                     </div>
                     <div class="card-body"> 
                         <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">

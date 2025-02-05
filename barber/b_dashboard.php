@@ -21,19 +21,19 @@ if (!$barberResult) {
 $barber = mysqli_fetch_assoc($barberResult);
 $barberFullName = $barber ? $barber['firstName'] . ' ' . $barber['lastName'] : 'Unknown Barber'; // Default if no name found
 
-    // Fetch the number of pending appointments and their status
-    $notificationQuery = "
-    SELECT COUNT(*) AS pending_count 
-    FROM barb_apps_tbl AS b 
-    JOIN appointment_tbl AS a 
-    ON b.appointmentID = a.appointmentID 
-    WHERE b.barberID = '$barberID' 
-    AND a.status = 'Pending'
-    ";
+// Fetch the number of pending appointments and their status
+$notificationQuery = "
+SELECT COUNT(*) AS notif_count 
+FROM barb_apps_tbl AS b 
+JOIN appointment_tbl AS a 
+ON b.appointmentID = a.appointmentID 
+WHERE b.barberID = '$barberID' 
+AND a.status = 'Pending'
+";
     
-    $notificationResult = mysqli_query($conn, $notificationQuery);
-    $notificationData = mysqli_fetch_assoc($notificationResult);
-    $pendingCount = $notificationData['pending_count'];
+$notificationResult = mysqli_query($conn, $notificationQuery);
+$notificationData = mysqli_fetch_assoc($notificationResult);
+$notificationCount = $notificationData['notif_count'];
     
 
 // Query for Pending Customers
@@ -587,8 +587,8 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                         </a>
                         <a href="schedule.php" class="list-group-item list-group-item-action py-2 ripple">
                             <i class="fa-solid fa-users fa-fw me-3"></i><span>Schedule</span>
-                            <?php if ($pendingCount > 0): ?>
-                                <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                            <?php if ($notificationCount > 0): ?>
+                                <span class="badge bg-danger ms-2"><?php echo $notificationCount; ?></span>
                             <?php endif; ?>
                         </a>
                         <a href="b_history.php" class="list-group-item list-group-item-action py-2 ripple">

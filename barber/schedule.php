@@ -365,22 +365,6 @@ $pendingCount = $notificationData['pending_count'];
             <div class="card border-0 rounded-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                     <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Upcoming Customers</h4>
-                    <h4 style="color: #000000;">Total: 
-                        <?php
-                        // Query to count the upcoming appointments for the logged-in barber
-                        $countQuery = "SELECT COUNT(*) AS total_upcoming
-                                       FROM barb_apps_tbl ba
-                                       JOIN appointment_tbl a ON ba.appointmentID = a.appointmentID
-                                       WHERE ba.barberID = $barberID AND a.date AND a.status = 'Pending'";
-                        $countResult = mysqli_query($conn, $countQuery);
-                        if ($countResult) {
-                            $countData = mysqli_fetch_assoc($countResult);
-                            echo $countData['total_upcoming'];
-                        } else {
-                            echo "0"; // In case of an error, show 0
-                        }
-                        ?>
-                    </h4>
                 </div>
 
                 <div class="card-body">

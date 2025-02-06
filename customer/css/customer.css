@@ -51,4 +51,95 @@
 .appointments-table td:last-child {
     padding-right: 0;  /* Remove right padding for last column */
     text-align: right; /* Align the content to the right */
+}
+
+/* Modal Centering */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    min-height: calc(100% - 1rem);
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 500px;  /* Adjust this value as needed */
+    background-color: #1f1f1f; /* Add dark background color */
+    color: #fff; /* Add light text color */
+}
+
+.modal-header {
+    padding: 1rem;
+    justify-content: center;
+    border-bottom: none;
+    background-color: #1f1f1f; /* Add dark background color */
+}
+
+.modal-title {
+    margin: 0 auto;
+    font-weight: bold;
+    color: #fff; /* Add light text color */
+}
+
+.modal-body {
+    padding: 1rem;
+    background-color: #1f1f1f; /* Add dark background color */
+}
+
+.modal-footer {
+    padding: 1rem;
+    border-top: none;
+    background-color: #1f1f1f; /* Add dark background color */
+}
+
+/* Form elements in modal */
+.form-label {
+    color: #fff; /* Add light text color */
+}
+
+.form-control {
+    background-color: #333; /* Dark input background */
+    color: #fff; /* Light input text */
+    border: 1px solid #444;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7); /* White with some transparency */
+}
+
+.form-control:focus {
+    background-color: #333;
+    color: #fff;
+    border-color: #F3CD32;
+    box-shadow: 0 0 0 0.25rem rgba(243, 205, 50, 0.25);
+}
+
+/* Status Classes */
+.status-completed {
+    color: #28a745;
+}
+
+.status-cancelled {
+    color: #dc3545;
+}
+
+.status-pending {
+    color: #ffc107;
+}
+
+.status-missed {
+    color: #6c757d;
+}
+
+/* Appointments Header */
+.appointments-header-wrapper {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.appointments-header {
+    color: #FFDE59;
+    font-size: 2em;
+    font-weight: bold;
 } 

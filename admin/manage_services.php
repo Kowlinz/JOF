@@ -6,11 +6,16 @@ if (!isset($_SESSION["user"])) {
 
 include 'db_connect.php';
 
-// Fetch the number of pending appointments
-$notificationQuery = "SELECT COUNT(*) AS pending_count FROM appointment_tbl WHERE status = 'Pending'";
+// Fetch the number of pending appointments without an assigned barber
+$notificationQuery = "
+    SELECT COUNT(*) AS notif_count 
+    FROM appointment_tbl a
+    LEFT JOIN barb_apps_tbl b ON a.appointmentID = b.appointmentID
+    WHERE a.status = 'Pending' AND b.barberID IS NULL";
+
 $notificationResult = mysqli_query($conn, $notificationQuery);
 $notificationData = mysqli_fetch_assoc($notificationResult);
-$pendingCount = $notificationData['pending_count'];
+$notificationCount = $notificationData['notif_count'];
 
 // Handle all POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -1251,8 +1256,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                         <i class="fa-solid fa-users fa-fw me-3"></i>
                         <span>Appointment</span>
                     </div>
-                    <?php if ($pendingCount > 0): ?>
-                        <span class="badge bg-danger rounded-pill"><?php echo $pendingCount; ?></span>
+                    <?php if ($notificationCount > 0): ?>
+                        <span class="badge bg-danger rounded-pill"><?php echo $notificationCount; ?></span>
                     <?php endif; ?>
                 </a>
                 

@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <link rel="stylesheet" href="css/table.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="css/sidebar.css">
-    <title>Options</title>
+    <title>Manage Services</title>
 </head>
 <body>
     <div class="body d-flex py-3 mt-5">
@@ -717,7 +717,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 this.classList.add('active');
                 const category = this.getAttribute('href').replace('#', '');
                 
-                fetch(`options.php?action=get_haircuts&category=${category}`)
+                fetch(`manage_services.php?action=get_haircuts&category=${category}`)
                     .then(response => response.text())
                     .then(html => {
                         document.querySelector('.gallery-grid').innerHTML = html;
@@ -782,7 +782,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                         formData.append('action', 'delete_haircut');
                         formData.append('haircut_id', haircut_id);
 
-                        fetch('options.php', {
+                        fetch('manage_services.php', {
                             method: 'POST',
                             body: formData
                         })
@@ -840,7 +840,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                     // Refresh the gallery grid
                     const activeTab = document.querySelector('.nav-link.active');
                     const category = activeTab.getAttribute('href').replace('#', '');
-                    fetch(`options.php?action=get_haircuts&category=${category}`)
+                    fetch(`manage_services.php?action=get_haircuts&category=${category}`)
                         .then(response => response.text())
                         .then(html => {
                             document.querySelector('.gallery-grid').innerHTML = html;
@@ -977,7 +977,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                     formData.append('action', 'delete_service');
                     formData.append('serviceID', serviceID);
 
-                    fetch('options.php', {
+                    fetch('manage_services.php', {
                         method: 'POST',
                         body: formData
                     })
@@ -1133,7 +1133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                     formData.append('action', 'delete_addon');
                     formData.append('addonID', addonID);
 
-                    fetch('options.php', {
+                    fetch('manage_services.php', {
                         method: 'POST',
                         body: formData
                     })
@@ -1318,8 +1318,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 <a href="barbers.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-scissors fa-fw me-3"></i><span>Barbers</span>
                 </a>
-                <a href="options.php" class="list-group-item list-group-item-action py-2 ripple active">
-                    <i class="fa-solid fa-gear fa-fw me-3"></i><span>Options</span>
+                <a href="manage_services.php" class="list-group-item list-group-item-action py-2 ripple active">
+                    <i class="fa-solid fa-gear fa-fw me-3"></i><span>Manage Services</span>
+                </a>
+                <a href="configuration.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-gear fa-fw me-3"></i><span>Website Configuration</span>
                 </a>
                 <a href="../logout-staff.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-right-from-bracket fa-fw me-3"></i><span>Log Out</span>

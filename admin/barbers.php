@@ -146,8 +146,11 @@ $result = $conn->query($sql);
                 <a href="barbers.php" class="list-group-item list-group-item-action py-2 ripple active">
                     <i class="fa-solid fa-scissors fa-fw me-3"></i><span>Barbers</span>
                 </a>
-                <a href="options.php" class="list-group-item list-group-item-action py-2 ripple">
-                    <i class="fa-solid fa-gear fa-fw me-3"></i><span>Options</span>
+                <a href="manage_services.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-gear fa-fw me-3"></i><span>Manage Services</span>
+                </a>
+                <a href="configuration.php" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fa-solid fa-gear fa-fw me-3"></i><span>Website Configuration</span>
                 </a>
                 <a href="../logout-staff.php" class="list-group-item list-group-item-action py-2 ripple">
                     <i class="fa-solid fa-right-from-bracket fa-fw me-3"></i><span>Log Out</span>

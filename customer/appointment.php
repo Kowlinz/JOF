@@ -69,7 +69,7 @@ $result = $conn->query($sql);
 
         /* Add animation delay for the appointments container */
         .appointments-container.fade-in {
-            animation-delay: 0.2s;
+        animation-delay: 0.2s;
         }
 
         /* Modal pop-up animation */
@@ -86,10 +86,10 @@ $result = $conn->query($sql);
 
         /* Optional: Add a nice bounce effect */
         @keyframes modalPop {
-            0% {
+            0% {                
                 transform: scale(0.7);
                 opacity: 0;
-            }
+                }
             50% {
                 transform: scale(1.05);
             }
@@ -98,7 +98,7 @@ $result = $conn->query($sql);
                 opacity: 1;
             }
         }
-
+        
         .modal.show .modal-dialog {
             animation: modalPop 0.3s ease-out forwards;
         }
@@ -156,7 +156,6 @@ $result = $conn->query($sql);
                             <a href="../logout.php" class="menu-link">LOGOUT</a>
                         </div>
                     </div>
-
                     <div class="navbar-nav mx-auto ps-5">
                         <a class="nav-link mx-4 nav-text fs-5" href="../index.php">Home</a>
                         <a class="nav-link mx-4 nav-text fs-5" href="../haircuts.php">HAIRCUTS & SERVICES</a>
@@ -167,7 +166,6 @@ $result = $conn->query($sql);
                             onclick="document.location='booking.php'" 
                             type="button" 
                             style="background-color: #000000; color: #FFDE59; border-radius: 12px;">Book Now</button>
-                            
                         <div class="dropdown">
                             <div class="user-header d-flex align-items-center" id="userDropdown">
                                 <div class="user-icon">
@@ -177,12 +175,10 @@ $result = $conn->query($sql);
                                     <span class="user-name"><?php echo htmlspecialchars($_SESSION['firstName'] ?? ''); ?></span>
                                 </div>
                             </div>
-
                             <div class="dropdown-menu" id="dropdownMenu">
                                 <a href="../logout.php" class="dropdown-item">Logout</a>
                             </div>
                         </div>
-                        
                         <script>
                             // JavaScript to toggle dropdown visibility
                             const dropdownToggle = document.getElementById('userDropdown');
@@ -220,122 +216,89 @@ $result = $conn->query($sql);
                 </thead>
                 <tbody>
                 <?php
-if ($result->num_rows > 0) {
-    $currentTime = date('Y-m-d H:i:s'); // Get current time once to avoid repeating it
-    
-    while ($row = $result->fetch_assoc()) {
-        $statusClass = '';
-        $statusText = $row['status'];  // Default to the current status
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $statusClass = '';
 
-        // Fetch the service and addon details for the current appointment
-        $serviceID = $row['serviceID'];
-        $addonID = $row['addonID'];
+                        switch ($row['status']) {
+                            case 'Completed':
+                                $statusClass = 'status-completed';
+                                break;
+                            case 'Cancelled':
+                                $statusClass = 'status-cancelled';
+                                break;
+                            case 'Pending':
+                                $statusClass = 'status-pending';
+                                break;
+                        }
 
-        // Query to get the service and add-on names
-        $serviceSql = "SELECT serviceName FROM service_tbl WHERE serviceID = ?";
-        $addonSql = "SELECT addonName FROM addon_tbl WHERE addonID = ?";
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($row['date']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['timeSlot']) . "</td>";
+                        echo "<td class='" . $statusClass . "'>" . htmlspecialchars($row['status']) . "</td>";
 
-        // Fetch the service name
-        $serviceStmt = $conn->prepare($serviceSql);
-        $serviceStmt->bind_param("i", $serviceID);
-        $serviceStmt->execute();
-        $serviceStmt->bind_result($serviceName);
-        $serviceStmt->fetch();
-        $serviceStmt->close();
-
-        // Fetch the add-on name
-        $addonStmt = $conn->prepare($addonSql);
-        $addonStmt->bind_param("i", $addonID);
-        $addonStmt->execute();
-        $addonStmt->bind_result($addonName);
-        $addonStmt->fetch();
-        $addonStmt->close();
-
-        // Check if the status is "Pending" and the current time has passed the appointment time
-        if ($row['status'] == 'Pending' && $row['date'] > $currentTime) {
-            // Update status to "Missed Appointment"
-            $statusText = 'Missed Appointment';
-            $statusClass = 'status-missed';  // Apply class for "Missed Appointment"
-            
-            // Update the status in the database to "Missed Appointment"
-            $updateSql = "UPDATE appointment_tbl SET status='Missed Appointment' WHERE appointmentID = ?";
-            $stmt = $conn->prepare($updateSql);
-            $stmt->bind_param("i", $row['appointmentID']);
-            $stmt->execute();
-            $stmt->close();
-        } else {
-            // Switch class for regular statuses
-            switch ($row['status']) {
-                case 'Completed':
-                    $statusClass = 'status-completed';
-                    break;
-                case 'Cancelled':
-                    $statusClass = 'status-cancelled';
-                    break;
-                case 'Pending':
-                    $statusClass = 'status-pending';
-                    break;
-                case 'Missed Appointment':
-                    $statusClass = 'status-missed';
-                    break;
-            }
-        }
-        
-        // Safe output with htmlspecialchars to prevent XSS
-        echo "<tr>";
-        echo "<td>" . htmlspecialchars($row['date']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['timeSlot']) . "</td>";
-        echo "<td class='" . $statusClass . "'>" . htmlspecialchars($statusText) . "</td>";
-        
-        // Only show cancel button for Pending appointments
-        if ($row['status'] !== "Cancelled" && $row['status'] !== "Completed" && $row['status'] !== "Missed Appointment") {
-            echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
-            "' data-bs-toggle='modal' data-bs-target='#cancelModal' onclick='openCancelModal(" . 
-            $row['appointmentID'] . ", `" . 
-            htmlspecialchars($row['date']) . "`, `" . 
-            htmlspecialchars($row['timeSlot']) . "`, `" . 
-            htmlspecialchars($serviceName) . "`, `" . 
-            htmlspecialchars($addonName) . "`)'>Cancel</button></td>";
-        } else {
-            echo "<td></td>";
-        }
-        echo "</tr>";
-    }
-} else {
-    echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
-}
-?>
-
+                        if ($row['status'] === "Pending") {
+                            echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
+                            "' data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button></td>";
+                        } else {
+                            echo "<td></td>";
+                        }
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
+                }
+                ?>
                 </tbody>
             </table>
         </div>
-
         <!-- Modal -->
+
         <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+
             <div class="modal-dialog">
+
                 <div class="modal-content">
+
                     <div class="modal-header">
+
                         <h5 class="modal-title" id="cancelModalLabel">Cancel Appointment</h5>
+
                     </div>
+
                     <div class="modal-body">
+
                         <p>Date: <span id="appointmentDate"></span></p>
+
                         <p>Time: <span id="appointmentTime"></span></p>
+
                         <p>Service: <span id="serviceName"></span></p>
+
                         <p>Add-On: <span id="addonName"></span></p>
+
                         <div class="mb-3">
+
                         <label for="cancelReason" class="form-label">Reason for Cancellation</label>
+
                         <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (Required)" required>
+
                     </div>
+
                     </div>
+
                     <div class="modal-footer">
+
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+
                         <button type="button" class="btn btn-danger" id="confirmCancelButton">Cancel</button>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
-
-
 <script>
 // Function to handle appointment cancellation and populate modal
 function openCancelModal(appointmentID, date, time, serviceName, addonName) {
@@ -361,7 +324,6 @@ function openCancelModal(appointmentID, date, time, serviceName, addonName) {
     };
 }
 </script>
-
         <script>
             // JavaScript to toggle mobile menu
             const menuBtn = document.getElementById('menuBtn');
@@ -383,7 +345,6 @@ function openCancelModal(appointmentID, date, time, serviceName, addonName) {
                 }
             });
         </script>
-
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </div>
 </body>

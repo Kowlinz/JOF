@@ -198,8 +198,7 @@ $addonsResult = $conn->query($addonsQuery);
 
         /* Add this new style for the remarks spacing */
         #confirmRemarks {
-            display: inline-block;
-            margin-bottom: 20px;
+            display: inline-flex;
         }
 
         .modal-body p:last-child strong,
@@ -478,6 +477,7 @@ $addonsResult = $conn->query($addonsQuery);
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="confirmationModalLabel">Appointment Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <p><strong>Date:</strong> <span id="confirmDate"></span></p>
@@ -486,11 +486,11 @@ $addonsResult = $conn->query($addonsQuery);
                                 <p><strong>Remarks:</strong> <span id="confirmRemarks"></span></p>
                                 <p><strong>Service:</strong> <span id="confirmService"></span></p>
                                 <p><strong>Add-on:</strong> <span id="confirmAddon"></span></p>
-                                <p class="total-price"><strong>Total Price:</strong> <span id="confirmTotalPrice">319 PHP</span></p>
+                                <p class="total-price"><strong>Total Price:</strong> <span id="confirmTotalPrice"></span></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Discard</button>
-                                <button type="button" id="confirmBooking" class="btn btn-confirm px-4">Confirm</button>
+                                <button type="button" id="confirmBooking" class="btn btn-confirm">Confirm</button>
                             </div>
                         </div>
                     </div>
@@ -502,6 +502,7 @@ $addonsResult = $conn->query($addonsQuery);
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <p>Please fill in all required fields (Date, Time Slot, and Service).</p>
@@ -521,10 +522,10 @@ $addonsResult = $conn->query($addonsQuery);
                         // Get form values
                         const date = document.getElementById('date').value;
                         const timeSlot = document.getElementById('selectedTimeSlot').value;
-                        const service = document.getElementById('service-button').textContent;
-                        const addon = document.getElementById('addon-button').textContent;
                         const haircut = document.getElementById('haircut-button').textContent;
                         const remarks = document.getElementById('remarks').value;
+                        const service = document.getElementById('service-button').textContent;
+                        const addon = document.getElementById('addon-button').textContent;
 
                         // Calculate total price
                         let totalPrice = 0;
@@ -559,10 +560,10 @@ $addonsResult = $conn->query($addonsQuery);
                         // Populate modal with values
                         document.getElementById('confirmDate').innerText = formattedDate;
                         document.getElementById('confirmTimeSlot').innerText = timeSlot;
-                        document.getElementById('confirmHaircut').innerText = (haircut === 'Choose Haircut' || !document.getElementById('haircut').value) ? 'None' : haircut;
+                        document.getElementById('confirmHaircut').innerText = haircut === 'Choose Haircut' ? 'None' : haircut;
                         document.getElementById('confirmRemarks').innerText = remarks || 'None';
                         document.getElementById('confirmService').innerText = service;
-                        document.getElementById('confirmAddon').innerText = (addon === 'Choose Add-on' || !document.getElementById('addon').value) ? 'None' : addon;
+                        document.getElementById('confirmAddon').innerText = addon === 'Choose Add-on' ? 'None' : addon;
                         document.getElementById('confirmTotalPrice').innerText = `${totalPrice} PHP`;
 
                         // Show the modal

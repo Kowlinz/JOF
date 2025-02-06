@@ -60,6 +60,19 @@ $totalIncomeQuery = "
 $totalIncomeResult = mysqli_query($conn, $totalIncomeQuery);
 $totalIncome = mysqli_fetch_assoc($totalIncomeResult)['total_income'];
 $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00'; // Format the income
+
+// Query to calculate the barber's total income for the current month
+$monthlyBarberIncomeQuery = "
+    SELECT SUM(e.barberEarnings) AS total_monthly_income
+    FROM earnings_tbl e
+    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+    WHERE MONTH(a.date) = MONTH(CURDATE()) 
+    AND YEAR(a.date) = YEAR(CURDATE()) 
+    AND e.barberID = '$barberID'
+";
+$monthlyBarberIncomeResult = mysqli_query($conn, $monthlyBarberIncomeQuery);
+$totalMonthlyBarberIncome = mysqli_fetch_assoc($monthlyBarberIncomeResult)['total_monthly_income'] ?? 0;
+$totalMonthlyBarberIncome = number_format($totalMonthlyBarberIncome, 2);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -359,11 +372,24 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00'; /
                 <div class="alert mb-0">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon revenue">
-                            <i class="fa-solid fa-sack-dollar"></i>
+                            <i class="fa-solid fa-coins"></i>
                         </div>
                         <div class="flex-fill text-wrap">
                     <div class="h5">Today's Income</div>
                     <div class="h6">₱<?= number_format($totalIncome, 2) ?></div>
+                </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="alert mb-0">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon revenue">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <div class="flex-fill text-wrap">
+                    <div class="h5">This Month Earnings</div>
+                    <div class="h6">₱<?= number_format($totalMonthlyBarberIncome, 2) ?></div>
                 </div>
                     </div>
                 </div>

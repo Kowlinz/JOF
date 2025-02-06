@@ -1,0 +1,54 @@
+/* Appointment Section */
+.appointments-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.appointments-table th,
+.appointments-table td {
+    text-align: left;
+    padding: 10px 50px;
+    border-bottom: 1px solid #D3D3D3;
+}
+
+.appointments-table th {
+    color: #000000;
+    font-size: 18px;
+}
+
+.appointments-table td {
+    color: #000000;
+}
+
+.cancel-button {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.cancel-button:hover {
+    background-color: #cc0000;
+}
+
+.appointments-table th:first-child,
+.appointments-table td:first-child {
+    padding-left: 0;  /* Remove left padding for first column */
+}
+
+.appointments-table th:last-child,
+.appointments-table td:last-child {
+    padding-right: 0;  /* Remove right padding for last column */
+    text-align: right; /* Align the content to the right */
+} 

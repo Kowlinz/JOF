@@ -41,63 +41,8 @@ $result = $conn->query($sql);
     <link rel="icon" href="../css/images/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/style1.css">
+    <link rel="stylesheet" href="css/customer.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
-            /* Appointment Section */
-            .appointments-container {
-                max-width: 800px;
-                margin: 20px auto;
-                background-color: #ffffff;
-                border-radius: 8px;
-                padding: 20px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            }
-
-            .appointments-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            .appointments-table th,
-            .appointments-table td {
-                text-align: left;
-                padding: 10px 50px;
-                border-bottom: 1px solid #D3D3D3;
-            }
-
-            .appointments-table th {
-                color: #000000;
-                font-size: 18px;
-            }
-
-            .appointments-table td {
-                color: #000000;
-            }
-
-            .cancel-button {
-                background-color: #ff0000;
-                color: #fff;
-                border: none;
-                padding: 5px 10px;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-
-            .cancel-button:hover {
-                background-color: #cc0000;
-            }
-
-            .appointments-table th:first-child,
-            .appointments-table td:first-child {
-                padding-left: 0;  /* Remove left padding for first column */
-            }
-
-            .appointments-table th:last-child,
-            .appointments-table td:last-child {
-                padding-right: 0;  /* Remove right padding for last column */
-                text-align: right; /* Align the content to the right */
-            }
-    </style>
 </head>
 <body>
     <div class="main-page">
@@ -304,56 +249,8 @@ if ($result->num_rows > 0) {
             </div>
         </div>
 
-
-<script>
-// Function to handle appointment cancellation and populate modal
-function openCancelModal(appointmentID, date, time, serviceName, addonName) {
-    document.getElementById('appointmentDate').textContent = date;
-    document.getElementById('appointmentTime').textContent = time;
-    document.getElementById('serviceName').textContent = serviceName ? serviceName : 'No service selected';
-    document.getElementById('addonName').textContent = addonName ? addonName : 'No add-on selected';
-
-    // Set up the Confirm button to handle the cancellation
-    const confirmButton = document.getElementById('confirmCancelButton');
-    confirmButton.onclick = function () {
-        const reasonInput = document.getElementById('cancelReason');
-        const reason = reasonInput.value.trim();
-
-        if (reason === "") {
-            alert("Please provide a reason for cancellation.");
-            reasonInput.focus(); // Focus on input if empty
-            return;
-        }
-
-        // Redirect to cancellation PHP script with parameters
-        window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
-    };
-}
-</script>
-
-        <script>
-            // JavaScript to toggle mobile menu
-            const menuBtn = document.getElementById('menuBtn');
-            const menuDropdown = document.getElementById('menuDropdown');
-            const menuClose = document.getElementById('menuClose');
-
-            menuBtn.addEventListener('click', function () {
-                menuDropdown.classList.toggle('show');
-            });
-
-            menuClose.addEventListener('click', function () {
-                menuDropdown.classList.remove('show');
-            });
-
-            // Close menu when clicking outside
-            document.addEventListener('click', function (event) {
-                if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
-                    menuDropdown.classList.remove('show');
-                }
-            });
-        </script>
-
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="customer/js/appointment.js"></script>
     </div>
 </body>
 </html>

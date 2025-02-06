@@ -33,6 +33,16 @@
     $resultTotalAdmin = $stmtTotalAdmin->get_result();
     $totalAdminEarnings = $resultTotalAdmin->fetch_assoc()['totalAdminEarnings'] ?? 0; // Default to 0 if null
 
+    // Query to calculate total adminEarnings for the current month
+    $monthlyAdminEarningsQuery = "SELECT SUM(adminEarnings) AS totalMonthlyAdminEarnings 
+    FROM earnings_tbl e 
+    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+    WHERE MONTH(a.date) = MONTH(CURDATE()) AND YEAR(a.date) = YEAR(CURDATE())";
+
+    $stmtMonthlyAdmin = $conn->prepare($monthlyAdminEarningsQuery);
+    $stmtMonthlyAdmin->execute();
+    $resultMonthlyAdmin = $stmtMonthlyAdmin->get_result();
+    $totalMonthlyAdminEarnings = $resultMonthlyAdmin->fetch_assoc()['totalMonthlyAdminEarnings'] ?? 0; // Default to 0 if null
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +74,7 @@
                 <div class="alert mb-0">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon revenue">
-                            <i class="fa-solid fa-sack-dollar"></i>
+                            <i class="fa-solid fa-coins"></i>
                         </div>
                         <div class="flex-fill text-wrap">
                             <div class="h5">Today's Admin Earnings</div>
@@ -73,8 +83,21 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="alert mb-0">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon revenue">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <div class="flex-fill text-wrap">
+                            <div class="h5">This Month Earnings</div>
+                            <div class="h6">₱<?= number_format($totalMonthlyAdminEarnings, 2) ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="row ms-5">
+        <div class="row g-3 mb-3 ms-5">
             <div class="col-md-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">

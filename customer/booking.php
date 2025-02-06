@@ -51,191 +51,286 @@ $addonsResult = $conn->query($addonsQuery);
     <link rel="stylesheet" href="../css/style1.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
     <style>
-    .time-slots-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        padding: 15px;
-    }
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
 
-    .time-slot-btn {
-        background-color: #FFDE59;
-        border: none;
-        padding: 10px;
-        border-radius: 20px;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
 
-    .time-slot-btn.selected {
-        background-color: black;
-        color: #FFDE59;
-    }
+        .time-slot-btn {
+            background-color: #FFDE59;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    .time-slot-btn.booked {
-        background-color: #D3D3D3;
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
+        .time-slot-btn.selected {
+            background-color: black;
+            color: #FFDE59;
+        }
 
-    .time-slot-btn.booked:hover {
-        background-color: #D3D3D3;
-    }
+        .time-slot-btn.booked {
+            background-color: #D3D3D3;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
 
-    .available {
-        background-color: #FFDE59; /* Green for available */
-        color: black;
-    }
+        .time-slot-btn.booked:hover {
+            background-color: #D3D3D3;
+        }
 
-    .unavailable {
-        background-color: #d6d6d6; /* Light gray for unavailable */
-        color: #555;
-        cursor: not-allowed;
-    }
+        .available {
+            background-color: #FFDE59; /* Green for available */
+            color: black;
+        }
 
-    /* Add these modal styles */
-    .modal-content {
-        background-color: #1f1f1f;
-        color: #ffffff;
-    }
+        .unavailable {
+            background-color: #d6d6d6; /* Light gray for unavailable */
+            color: #555;
+            cursor: not-allowed;
+        }
 
-    .modal-header {
-        border-bottom: none;
-        justify-content: center;
-    }
+        /* Add these modal styles */
+        .modal-content {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
 
-    .modal-header .modal-title {
-        font-weight: bold;
-        width: 100%;
-        text-align: center;
-    }
+        .modal-header {
+            border-bottom: none;
+            justify-content: center;
+        }
 
-    .modal-header .btn-close {
-        position: absolute;
-        right: 1rem;
-    }
+        .modal-header .modal-title {
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
 
-    .modal-footer {
-        border-top: none; /* Remove the border */
-    }
+        .modal-header .btn-close {
+            position: absolute;
+            right: 1rem;
+        }
 
-    .btn-close {
-        color: #ffffff;
-        filter: invert(1) grayscale(100%) brightness(200%);
-    }
+        .modal-footer {
+            border-top: none; /* Remove the border */
+        }
 
-    .service-item {
-        background-color: transparent;
-        padding: 10px 15px;
-        margin-bottom: 8px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-        box-shadow: none !important;
-        text-shadow: none !important;
-        color: #ffffff;
-    }
+        .btn-close {
+            color: #ffffff;
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
 
-    /* Add specific styling for service items in all modals */
-    #servicesModal .service-item,
-    #haircutsModal .service-item,
-    #addonsModal .service-item {
-        background-color: transparent;
-        border: none;
-        box-shadow: none !important;
-    }
+        .service-item {
+            background-color: transparent;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            color: #ffffff;
+        }
 
-    .service-item:hover {
-        background-color: transparent;
-        color: #FFDE59;
-        box-shadow: none !important;
-        transform: translateY(-2px);
-    }
+        /* Add specific styling for service items in all modals */
+        #servicesModal .service-item,
+        #haircutsModal .service-item,
+        #addonsModal .service-item {
+            background-color: transparent;
+            border: none;
+            box-shadow: none !important;
+        }
 
-    .service-item.selected {
-        background-color: #FFDE59;
-        color: #000000;
-        border: none;
-        box-shadow: none !important;
-    }
+        .service-item:hover {
+            background-color: transparent;
+            color: #FFDE59;
+            box-shadow: none !important;
+            transform: translateY(-2px);
+        }
 
-    /* Add spacing between service name and price */
-    .service-name {
-        margin-bottom: 4px;
-    }
+        .service-item.selected {
+            background-color: #FFDE59;
+            color: #000000;
+            border: none;
+            box-shadow: none !important;
+        }
 
-    .service-price {
-        font-weight: bold;
-    }
+        /* Add spacing between service name and price */
+        .service-name {
+            margin-bottom: 4px;
+        }
 
-    .btn-confirm {
-        background-color: #FFDE59;
-        color: #000000;
-        font-weight: bold;
-    }
+        .service-price {
+            font-weight: bold;
+        }
 
-    .btn-confirm:hover {
-        background-color: #e6c84f;
-    }
+        .btn-confirm {
+            background-color: #FFDE59;
+            color: #000000;
+            font-weight: bold;
+        }
 
-    /* Add these styles */
-    .modal-body p:last-child {
-        background-color: #FFDE59;
-        padding: 10px 15px;
-        border-radius: 8px;
-        margin-top: 20px;
-        color: #000000;
-    }
+        .btn-confirm:hover {
+            background-color: #e6c84f;
+        }
 
-    /* Add this new style for the remarks spacing */
-    #confirmRemarks {
-        display: inline-block;
-        margin-bottom: 20px;
-    }
+        /* Add these styles */
+        .modal-body p:last-child {
+            background-color: #FFDE59;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #000000;
+        }
 
-    .modal-body p:last-child strong,
-    .modal-body p:last-child span {
-        font-size: 1.2rem;
-    }
+        /* Add this new style for the remarks spacing */
+        #confirmRemarks {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
 
-    /* Update the modal footer button styles */
-    .modal-footer .btn {
-        min-width: 120px;
-        padding: 8px 20px;
-        width: 120px; /* Set fixed width */
-        font-size: 1rem; /* Set consistent font size */
-    }
+        .modal-body p:last-child strong,
+        .modal-body p:last-child span {
+            font-size: 1.2rem;
+        }
 
-    .btn-secondary {
-        background-color: #333333;
-        color: #ffffff;
-        font-weight: bold;
-    }
+        /* Update the modal footer button styles */
+        .modal-footer .btn {
+            min-width: 120px;
+            padding: 8px 20px;
+            width: 120px; /* Set fixed width */
+            font-size: 1rem; /* Set consistent font size */
+        }
 
-    .btn-secondary:hover {
-        background-color: #444444;
-        color: #ffffff;
-    }
+        .btn-secondary {
+            background-color: #333333;
+            color: #ffffff;
+            font-weight: bold;
+        }
 
-    /* Add this to override the yellow background for error modal */
-    #errorModal .modal-body p:last-child {
-        background-color: transparent;
-        padding: 10px 15px;
-        color: #ffffff;
-    }
+        .btn-secondary:hover {
+            background-color: #444444;
+            color: #ffffff;
+        }
 
-    /* Keep the yellow background only for total price in confirmation modal */
-    #confirmationModal .modal-body p:last-child {
-        background-color: #FFDE59;
-        padding: 10px 15px;
-        border-radius: 8px;
-        margin-top: 20px;
-        color: #000000;
-    }
+        /* Add this to override the yellow background for error modal */
+        #errorModal .modal-body p:last-child {
+            background-color: transparent;
+            padding: 10px 15px;
+            color: #ffffff;
+        }
+
+        /* Keep the yellow background only for total price in confirmation modal */
+        #confirmationModal .modal-body p:last-child {
+            background-color: #FFDE59;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #000000;
+        }
+
+        /* Initial state for fade-in elements */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add animation delay for the form */
+        form.fade-in {
+            animation-delay: 0.4s;
+        }
+
+        /* Add animation delay for the heading */
+        h2.fade-in {
+            animation-delay: 0.2s;
+        }
+
+        /* Modal pop-up animation */
+        .modal.fade .modal-dialog {
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Optional: Add a nice bounce effect */
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+
+        /* Navbar animation */
+        .header {
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: navSlideDown 0.8s ease forwards;
+        }
+
+        @keyframes navSlideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust other animations to start after navbar */
+        .fade-in {
+            animation-delay: 0.3s; /* Start after navbar animation */
+        }
+
+        form.fade-in {
+            animation-delay: 0.6s; /* Further delay for form */
+        }
+
+        h2.fade-in {
+            animation-delay: 0.4s; /* Delay for heading */
+        }
     </style>
 </head>
 <body>
@@ -312,12 +407,12 @@ $addonsResult = $conn->query($addonsQuery);
     </div>
 
     <div class="container mt-5">
-        <div class="text-center mb-4 d-none d-lg-block">
+        <div class="text-center mb-4 d-none d-lg-block fade-in">
             <img src="css/images/JOF-Logo.png" alt="logo-1" width="90" height="120" class="mt-3">
         </div>
-        <h2 class="text-center mb-5" style="color: #FFDF60;">Make an Appointment</h2>
+        <h2 class="text-center mb-5 fade-in" style="color: #FFDF60;">Make an Appointment</h2>
 
-        <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5">
+        <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5 fade-in">
             <div class="row justify-content-center">
                 <div class="col-md-4">
                     <div class="mb-3 required">

@@ -37,7 +37,35 @@ include 'admin/landing_text.php';
 	<link rel="icon" href="css/images/favicon.ico">
 	<link rel="stylesheet" href="css/style1.css">
 	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
 	<style>
+		body {
+			font-family: 'Lexend', sans-serif;
+		}
+		
+		/* Navbar animation */
+		.header {
+			opacity: 0;
+			transform: translateY(-20px);
+			animation: navSlideDown 0.8s ease forwards;
+		}
+
+		@keyframes navSlideDown {
+			0% {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			100% {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Adjust other animations to start after navbar */
+		.fade-in {
+			animation-delay: 0.3s; /* Start after navbar animation */
+		}
+
 		@media screen and (max-width: 1321px) {
 			.homepage-logo {
 				display: none;

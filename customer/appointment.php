@@ -43,6 +43,93 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="../css/style1.css">
     <link rel="stylesheet" href="css/customer.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        /* Initial state for fade-in elements */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add animation delay for the appointments container */
+        .appointments-container.fade-in {
+            animation-delay: 0.2s;
+        }
+
+        /* Modal pop-up animation */
+        .modal.fade .modal-dialog {
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Optional: Add a nice bounce effect */
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+
+        /* Navbar animation */
+        .header {
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: navSlideDown 0.8s ease forwards;
+        }
+
+        @keyframes navSlideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust other animations to start after navbar */
+        .fade-in {
+            animation-delay: 0.3s; /* Start after navbar animation */
+        }
+
+        .appointments-container.fade-in {
+            animation-delay: 0.5s; /* Further delay for container */
+        }
+    </style>
 </head>
 <body>
     <div class="main-page">
@@ -118,10 +205,10 @@ $result = $conn->query($sql);
         </div>
 
         <div class="appointments-header-wrapper">
-            <h1 class="appointments-header">My Appointments</h1>
+            <h1 class="appointments-header fade-in">My Appointments</h1>
         </div>
 
-        <div class="appointments-container">
+        <div class="appointments-container fade-in">
             <table class="appointments-table">
                 <thead>
                     <tr>

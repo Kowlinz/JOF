@@ -51,6 +51,155 @@ $conn->close();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style1.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        /* Navbar animation */
+        .header {
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: navSlideDown 0.8s ease forwards;
+        }
+
+        @keyframes navSlideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust other animations to start after navbar */
+        .fade-in {
+            animation-delay: 0.3s; /* Start after navbar animation */
+        }
+
+        .container.fade-in:nth-child(3) {
+            animation-delay: 0.5s; /* Further delay for container */
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Services section styling */
+        .services-section {
+            padding-top: 0;
+        }
+
+        .services-container {
+            margin-bottom: 30px;
+        }
+
+        .haircuts-header {
+            margin-bottom: 15px;
+        }
+
+        /* Container adjustments */
+        .container.fade-in {
+            margin-bottom: 0;
+        }
+
+        /* Table container adjustments */
+        .card-body {
+            padding: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991px) {
+            .services-section {
+                padding-top: 15px;
+            }
+
+            .haircuts-header {
+                margin-bottom: 15px;
+                text-align: center;
+            }
+
+            .services-container {
+                margin-top: 0;
+                padding: 0 15px;
+            }
+
+            #gallery-container {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .services-section {
+                padding-top: 10px;
+            }
+
+            .haircuts-header {
+                font-size: 24px;
+            }
+
+            .services-container {
+                padding: 0 10px;
+            }
+        }
+
+        /* Gallery layout for tablets */
+        @media (min-width: 576px) and (max-width: 920px) {
+            #gallery-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            #gallery-container > div {
+                width: 80%;
+                max-width: 500px;
+                flex: 0 0 auto;
+            }
+            .gallery-item {
+                width: 100%;
+                margin: 0 auto;
+            }
+            .gallery-item img {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+            }
+        }
+
+        .gallery-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInItem 0.5s ease forwards;
+        }
+
+        @keyframes fadeInItem {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add animation delay for each item */
+        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+    </style>
 </head>
 
 <body>
@@ -185,128 +334,6 @@ $conn->close();
                 </div>
             </div>
         </div>
-
-        <style>
-            .fade-in {
-                animation: fadeIn 1s ease-out;
-                opacity: 1;
-            }
-
-            @keyframes fadeIn {
-                0% {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            .container.fade-in:nth-child(3) {
-                animation-delay: 0.2s;
-            }
-
-            /* Services section styling */
-            .services-section {
-                padding-top: 0;
-            }
-
-            .services-container {
-                margin-bottom: 30px;
-            }
-
-            .haircuts-header {
-                margin-bottom: 15px;
-            }
-
-            /* Container adjustments */
-            .container.fade-in {
-                margin-bottom: 0;
-            }
-
-            /* Table container adjustments */
-            .card-body {
-                padding: 0;
-            }
-
-            /* Responsive adjustments */
-            @media (max-width: 991px) {
-                .services-section {
-                    padding-top: 15px;
-                }
-
-                .haircuts-header {
-                    margin-bottom: 15px;
-                    text-align: center;
-                }
-
-                .services-container {
-                    margin-top: 0;
-                    padding: 0 15px;
-                }
-
-                #gallery-container {
-                    margin-bottom: 0;
-                }
-            }
-
-            @media (max-width: 768px) {
-                .services-section {
-                    padding-top: 10px;
-                }
-
-                .haircuts-header {
-                    font-size: 24px;
-                }
-
-                .services-container {
-                    padding: 0 10px;
-                }
-            }
-
-            /* Gallery layout for tablets */
-            @media (min-width: 576px) and (max-width: 920px) {
-                #gallery-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: center;
-                }
-                #gallery-container > div {
-                    width: 80%;
-                    max-width: 500px;
-                    flex: 0 0 auto;
-                }
-                .gallery-item {
-                    width: 100%;
-                    margin: 0 auto;
-                }
-                .gallery-item img {
-                    width: 100%;
-                    height: auto;
-                    object-fit: cover;
-                }
-            }
-
-            .gallery-item {
-                opacity: 0;
-                transform: translateY(20px);
-                animation: fadeInItem 0.5s ease forwards;
-            }
-
-            @keyframes fadeInItem {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            /* Add animation delay for each item */
-            .gallery-item:nth-child(1) { animation-delay: 0.1s; }
-            .gallery-item:nth-child(2) { animation-delay: 0.2s; }
-            .gallery-item:nth-child(3) { animation-delay: 0.3s; }
-            .gallery-item:nth-child(4) { animation-delay: 0.4s; }
-        </style>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {

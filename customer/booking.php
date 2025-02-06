@@ -95,6 +95,131 @@ $addonsResult = $conn->query($addonsQuery);
         color: #555;
         cursor: not-allowed;
     }
+
+    /* Add these modal styles */
+    .modal-content {
+        background-color: #1f1f1f;
+        color: #ffffff;
+    }
+
+    .modal-header {
+        border-bottom: none;
+        justify-content: center;
+    }
+
+    .modal-header .modal-title {
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+    }
+
+    .modal-header .btn-close {
+        position: absolute;
+        right: 1rem;
+    }
+
+    .modal-footer {
+        border-top: none; /* Remove the border */
+    }
+
+    .btn-close {
+        color: #ffffff;
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .service-item {
+        background-color: transparent;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        color: #ffffff;
+    }
+
+    /* Add specific styling for service items in all modals */
+    #servicesModal .service-item,
+    #haircutsModal .service-item,
+    #addonsModal .service-item {
+        background-color: transparent;
+        border: none;
+        box-shadow: none !important;
+    }
+
+    .service-item:hover {
+        background-color: transparent;
+        color: #FFDE59;
+        box-shadow: none !important;
+        transform: translateY(-2px);
+    }
+
+    .service-item.selected {
+        background-color: #FFDE59;
+        color: #000000;
+        border: none;
+        box-shadow: none !important;
+    }
+
+    /* Add spacing between service name and price */
+    .service-name {
+        margin-bottom: 4px;
+    }
+
+    .service-price {
+        font-weight: bold;
+    }
+
+    .btn-confirm {
+        background-color: #FFDE59;
+        color: #000000;
+        font-weight: bold;
+    }
+
+    .btn-confirm:hover {
+        background-color: #e6c84f;
+    }
+
+    /* Add these styles */
+    .modal-body p:last-child {
+        background-color: #FFDE59;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        color: #000000;
+    }
+
+    /* Add this new style for the remarks spacing */
+    #confirmRemarks {
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .modal-body p:last-child strong,
+    .modal-body p:last-child span {
+        font-size: 1.2rem;
+    }
+
+    /* Update the modal footer button styles */
+    .modal-footer .btn {
+        min-width: 120px;
+        padding: 8px 20px;
+        width: 120px; /* Set fixed width */
+        font-size: 1rem; /* Set consistent font size */
+    }
+
+    .btn-secondary {
+        background-color: #333333;
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    .btn-secondary:hover {
+        background-color: #444444;
+        color: #ffffff;
+    }
     </style>
 </head>
 <body>
@@ -242,19 +367,19 @@ $addonsResult = $conn->query($addonsQuery);
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="confirmationModalLabel">Appointment Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <p><strong>Date:</strong> <span id="confirmDate"></span></p>
                                 <p><strong>Time:</strong> <span id="confirmTimeSlot"></span></p>
-                                <p><strong>Service:</strong> <span id="confirmService"></span></p>
-                                <p><strong>Add-on:</strong> <span id="confirmAddon"></span></p>
                                 <p><strong>Haircut:</strong> <span id="confirmHaircut"></span></p>
                                 <p><strong>Remarks:</strong> <span id="confirmRemarks"></span></p>
-                                <p><strong>Total Price:</strong> <span id="confirmTotalPrice">319 PHP</span></p>
+                                <p><strong>Service:</strong> <span id="confirmService"></span></p>
+                                <p><strong>Add-on:</strong> <span id="confirmAddon"></span></p>
+                                <p class="total-price"><strong>Total Price:</strong> <span id="confirmTotalPrice">319 PHP</span></p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" id="confirmBooking" class="btn btn-confirm">Confirm</button>
+                                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Discard</button>
+                                <button type="button" id="confirmBooking" class="btn btn-confirm px-4">Confirm</button>
                             </div>
                         </div>
                     </div>
@@ -266,7 +391,6 @@ $addonsResult = $conn->query($addonsQuery);
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="errorModalLabel">Error</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <p>Please fill in all required fields (Date, Time Slot, and Service).</p>
@@ -324,10 +448,10 @@ $addonsResult = $conn->query($addonsQuery);
                         // Populate modal with values
                         document.getElementById('confirmDate').innerText = formattedDate;
                         document.getElementById('confirmTimeSlot').innerText = timeSlot;
-                        document.getElementById('confirmService').innerText = service;
-                        document.getElementById('confirmAddon').innerText = addon === 'Choose Add-on' ? 'None' : addon;
-                        document.getElementById('confirmHaircut').innerText = haircut === 'Choose Haircut' ? 'None' : haircut;
+                        document.getElementById('confirmHaircut').innerText = (haircut === 'Choose Haircut' || !document.getElementById('haircut').value) ? 'None' : haircut;
                         document.getElementById('confirmRemarks').innerText = remarks || 'None';
+                        document.getElementById('confirmService').innerText = service;
+                        document.getElementById('confirmAddon').innerText = (addon === 'Choose Add-on' || !document.getElementById('addon').value) ? 'None' : addon;
                         document.getElementById('confirmTotalPrice').innerText = `${totalPrice} PHP`;
 
                         // Show the modal

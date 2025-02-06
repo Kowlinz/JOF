@@ -293,7 +293,7 @@ if ($result->num_rows > 0) {
                         <p>Add-On: <span id="addonName"></span></p>
                         <div class="mb-3">
                         <label for="cancelReason" class="form-label">Reason for Cancellation</label>
-                        <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (optional)">
+                        <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (Required)" required>
                     </div>
                     </div>
                     <div class="modal-footer">
@@ -316,7 +316,14 @@ function openCancelModal(appointmentID, date, time, serviceName, addonName) {
     // Set up the Confirm button to handle the cancellation
     const confirmButton = document.getElementById('confirmCancelButton');
     confirmButton.onclick = function () {
-        const reason = document.getElementById('cancelReason').value;
+        const reasonInput = document.getElementById('cancelReason');
+        const reason = reasonInput.value.trim();
+
+        if (reason === "") {
+            alert("Please provide a reason for cancellation.");
+            reasonInput.focus(); // Focus on input if empty
+            return;
+        }
 
         // Redirect to cancellation PHP script with parameters
         window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);

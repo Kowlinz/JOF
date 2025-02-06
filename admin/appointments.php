@@ -117,7 +117,7 @@
                                         <td>Time</td>
                                         <td>Service</td>
                                         <td>Barber</td>
-                                        <td></td>
+                                        <td>Actions</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -259,6 +259,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/calendar.js"></script>
 
 <script>
@@ -328,11 +329,35 @@ function filterAppointments() {
                         <button type="submit" class="btn btn-success" name="status" value="Completed">
                             <i class="fas fa-check me-2"></i>Mark as Done
                         </button>
-                        <button type="submit" class="btn btn-danger" name="status" value="Cancelled">
+                        <button type="button" class="btn btn-danger" onclick="openCancelModal()">
                             <i class="fas fa-times me-2"></i>Cancel Appointment
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reason for Cancellation Modal -->
+<div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelReasonModalLabel">Cancel Appointment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form id="cancelForm" action="update_status.php" method="POST">
+                <input type="hidden" id="cancelAppointmentID" name="appointmentID">
+                <input type="hidden" name="status" value="Cancelled">
+                <label for="cancelReason" class="form-label">Reason for Cancellation (Required)</label>
+                <textarea id="cancelReason" name="reason" class="form-control" rows="3" required></textarea>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                </div>
+            </form>
             </div>
         </div>
     </div>
@@ -344,6 +369,28 @@ function openStatusModal(appointmentId) {
     const modal = new bootstrap.Modal(document.getElementById('statusModal'));
     modal.show();
 }
+</script>
+
+<script>
+function openCancelModal() {
+    // Get the appointment ID from the Status Modal
+    let appointmentID = document.getElementById("appointmentID").value;
+
+    // Set the appointment ID inside the Cancel Reason Modal
+    document.getElementById("cancelAppointmentID").value = appointmentID;
+
+    // Close the Status Modal
+    let statusModalEl = document.getElementById("statusModal");
+    let statusModal = bootstrap.Modal.getInstance(statusModalEl);
+    if (statusModal) {
+        statusModal.hide();
+    }
+
+    // Open the Cancel Reason Modal
+    let cancelModal = new bootstrap.Modal(document.getElementById("cancelReasonModal"));
+    cancelModal.show();
+}
+
 </script>
 </body>
 </html>

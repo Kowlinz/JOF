@@ -84,20 +84,28 @@ $conn->close();
             animation-delay: 0.5s; /* Further delay for container */
         }
 
-        .fade-in {
-            animation: fadeIn 1s ease-out;
-            opacity: 1;
+        /* Gallery item styles */
+        .gallery-item {
+            opacity: 0; /* Start hidden */
+            transform: translateY(20px); /* Start slightly below */
+            animation: fadeInItem 0.5s ease forwards; /* Fade in animation */
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeInItem {
             0% {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             100% {
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        /* Ensure items are fully visible when displayed */
+        .gallery-item.show {
+            opacity: 1; /* Fully visible */
+            transform: translateY(0); /* Reset translation */
         }
 
         /* Services section styling */
@@ -180,25 +188,6 @@ $conn->close();
                 object-fit: cover;
             }
         }
-
-        .gallery-item {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInItem 0.5s ease forwards;
-        }
-
-        @keyframes fadeInItem {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Add animation delay for each item */
-        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
-        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
-        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
-        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 

@@ -33,7 +33,7 @@ if (isset($_SESSION["user"])) {
     <link rel="icon" href="css/images/favicon.ico">
 </head>
 <body>
-    <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
+    <div class="login-background" style="background-color: #171717;">
         <div class="container">
             <div class="header">
                 <nav class="navbar navbar-expand-lg py-4">
@@ -94,6 +94,11 @@ if (isset($_SESSION["user"])) {
                         }
                     }
                 ?>
+
+                <!-- Add the logo above the Staff Login header -->
+                <div class="text-center mb-4">
+                    <img src="css/images/jof_logo_black.png" alt="Logo" style="max-width: 60px; height: auto;">
+                </div>
 
                 <h2 class="login-header">Staff Login</h2>
                 <form action="login-staff.php" method="post">

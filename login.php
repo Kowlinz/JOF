@@ -62,7 +62,7 @@ if (isset($_POST["Login"])) {
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
+    <div class="login-background" style="background-color: #171717;">
         <div class="container">
             <div class="header">
                 <nav class="navbar navbar-expand-lg py-4">
@@ -99,6 +99,11 @@ if (isset($_POST["Login"])) {
                     <a href="index.php" class="btn btn-warning text-dark fw-bold">
                         <i class="bi bi-arrow-left"></i> Back
                     </a>
+                </div>
+
+                <!-- Add the logo above the Login header -->
+                <div class="text-center mb-4">
+                    <img src="css/images/jof_logo_black.png" alt="Logo" style="max-width: 60px; height: auto;">
                 </div>
 
                 <!-- Display Session Alerts Dynamically -->

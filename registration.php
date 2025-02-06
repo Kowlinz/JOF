@@ -17,14 +17,12 @@
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-    <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
+    <div class="login-background" style="background-color: #171717;">
         <div class="container">
             <div class="login-container fade-in">
 
-                <div class="d-flex justify-content-start mb-4">
-                    <a href="index.php" class="btn btn-warning text-dark fw-bold">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </a>
+                <div class="text-center mb-4">
+                    <img src="css/images/jof_logo_black.png" alt="Logo" style="max-width: 60px; height: auto;">
                 </div>
 
                 <?php   
@@ -164,12 +162,14 @@
                             <input type="tel" class="form-control" name="contactNum" placeholder="Contact Number" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
                         </div> 
 
-                        <div class="form-group">
+                        <div class="form-group position-relative">
                             <input type="password" class="form-control" name="password" placeholder="Password" required maxlength="20" oninput="limitPasswordLength(this)">
+                            <i class="bi bi-eye-slash password-toggle" id="togglePassword1"></i>
                         </div> 
 
-                        <div class="form-group">
+                        <div class="form-group position-relative">
                             <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password" required maxlength="20" oninput="limitPasswordLength(this)">
+                            <i class="bi bi-eye-slash password-toggle" id="togglePassword2"></i>
                         </div> 
 
                         <div class="form-btn">
@@ -198,6 +198,44 @@
                 transform: translateY(0);
             }
         }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .password-toggle:hover {
+            color: #000;
+        }
     </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Password toggle functionality for the first password field
+        const togglePassword1 = document.getElementById('togglePassword1');
+        const passwordInput1 = document.querySelector('input[name="password"]');
+
+        togglePassword1.addEventListener('click', function() {
+            const type = passwordInput1.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput1.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // Password toggle functionality for the repeat password field
+        const togglePassword2 = document.getElementById('togglePassword2');
+        const passwordInput2 = document.querySelector('input[name="repeat_password"]');
+
+        togglePassword2.addEventListener('click', function() {
+            const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput2.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+    });
+    </script>
 </body>
 </html>

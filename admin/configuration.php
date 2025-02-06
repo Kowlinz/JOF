@@ -29,7 +29,13 @@ $pendingCount = $notificationData['pending_count'];
 <body>
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
-                <h1 class="dashboard mb-3">Edit Landing Page Text</h1>
+            <div class="position-relative">
+                <h1 class="dashboard mb-3 ms-5">Edit Landing Page Text</h1>
+                <button class="mobile-toggle d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="ms-5">
                 <div class="services-container">
                     <div class="card border-0 rounded-4">
                         <div class="card-body p-4">
@@ -74,27 +80,27 @@ $pendingCount = $notificationData['pending_count'];
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Edit Text Modal -->
-                <div class="modal fade" id="editTextModal" tabindex="-1" aria-labelledby="editTextModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editTextModalLabel">Edit Text</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="editTextForm">
-                                    <input type="hidden" id="textType">
-                                    <div class="mb-3">
-                                        <label for="newText" class="form-label">New Text</label>
-                                        <textarea class="form-control" id="newText" rows="3" required></textarea>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-warning">Update Text</button>
-                                    </div>
-                                </form>
-                            </div>
+            <!-- Edit Text Modal -->
+            <div class="modal fade" id="editTextModal" tabindex="-1" aria-labelledby="editTextModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editTextModalLabel">Edit Text</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editTextForm">
+                                <input type="hidden" id="textType">
+                                <div class="mb-3">
+                                    <label for="newText" class="form-label">New Text</label>
+                                    <textarea class="form-control" id="newText" rows="3" required></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-warning">Update Text</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -206,9 +212,9 @@ $pendingCount = $notificationData['pending_count'];
     </nav>
 
     <script>
-    // Add this to your existing JavaScript
     function editText(type) {
-        const modal = new bootstrap.Modal(document.getElementById('editTextModal'));
+        // Get the modal instance
+        const editTextModal = new bootstrap.Modal(document.getElementById('editTextModal'));
         const form = document.getElementById('editTextForm');
         const textInput = document.getElementById('newText');
         const textType = document.getElementById('textType');
@@ -217,7 +223,7 @@ $pendingCount = $notificationData['pending_count'];
         textInput.value = document.getElementById(type + 'Text').innerText.trim();
         textType.value = type;
         
-        modal.show();
+        editTextModal.show();
     }
 
     document.getElementById('editTextForm').addEventListener('submit', function(e) {
@@ -236,7 +242,9 @@ $pendingCount = $notificationData['pending_count'];
         .then(data => {
             if (data.success) {
                 // Update the text on the page
-                document.getElementById(document.getElementById('textType').value + 'Text').innerText = document.getElementById('newText').value;
+                const textType = document.getElementById('textType').value;
+                const newText = document.getElementById('newText').value;
+                document.getElementById(textType + 'Text').innerText = newText;
                 
                 // Close the edit modal
                 const editTextModal = bootstrap.Modal.getInstance(document.getElementById('editTextModal'));
@@ -260,6 +268,21 @@ $pendingCount = $notificationData['pending_count'];
             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
             errorModal.show();
         });
+    });
+
+    // Add event listener for modal close
+    document.getElementById('editTextModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('editTextForm').reset();
+    });
+
+    document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
+        const messageElement = this.querySelector('.modal-body p');
+        if (messageElement) messageElement.textContent = '';
+    });
+
+    document.getElementById('errorModal').addEventListener('hidden.bs.modal', function () {
+        const messageElement = this.querySelector('.modal-body');
+        if (messageElement) messageElement.textContent = '';
     });
     </script>
 

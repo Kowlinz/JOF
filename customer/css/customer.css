@@ -79,18 +79,69 @@
 .modal-title {
     margin: 0 auto;
     font-weight: bold;
-    color: #fff; /* Add light text color */
+    color: #fff;
+    font-size: 1.5rem; /* Increase font size */
 }
 
 .modal-body {
     padding: 1rem;
-    background-color: #1f1f1f; /* Add dark background color */
+    background-color: #1f1f1f;
+}
+
+/* Add specific styling for modal body paragraphs */
+.modal-body p {
+    padding: 10px 15px;
+    margin-bottom: 8px;
+}
+
+/* Keep the form label styling consistent */
+.modal-body .form-label {
+    padding: 10px 15px;
+    margin-bottom: 0;
+}
+
+/* Keep the form input consistent */
+.modal-body .form-control {
+    margin: 0 15px;
+    width: calc(100% - 30px);
 }
 
 .modal-footer {
     padding: 1rem;
     border-top: none;
-    background-color: #1f1f1f; /* Add dark background color */
+    background-color: #1f1f1f;
+    justify-content: center; /* Center the buttons */
+    gap: 10px; /* Add space between buttons */
+}
+
+/* Style the modal footer buttons */
+.modal-footer .btn {
+    min-width: 120px;
+    padding: 8px 20px;
+    width: 120px;
+    font-size: 1rem;
+}
+
+.btn-secondary {
+    background-color: #333333;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.btn-secondary:hover {
+    background-color: #444444;
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    color: #ffffff;
 }
 
 /* Form elements in modal */
@@ -142,4 +193,43 @@
     color: #FFDE59;
     font-size: 2em;
     font-weight: bold;
+}
+
+/* Make button padding consistent across all modals */
+.modal-footer .btn {
+    min-width: 120px;
+    padding: 8px 20px;
+    width: 120px;
+    font-size: 1rem;
+}
+
+.modal-footer .btn.px-4 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+/* Add specific styling for error modal */
+#errorModal .modal-body p {
+    background-color: transparent;
+    color: #ffffff;
+    padding: 0;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Add specific styling for Cancel Appointment modal */
+#cancelModal .modal-body p {
+    padding: 5px 15px;  /* Reduce padding from 10px to 5px */
+    margin-bottom: 4px; /* Reduce margin from 8px to 4px */
+}
+
+/* Keep form elements spacing separate */
+#cancelModal .form-label {
+    padding: 10px 15px;
+    margin-top: 10px;
+}
+
+#cancelModal .form-control {
+    margin: 0 15px;
+    width: calc(100% - 30px);
 } 

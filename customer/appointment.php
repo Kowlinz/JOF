@@ -242,7 +242,7 @@ if ($result->num_rows > 0) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
-                        <button type="button" class="btn btn-danger" id="confirmCancelButton">Confirm</button>
+                        <button type="button" class="btn btn-danger" id="confirmCancelButton">Cancel</button>
                     </div>
                 </div>
             </div>

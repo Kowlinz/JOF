@@ -220,6 +220,22 @@ $addonsResult = $conn->query($addonsQuery);
         background-color: #444444;
         color: #ffffff;
     }
+
+    /* Add this to override the yellow background for error modal */
+    #errorModal .modal-body p:last-child {
+        background-color: transparent;
+        padding: 10px 15px;
+        color: #ffffff;
+    }
+
+    /* Keep the yellow background only for total price in confirmation modal */
+    #confirmationModal .modal-body p:last-child {
+        background-color: #FFDE59;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        color: #000000;
+    }
     </style>
 </head>
 <body>

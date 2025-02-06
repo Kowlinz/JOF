@@ -1,67 +1,87 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
+session_start();
 include 'db_connect.php';
+
+$response = array();
 
 if (isset($_GET['table'])) {
     $table = $_GET['table'];
+    
+    try {
+        // Start transaction
+        $conn->begin_transaction();
 
-    // Whitelist of valid table parameters
-    $allowedTables = ['cancelled', 'previous_customer'];
+        if ($table === 'previous_customer' || $table === 'cancelled') {
+            $status = ($table === 'previous_customer') ? 'Completed' : 'Cancelled';
+            
+            // First, check if there are any records to delete
+            $checkQuery = "SELECT COUNT(*) as count FROM appointment_tbl WHERE status = ?";
+            $stmt = $conn->prepare($checkQuery);
+            $stmt->bind_param("s", $status);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $count = $result->fetch_assoc()['count'];
 
-    if (!in_array($table, $allowedTables)) {
-        die("Invalid table name: " . htmlspecialchars($table)); // Prevent SQL injection
-    }
+            if ($count === 0) {
+                throw new Exception("No records found to delete.");
+            }
 
-    // Determine actual table name and condition
-    $tableName = "appointment_tbl"; // Fixed table name based on your database
-    $condition = "";
+            // Get all appointmentIDs that will be deleted
+            $appointmentQuery = "SELECT appointmentID FROM appointment_tbl WHERE status = ?";
+            $stmt = $conn->prepare($appointmentQuery);
+            $stmt->bind_param("s", $status);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            // Get all appointmentIDs
+            $appointmentIDs = [];
+            while ($row = $result->fetch_assoc()) {
+                $appointmentIDs[] = $row['appointmentID'];
+            }
 
-    if ($table === "cancelled") {
-        $condition = "status = 'Cancelled'";
-    } elseif ($table === "previous_customer") {
-        $condition = "status = 'Completed'";
-    }
+            if (!empty($appointmentIDs)) {
+                // Convert array to string for IN clause
+                $appointmentIDsString = implode(',', $appointmentIDs);
 
-    // Ensure the query is valid before execution
-    if (!empty($tableName) && !empty($condition)) {
-        // Step 1: Delete the dependent rows in barb_apps_tbl first
-        $deleteBarbAppsQuery = "DELETE FROM barb_apps_tbl WHERE appointmentID IN (SELECT appointmentID FROM $tableName WHERE $condition)";
-        
-        // Debugging output
-        echo "Executing Query for barb_apps_tbl: $deleteBarbAppsQuery <br>";
-        
-        if (!mysqli_query($conn, $deleteBarbAppsQuery)) {
-            die("Error deleting dependent records from barb_apps_tbl: " . mysqli_error($conn)); // Display MySQL error
-        }
+                // Delete from barb_apps_tbl first (child table)
+                $deleteBarberApps = "DELETE FROM barb_apps_tbl WHERE appointmentID IN ($appointmentIDsString)";
+                if (!$conn->query($deleteBarberApps)) {
+                    throw new Exception("Error deleting from barb_apps_tbl: " . $conn->error);
+                }
 
-        // Step 2: Delete the dependent rows in earnings_tbl first
-        $deleteEarningsQuery = "DELETE FROM earnings_tbl WHERE appointmentID IN (SELECT appointmentID FROM $tableName WHERE $condition)";
-        
-        // Debugging output
-        echo "Executing Query for earnings_tbl: $deleteEarningsQuery <br>";
-        
-        if (!mysqli_query($conn, $deleteEarningsQuery)) {
-            die("Error deleting dependent records from earnings_tbl: " . mysqli_error($conn)); // Display MySQL error
-        }
+                // Delete from earnings_tbl (if it exists and has foreign key)
+                $deleteEarnings = "DELETE FROM earnings_tbl WHERE appointmentID IN ($appointmentIDsString)";
+                if (!$conn->query($deleteEarnings)) {
+                    throw new Exception("Error deleting from earnings_tbl: " . $conn->error);
+                }
 
-        // Step 3: Now delete from appointment_tbl
-        $deleteAppointmentQuery = "DELETE FROM $tableName WHERE $condition";
-        
-        echo "Executing Query for appointment_tbl: $deleteAppointmentQuery <br>"; // Debugging output
+                // Finally delete from appointment_tbl (parent table)
+                $deleteAppointments = "DELETE FROM appointment_tbl WHERE appointmentID IN ($appointmentIDsString)";
+                if (!$conn->query($deleteAppointments)) {
+                    throw new Exception("Error deleting from appointment_tbl: " . $conn->error);
+                }
+            }
 
-        if (mysqli_query($conn, $deleteAppointmentQuery)) {
-            echo "<script>alert('Data deleted successfully!'); window.location.href='a_history.php';</script>";
+            // Commit transaction
+            $conn->commit();
+            
+            $response['success'] = true;
+            $response['message'] = 'Data deleted successfully';
         } else {
-            die("Error deleting data from appointment_tbl: " . mysqli_error($conn)); // Display MySQL error
+            throw new Exception("Invalid table specified");
         }
-    } else {
-        die("Error: Table name or condition is empty.");
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        
+        $response['success'] = false;
+        $response['message'] = $e->getMessage();
     }
 } else {
-    die("Invalid request: Table parameter missing.");
+    $response['success'] = false;
+    $response['message'] = 'No table specified';
 }
 
-mysqli_close($conn);
+header('Content-Type: application/json');
+echo json_encode($response);
 ?>

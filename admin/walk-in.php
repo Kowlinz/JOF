@@ -33,7 +33,152 @@ $addonsResult = $conn->query($addonsQuery);
     <link rel="stylesheet" href="../css/style1.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        /* Modal styles */
+        .modal-content {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            justify-content: center;
+        }
+
+        .modal-header .modal-title {
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-header .btn-close {
+            position: absolute;
+            right: 1rem;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+
+        .btn-close {
+            color: #ffffff;
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Service item styles */
+        .service-item {
+            background-color: transparent;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            color: #ffffff;
+        }
+
+        #servicesModal .service-item,
+        #haircutsModal .service-item,
+        #addonsModal .service-item {
+            background-color: transparent;
+            border: none;
+            box-shadow: none !important;
+        }
+
+        .service-item:hover {
+            background-color: rgba(255, 222, 89, 0.2) !important;
+            color: #FFDE59 !important;
+            box-shadow: none !important;
+            transform: translateY(-2px);
+        }
+
+        .service-item.selected {
+            background-color: #FFDE59 !important;
+            color: #000000 !important;
+            border: none;
+            box-shadow: none !important;
+        }
+
+        /* Button styles */
+        .btn-confirm {
+            background-color: #FFDE59;
+            color: #000000;
+            font-weight: bold;
+            min-width: 120px;
+            padding: 8px 20px;
+            width: 120px;
+            font-size: 1rem;
+        }
+
+        .btn-confirm:hover {
+            background-color: #e6c84f;
+        }
+
+        .btn-secondary {
+            background-color: #333333;
+            color: #ffffff;
+            font-weight: bold;
+            min-width: 120px;
+            padding: 8px 20px;
+            width: 120px;
+            font-size: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #444444;
+            color: #ffffff;
+        }
+
+        /* Animation styles */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal animations */
+        .modal.fade .modal-dialog {
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
         /* Add these to your existing styles */
         .time-slots-grid {
             display: grid;
@@ -53,13 +198,14 @@ $addonsResult = $conn->query($addonsQuery);
             transition: background-color 0.3s;
         }
 
-        .time-slot-btn:hover {
-            background-color: #FFD700;
+        .time-slot-btn:hover:not(.booked) {
+            background-color: rgba(255, 222, 89, 0.8);
+            color: #000000;
         }
 
         .time-slot-btn.selected {
-        background-color: black;
-        color: #FFDE59;
+            background-color: #FFDE59 !important;
+            color: #000000 !important;
         }
 
         .time-slot-btn.booked {
@@ -68,42 +214,64 @@ $addonsResult = $conn->query($addonsQuery);
             opacity: 0.7;
         }
 
-        .service-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .service-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .service-item.selected {
-            background-color: #FFDE59;
-        }
-
         .service-name {
             font-weight: bold;
         }
 
         .service-price {
-            color: #666;
+            color: #ffffff;
             margin-top: 5px;
+        }
+
+        /* Add specific color for selected item price */
+        .service-item.selected .service-price {
+            color: #000000;
+        }
+
+        /* Add these modal styles */
+        .modal-body p:last-child {
+            background-color: #FFDE59;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #000000;
+        }
+
+        .modal-body p:last-child strong,
+        .modal-body p:last-child span {
+            font-size: 1.2rem;
+        }
+
+        /* Update the modal footer button styles */
+        .modal-footer .btn {
+            min-width: 120px;
+            padding: 8px 20px;
+            width: 120px;
+            font-size: 1rem;
+        }
+
+        /* Add this to override the yellow background for error modal */
+        #errorModal .modal-body p:last-child {
+            background-color: transparent;
+            padding: 10px 15px;
+            color: #ffffff;
+        }
+
+        /* Keep the yellow background only for total price in confirmation modal */
+        #confirmationModal .modal-body p:last-child {
+            background-color: #FFDE59;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #000000;
         }
     </style>
 </head>
 <body>
-        <!-- Back Button -->
-        <div class="d-flex justify-content-start mb-4">
-            <a href="appointments.php" class="btn btn-warning text-dark fw-bold">
-                <i class="bi bi-arrow-left"></i> Back
-            </a>
-        </div>
     <div class="container mt-5">
         <div class="text-center mb-4">
-                <img src="css/images/jof_logo_yellow.png" alt="logo-1" width="90" height="120" class="mt-3">
-            </div>
+            <img src="css/images/jof_logo_yellow.png" alt="logo-1" width="90" height="120" class="mt-3">
+        </div>
         <h2 class="text-center mb-5" style="color: #FFDF60;">Walk-In Appointment</h2>
 
         <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5">
@@ -145,10 +313,17 @@ $addonsResult = $conn->query($addonsQuery);
                     </div>
                 </div>
             </div>
-            <div class="col-12 text-center mt-4 mb-5">
+            <div class="col-12 text-center mt-4">
                 <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
             </div>
         </form>
+
+        <!-- Move back button here -->
+        <div class="text-center mt-3 mb-5">
+            <a href="appointments.php" class="btn btn-warning text-dark fw-bold">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
     </div>
 
                 <!-- Confirmation Modal -->
@@ -157,17 +332,17 @@ $addonsResult = $conn->query($addonsQuery);
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="confirmationModalLabel">Appointment Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <p><strong>Date:</strong> <span id="confirmDate"></span></p>
                                 <p><strong>Time:</strong> <span id="confirmTimeSlot"></span></p>
                                 <p><strong>Service:</strong> <span id="confirmService"></span></p>
                                 <p><strong>Add-on:</strong> <span id="confirmAddon"></span></p>
-                                <p><strong>Total Price:</strong> <span id="confirmTotalPrice">319 PHP</span></p>
+                                <p class="total-price"><strong>Total Price:</strong> <span id="confirmTotalPrice">319 PHP</span></p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" id="confirmBooking" class="btn btn-confirm">Confirm</button>
+                                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Discard</button>
+                                <button type="button" id="confirmBooking" class="btn btn-confirm px-4">Confirm</button>
                             </div>
                         </div>
                     </div>
@@ -179,13 +354,12 @@ $addonsResult = $conn->query($addonsQuery);
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="errorModalLabel">Error</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p id="errorMessage"></p>
+                        <p>Please fill in all required fields (Date, Time Slot, and Service).</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.history.back();">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -219,7 +393,7 @@ $addonsResult = $conn->query($addonsQuery);
 
                         // Validate required fields
                         if (!date || !timeSlot || !document.getElementById('service').value) {
-                            // Show error modal instead of alert
+                            // Show error modal with standard message
                             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                             errorModal.show();
                             return;

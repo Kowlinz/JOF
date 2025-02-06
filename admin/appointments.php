@@ -41,15 +41,15 @@
     ?>
 
     <?php
-    if (isset($_GET['status']) && isset($_GET['message'])) {
+    if (isset($_GET['status']) && isset($_GET['message']) && !isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+        // Only show the modal for non-AJAX requests
         $status = $_GET['status'];
         $message = $_GET['message'];
 
-        // Display a JavaScript alert with the message
         echo "
         <script>
             window.onload = function() {
-                const modal = new bootstrap.Modal(document.getElementById('statusModal'));
+                const modal = new bootstrap.Modal(document.getElementById('messageModal'));
                 document.getElementById('statusMessage').innerText = '$message';
                 modal.show();
             }
@@ -64,25 +64,6 @@
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-
-        <?php
-
-        // Check if there is a status or message in the query string
-        if (isset($_GET['status']) && isset($_GET['message'])) {
-            $status = $_GET['status']; // success or error
-            $message = $_GET['message']; // Message to display in the popup
-
-            // Display a JavaScript alert with the message
-            echo "
-            <script>
-                window.onload = function() {
-                    const modal = new bootstrap.Modal(document.getElementById('statusModal'));
-                    document.getElementById('statusMessage').innerText = '$message';
-                    modal.show();
-                }
-            </script>";
-        }
-        ?>
 
         <!-- Add Customer Button -->
         <div class="row ms-5 mb-4">
@@ -182,9 +163,9 @@
                                                     <td>{$row['timeSlot']}</td>
                                                     <td>{$row['serviceName']}</td>
                                                     <td>
-                                                        <form action='assign_barber.php' method='POST'>
+                                                        <form action='assign_barber.php' method='POST' class='assign-barber-form'>
                                                             <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
-                                                            <select name='barberID' class='form-select' onchange='this.form.submit()'>
+                                                            <select name='barberID' class='form-select'>
                                                                 <option value='' disabled selected hidden>Select Barber</option>";
                                                                 // Loop through all barbers to display them in the dropdown
                                                                 foreach ($barbers as $barber) {
@@ -321,15 +302,16 @@ function filterAppointments() {
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="statusModalLabel">Update Appointment Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-0 justify-content-center position-relative">
+                <h5 class="modal-title fs-4 fw-bold" id="statusModalLabel">Update Appointment Status</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form id="statusForm" action="update_status.php" method="POST">
+            <div class="modal-body text-center border-0">
+                <form id="statusForm" action="update_status.php" method="POST" onsubmit="handleStatusSubmit(event)">
                     <input type="hidden" id="appointmentID" name="appointmentID">
+                    <input type="hidden" name="status" value="Completed">
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success" name="status" value="Completed">
+                        <button type="submit" class="btn btn-success">
                             <i class="fas fa-check me-2"></i>Mark as Done
                         </button>
                         <button type="button" class="btn btn-danger" onclick="openCancelModal()">
@@ -346,21 +328,35 @@ function filterAppointments() {
 <div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelReasonModalLabel">Cancel Appointment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-0 justify-content-center position-relative">
+                <h5 class="modal-title fs-4 fw-bold" id="cancelReasonModalLabel">Cancel Appointment</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-            <form id="cancelForm" action="update_status.php" method="POST">
-                <input type="hidden" id="cancelAppointmentID" name="appointmentID">
-                <input type="hidden" name="status" value="Cancelled">
-                <label for="cancelReason" class="form-label">Reason for Cancellation (Required)</label>
-                <textarea id="cancelReason" name="reason" class="form-control" rows="3" required></textarea>
-                <div class="d-flex justify-content-end mt-3">
-                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" class="btn btn-danger">Confirm</button>
-                </div>
-            </form>
+            <div class="modal-body text-center border-0">
+                <form id="cancelForm" action="update_status.php" method="POST">
+                    <input type="hidden" id="cancelAppointmentID" name="appointmentID">
+                    <input type="hidden" name="status" value="Cancelled">
+                    <label for="cancelReason" class="form-label">Reason for Cancellation (Required)</label>
+                    <textarea id="cancelReason" name="reason" class="form-control" rows="3" required></textarea>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Message Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 justify-content-center position-relative">
+                <h5 class="modal-title fs-4 fw-bold" id="messageModalLabel">Status</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center border-0">
+                <p id="statusMessage" class="mb-0"></p>
             </div>
         </div>
     </div>
@@ -394,6 +390,128 @@ function openCancelModal() {
     cancelModal.show();
 }
 
+// Add this to handle the form submission
+document.getElementById('cancelForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('update_status.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Close the cancel reason modal
+        const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelReasonModal'));
+        cancelModal.hide();
+        
+        // Show the message modal
+        document.getElementById('statusMessage').innerText = data.message;
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+        
+        // Reload the page after closing the message modal
+        document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+            window.location.reload();
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('statusMessage').innerText = 'An error occurred while processing your request.';
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+    });
+});
+</script>
+
+<script>
+// Handle barber assignment forms
+document.querySelectorAll('.assign-barber-form select').forEach(select => {
+    select.addEventListener('change', function() {
+        const form = this.closest('form');
+        const formData = new FormData(form);
+        
+        fetch('assign_barber.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Always show the message modal for both success and error
+            document.getElementById('statusMessage').innerText = data.message || 'Barber assigned successfully.';
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+            
+            // If successful, reload the page after the modal is closed
+            if (data.success) {
+                document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+                    window.location.reload();
+                }, { once: true }); // Use once: true to prevent multiple event listeners
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('statusMessage').innerText = 'An error occurred while assigning the barber.';
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+        });
+    });
+});
+</script>
+
+<script>
+function handleStatusSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const appointmentID = form.querySelector('#appointmentID').value;
+    
+    // First check if a barber is assigned
+    fetch(`check_barber.php?appointmentID=${appointmentID}`)
+    .then(response => response.json())
+    .then(data => {
+        if (!data.hasBarber) {
+            // Show error message if no barber is assigned
+            const statusModal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
+            statusModal.hide();
+            
+            document.getElementById('statusMessage').innerText = 'Please assign a barber before marking the appointment as done.';
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+            return;
+        }
+        
+        // If barber is assigned, proceed with the status update
+        const formData = new FormData(form);
+        return fetch('update_status.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Close the status modal
+            const statusModal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
+            statusModal.hide();
+            
+            // Show the message modal
+            document.getElementById('statusMessage').innerText = data.message;
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+            
+            // Reload the page after closing the message modal
+            document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+                window.location.reload();
+            }, { once: true });
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('statusMessage').innerText = 'An error occurred while updating the appointment status.';
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+    });
+}
 </script>
 </body>
 </html>

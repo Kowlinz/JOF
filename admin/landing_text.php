@@ -1,5 +1,5 @@
 <?php
 // Store landing page text as PHP variables
-$welcomeText = "Welcome to the Jack of Fades Barbershop!";
+$welcomeText = "Welcome to the Jack of Fades Barbershop! HAHAAH";
 $headingText = "Affordable Price for a high quality haircut";
 $subheadingText = "Jack of Fades Barbershop offers high quality customized haircuts."; 

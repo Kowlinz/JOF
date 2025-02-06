@@ -6,34 +6,27 @@ session_start();
     
 include 'db_connect.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get barber ID and availability from form
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $barberID = $_POST['barberID'];
     $availability = $_POST['availability'];
 
-    // Validate inputs
-    if (!in_array($availability, ['Available', 'Unavailable'])) {
-        die("Invalid availability value.");
-    }
-
-    // Update query
     $sql = "UPDATE barbers_tbl SET availability = ? WHERE barberID = ?";
     $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $availability, $barberID);
 
-    if ($stmt) {
-        $stmt->bind_param("si", $availability, $barberID);
-
-        if ($stmt->execute()) {
-            header("Location: barbers.php?success=1"); // Redirect back on success
-            exit;
-        } else {
-            echo "Error updating availability: " . $stmt->error;
-        }
-
-        $stmt->close();
+    $response = array();
+    if ($stmt->execute()) {
+        $response['success'] = true;
+        $response['message'] = 'Availability updated successfully';
     } else {
-        echo "Error preparing query: " . $conn->error;
+        $response['success'] = false;
+        $response['message'] = 'Error updating availability';
     }
+
+    $stmt->close();
+    $conn->close();
+
+    header('Content-Type: application/json');
+    echo json_encode($response);
 }
-$conn->close();
 ?>

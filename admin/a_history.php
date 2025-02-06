@@ -44,17 +44,18 @@
                     <div class="card p-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h2 class="fw-bold">Previous Customers</h2>
-                            <!-- Date Picker for Filtering -->
-                            <div class="mb-0">
-                                <input type="date" id="appointmentDate" class="form-control" 
-                                value="<?php echo isset($_GET['appointment_date']) ? $_GET['appointment_date'] : ''; ?>" 
-                                oninput="filterAppointments()">
+                            <div class="d-flex align-items-center gap-3">
+                                <!-- Date Picker moved here -->
+                                <div class="mb-0">
+                                    <input type="date" id="appointmentDate" class="form-control date-picker" 
+                                    value="<?php echo isset($_GET['appointment_date']) ? $_GET['appointment_date'] : ''; ?>" 
+                                    oninput="filterAppointments()">
+                                </div>
+                                <button type="button" class="btn btn-delete" 
+                                        onclick="confirmDeletion('previous_customer')">
+                                    <i class="fa-solid fa-trash-alt fa-lg"></i>
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-delete" 
-                                    onclick="confirmDeletion('previous_customer')" 
-                                    >
-                                <i class="fa-solid fa-trash-alt fa-lg"></i>
-                            </button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -141,17 +142,18 @@
                     <div class="card p-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h2 class="fw-bold">Cancelled</h2>
-                            <!-- Date Picker for Filtering -->
-                            <div class="mb-0">
-                                <input type="date" id="cancelledDate" class="form-control" 
-                                value="<?php echo isset($_GET['cancelled_date']) ? $_GET['cancelled_date'] : ''; ?>"
-                                oninput="filterCancelledAppointments()">
+                            <div class="d-flex align-items-center gap-3">
+                                <!-- Date Picker moved here -->
+                                <div class="mb-0">
+                                    <input type="date" id="cancelledDate" class="form-control date-picker" 
+                                    value="<?php echo isset($_GET['cancelled_date']) ? $_GET['cancelled_date'] : ''; ?>"
+                                    oninput="filterCancelledAppointments()">
+                                </div>
+                                <button type="button" class="btn btn-delete" 
+                                        onclick="confirmDeletion('cancelled')">
+                                    <i class="fa-solid fa-trash-alt fa-lg"></i>
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-delete" 
-                                    onclick="confirmDeletion('cancelled')" 
-                                    >
-                                <i class="fa-solid fa-trash-alt fa-lg"></i>
-                            </button> 
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -324,12 +326,227 @@
     </script>
 
     <script>
-    function confirmDeletion(type) {
-        if (confirm("This should be done after the service hours. Are you sure you want to delete all data? This action cannot be undone.")) {
-            window.location.href = `delete_data.php?table=${type}`; // Redirect to a delete script
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to handle deletion confirmation
+        window.confirmDeletion = function(type) {
+            // Store the type in a data attribute on the confirm button
+            document.getElementById('confirmDelete').setAttribute('data-type', type);
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            modal.show();
         }
-    }
+
+        // Update the event listener for the confirm delete button
+        document.getElementById('confirmDelete').addEventListener('click', function() {
+            const type = this.getAttribute('data-type');
+            
+            // Hide the confirmation modal
+            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+            if (confirmModal) {
+                confirmModal.hide();
+            }
+
+            // Make AJAX request to delete_data.php
+            fetch(`delete_data.php?table=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success modal
+                        const successModal = new bootstrap.Modal(document.getElementById('deleteSuccessModal'));
+                        successModal.show();
+
+                        // Add event listener for when success modal is hidden
+                        document.getElementById('deleteSuccessModal').addEventListener('hidden.bs.modal', function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        if (data.message === "No records found to delete.") {
+                            // Show no records modal
+                            const noRecordsModal = new bootstrap.Modal(document.getElementById('noRecordsModal'));
+                            noRecordsModal.show();
+                        } else {
+                            alert('Error deleting data: ' + data.message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting data');
+                });
+        });
+    });
     </script>
+
+    <!-- Add these confirmation modals -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete all data? This action cannot be undone.</p>
+                    <p class="warning-text">Note: This should be done after the service hours.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border: none;">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update the success modal - remove footer with Close button -->
+    <div class="modal fade" id="deleteSuccessModal" tabindex="-1" aria-labelledby="deleteSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteSuccessModalLabel">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Data has been successfully deleted!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this modal for no records message -->
+    <div class="modal fade" id="noRecordsModal" tabindex="-1" aria-labelledby="noRecordsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noRecordsModalLabel">Notice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>No records found to delete.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add the styles -->
+    <style>
+        /* Modal styles */
+        .modal-content {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            justify-content: center;
+            position: relative;
+            padding: 1rem;
+        }
+
+        .modal-header .modal-title {
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-header .btn-close {
+            position: absolute;
+            right: 1rem;
+            padding: calc(1rem * .5);
+            margin: calc(-.5 * 1rem) calc(-.5 * 1rem) calc(-.5 * 1rem) auto;
+        }
+
+        .btn-close {
+            color: #ffffff;
+            filter: invert(1) grayscale(100%) brightness(200%);
+            opacity: 1;
+        }
+
+        .btn-close:hover {
+            opacity: 0.75;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+
+        .modal-footer .btn {
+            min-width: 120px;
+            padding: 8px 20px;
+            width: 120px;
+            font-size: 1rem;
+        }
+
+        .btn-secondary {
+            background-color: #333333;
+            color: #ffffff;
+            font-weight: bold;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-secondary:hover {
+            background-color: #444444;
+            color: #ffffff;
+        }
+
+        .btn-secondary:focus {
+            box-shadow: none !important;
+        }
+
+        /* Modal animations */
+        .modal.fade .modal-dialog {
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Add this to your existing styles */
+        .warning-text {
+            color: #FFDE59;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* Date picker styles */
+        .date-picker {
+            background-color: white !important;
+            border: 1px solid #ced4da;
+            color: #212529 !important;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            width: auto;
+        }
+
+        .date-picker:focus {
+            border-color: #FFDE59;
+            box-shadow: 0 0 0 0.2rem rgba(255, 222, 89, 0.25);
+        }
+
+        /* Add gap between date picker and trash icon */
+        .gap-3 {
+            gap: 1rem !important;
+        }
+    </style>
 
 </body>
 </html>

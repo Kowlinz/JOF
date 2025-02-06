@@ -81,9 +81,9 @@ $result = $conn->query($sql);
 
                                                 // Availability dropdown with form
                                                 echo "<td>";
-                                                echo "<form method='POST' action='update_availability.php'>";
+                                                echo "<form method='POST' action='update_availability.php' class='availability-form'>";
                                                 echo "<input type='hidden' name='barberID' value='" . $row['barberID'] . "'>";
-                                                echo "<select name='availability' class='form-select' onchange='this.form.submit()'>";
+                                                echo "<select name='availability' class='form-select availability-select' data-original='" . $row['availability'] . "'>";
                                                 echo "<option value='Available'" . ($row['availability'] === 'Available' ? " selected" : "") . ">Available</option>";
                                                 echo "<option value='Unavailable'" . ($row['availability'] === 'Unavailable' ? " selected" : "") . ">Unavailable</option>";
                                                 echo "</select>";
@@ -246,7 +246,7 @@ $result = $conn->query($sql);
                     <p>Are you sure you want to delete this barber?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border: none;">Cancel</button>
                     <button type="button" class="btn btn-danger" id="confirmBarberDelete">Delete</button>
                 </div>
             </div>
@@ -270,6 +270,179 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
+
+    <!-- Add this modal for availability change confirmation -->
+    <div class="modal fade" id="availabilityModal" tabindex="-1" aria-labelledby="availabilityModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="availabilityModalLabel">Confirm Availability Change</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to change this barber's availability?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning" id="confirmAvailability">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update the availability success modal style -->
+    <style>
+        /* Modal styles */
+        .modal-content {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            justify-content: center;
+        }
+
+        .modal-header .modal-title {
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+
+        /* Button styles */
+        .modal-footer .btn {
+            min-width: 120px;
+            padding: 8px 20px;
+            width: 120px;
+            font-size: 1rem;
+        }
+
+        .btn-secondary {
+            background-color: #333333;
+            color: #ffffff;
+            font-weight: bold;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-secondary:hover {
+            background-color: #444444;
+            color: #ffffff;
+        }
+
+        .btn-secondary:focus {
+            box-shadow: none !important;
+        }
+
+        /* Modal animations */
+        .modal.fade .modal-dialog {
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <!-- Update the availability success modal structure -->
+    <div class="modal fade" id="availabilitySuccessModal" tabindex="-1" aria-labelledby="availabilitySuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="availabilitySuccessModalLabel">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Barber availability has been updated successfully!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Add these styles for the X button */
+        .btn-close {
+            color: #ffffff;
+            filter: invert(1) grayscale(100%) brightness(200%);
+            opacity: 1;
+        }
+
+        .btn-close:hover {
+            opacity: 0.75;
+        }
+
+        /* Update modal header to accommodate X button */
+        .modal-header {
+            border-bottom: none;
+            justify-content: center;
+            position: relative;
+            padding: 1rem;
+        }
+
+        .modal-header .btn-close {
+            position: absolute;
+            right: 1rem;
+            padding: calc(1rem * .5);
+            margin: calc(-.5 * 1rem) calc(-.5 * 1rem) calc(-.5 * 1rem) auto;
+        }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle availability change
+        document.querySelectorAll('.availability-select').forEach(select => {
+            select.addEventListener('change', function(e) {
+                const form = this.closest('form');
+                const newValue = this.value;
+
+                // Submit form via AJAX
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the data-original attribute
+                        this.setAttribute('data-original', newValue);
+
+                        // Show success modal
+                        const successModal = new bootstrap.Modal(document.getElementById('availabilitySuccessModal'));
+                        successModal.show();
+                    } else {
+                        alert('Error updating availability');
+                        this.value = this.getAttribute('data-original');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating availability');
+                    this.value = this.getAttribute('data-original');
+                });
+            });
+        });
+    });
+    </script>
 </body>
 </html>
 

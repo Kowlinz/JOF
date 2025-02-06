@@ -185,13 +185,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <link rel="stylesheet" href="css/table.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="css/sidebar.css">
+    <style>
+        .modal-header, .modal-footer {
+            border: none;
+        }
+    </style>
     <title>Manage Services</title>
 </head>
 <body>
     <div class="body d-flex py-3 mt-5">
         <div class="container-xxl">
             <div class="position-relative">
-                <h1 class="dashboard mb-5 ms-5">Edit Haircut Gallery</h1>
+                <h1 class="dashboard mb-3 ms-5">Edit Haircut Gallery</h1>
                 <button class="mobile-toggle d-lg-none">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -239,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                         ?>
                     </div>
                     
-                    <button class="btn btn-warning confirm-btn mt-3" id="confirmGalleryEditBtn" style="display: none;">
+                    <button class="btn btn-success confirm-btn mt-3" id="confirmGalleryEditBtn" style="display: none;">
                         Confirm
                     </button>
                 </div>
@@ -306,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-warning mt-3" id="confirmServicesEditBtn" style="display: none;">
+                    <button class="btn btn-success mt-3" id="confirmServicesEditBtn" style="display: none;">
                         Confirm
                     </button>
                 </div>
@@ -322,8 +327,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title w-100" id="addServiceModalLabel">Add New Service</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -353,8 +358,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title w-100" id="editServiceModalLabel">Edit Service</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -394,7 +399,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 </div>
 
                 <!-- Add-ons Table -->
-                <div class="services-container">
+                <div class="services-container mb-5">
                     <div class="card border-0 rounded-4">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -440,7 +445,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-warning mt-3" id="confirmAddonsEditBtn" style="display: none;">
+                    <button class="btn btn-success mt-3" id="confirmAddonsEditBtn" style="display: none;">
                         Confirm
                     </button>
                 </div>
@@ -451,8 +456,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="errorModalLabel">Error</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="errorModalBody">
@@ -464,8 +469,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="addHaircutModal" tabindex="-1" aria-labelledby="addHaircutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addHaircutModalLabel">Add New Haircut</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="addHaircutModalLabel">Add New Haircut</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -498,8 +503,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="addAddonModal" tabindex="-1" aria-labelledby="addAddonModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addAddonModalLabel">Add New Add-on</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="addAddonModalLabel">Add New Add-on</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -529,15 +534,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="successModalLabel">Success</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p id="successMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -547,8 +549,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="deleteConfirmModalLabel">Confirm Deletion</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -566,8 +568,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="deleteServiceConfirmModal" tabindex="-1" aria-labelledby="deleteServiceConfirmModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteServiceConfirmModalLabel">Confirm Deletion</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="deleteServiceConfirmModalLabel">Confirm Deletion</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -585,8 +587,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="deleteAddonConfirmModal" tabindex="-1" aria-labelledby="deleteAddonConfirmModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteAddonConfirmModalLabel">Confirm Deletion</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="deleteAddonConfirmModalLabel">Confirm Deletion</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -604,8 +606,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <div class="modal fade" id="editAddonModal" tabindex="-1" aria-labelledby="editAddonModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editAddonModalLabel">Edit Add-on</h5>
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="editAddonModalLabel">Edit Add-on</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -632,6 +634,607 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.nav-link');
+        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+
+        // Add function to apply edit state
+        function applyEditState() {
+            const editBtn = document.getElementById('editGalleryBtn');
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            const confirmBtn = document.querySelector('.confirm-btn');
+            
+            if (editBtn.classList.contains('btn-active')) {
+                deleteBtns.forEach(btn => {
+                    btn.style.display = 'block';
+                });
+                confirmBtn.style.display = 'block';
+            }
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const category = this.getAttribute('href').replace('#', '');
+                
+                fetch(`manage_services.php?action=get_haircuts&category=${category}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.querySelector('.gallery-grid').innerHTML = html;
+                        attachDeleteListeners();
+                        // Apply edit state after loading new content
+                        applyEditState();
+                    });
+            });
+        });
+
+        // Edit button functionality
+        document.getElementById('editGalleryBtn').addEventListener('click', function() {
+            // Only proceed if the button is not active
+            if (!this.classList.contains('btn-active')) {
+                const deleteBtns = document.querySelectorAll('.delete-btn');
+                const confirmBtn = document.querySelector('.confirm-btn');
+                
+                deleteBtns.forEach(btn => {
+                    btn.style.display = 'block';
+                });
+                
+                confirmBtn.style.display = 'block';
+
+                // Add the active class and change text color
+                this.classList.add('btn-active');
+                this.style.color = 'white';
+            }
+        });
+
+        // Confirm button functionality
+        document.querySelector('.confirm-btn').addEventListener('click', function() {
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            const confirmBtn = this;
+            const editBtn = document.getElementById('editGalleryBtn');
+
+            // Hide delete buttons and confirm button
+            deleteBtns.forEach(btn => {
+                btn.style.display = 'none';
+            });
+            confirmBtn.style.display = 'none';
+
+            // Remove active state from Edit button
+            editBtn.classList.remove('btn-active');
+            editBtn.style.color = 'black';
+        });
+
+        // Function to attach delete event listeners
+        function attachDeleteListeners() {
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const haircut = this.closest('.haircut-item');
+                    const haircut_id = haircut.dataset.id;
+                    
+                    // Show confirmation modal
+                    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                    deleteModal.show();
+
+                    // Handle delete confirmation
+                    document.getElementById('confirmDelete').onclick = function() {
+                        const formData = new FormData();
+                        formData.append('action', 'delete_haircut');
+                        formData.append('haircut_id', haircut_id);
+
+                        fetch('manage_services.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            deleteModal.hide();
+                            if (data.success) {
+                                haircut.remove();
+                                // Show success message
+                                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                                document.getElementById('successMessage').innerText = 'Haircut deleted successfully!';
+                                successModal.show();
+                            } else {
+                                document.getElementById('errorModalBody').textContent = data.message;
+                                errorModal.show();
+                            }
+                        })
+                        .catch(error => {
+                            deleteModal.hide();
+                            console.error('Error:', error);
+                            document.getElementById('errorModalBody').textContent = 'An error occurred while deleting the haircut.';
+                            errorModal.show();
+                        });
+                    };
+                });
+            });
+        }
+
+        // Initial attachment of delete listeners
+        attachDeleteListeners();
+
+        // Open the Add Haircut modal when the "Add Photo" button is clicked
+        document.getElementById('addPhotoBtn').addEventListener('click', function() {
+            const addHaircutModal = new bootstrap.Modal(document.getElementById('addHaircutModal'));
+            addHaircutModal.show();
+        });
+
+        // Handle form submission
+        document.getElementById('addHaircutForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('haircutName', document.getElementById('haircutName').value);
+            formData.append('haircutCategory', document.getElementById('haircutCategory').value);
+            formData.append('haircutPhoto', document.getElementById('haircutPhoto').files[0]);
+
+            // Send the form data to the server using fetch
+            fetch('add_haircut.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Refresh the gallery grid
+                    const activeTab = document.querySelector('.nav-link.active');
+                    const category = activeTab.getAttribute('href').replace('#', '');
+                    fetch(`manage_services.php?action=get_haircuts&category=${category}`)
+                        .then(response => response.text())
+                        .then(html => {
+                            document.querySelector('.gallery-grid').innerHTML = html;
+                            attachDeleteListeners();
+                        });
+
+                    // Close the modal
+                    const addHaircutModal = bootstrap.Modal.getInstance(document.getElementById('addHaircutModal'));
+                    addHaircutModal.hide();
+
+                    // Reset the form
+                    document.getElementById('addHaircutForm').reset();
+
+                    // Show success message in modal
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    document.getElementById('successMessage').innerText = 'Haircut added successfully!';
+                    successModal.show();
+                } else {
+                    // Show error message in modal
+                    document.getElementById('errorModalBody').textContent = 'Error adding haircut: ' + data.message;
+                    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Show error message in modal
+                document.getElementById('errorModalBody').textContent = 'An error occurred while adding the haircut. Please try again.';
+                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                errorModal.show();
+            });
+        });
+
+        // Open the Add Service modal when the "Add Services" button is clicked
+        document.getElementById('addServiceBtn').addEventListener('click', function() {
+            const addServiceModal = new bootstrap.Modal(document.getElementById('addServiceModal'));
+            addServiceModal.show();
+        });
+
+        // Handle form submission for adding a new service
+        document.getElementById('addServiceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('serviceName', document.getElementById('serviceName').value);
+            formData.append('serviceDesc', document.getElementById('serviceDesc').value);
+            formData.append('servicePrice', document.getElementById('servicePrice').value);
+
+            fetch('add_service.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the add service modal
+                    const addServiceModal = bootstrap.Modal.getInstance(document.getElementById('addServiceModal'));
+                    addServiceModal.hide();
+
+                    // Reset the form
+                    document.getElementById('addServiceForm').reset();
+
+                    // Show success message in modal
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    document.getElementById('successMessage').innerText = 'Service added successfully!';
+                    successModal.show();
+
+                    // Refresh the page after modal is closed
+                    successModal._element.addEventListener('hidden.bs.modal', function () {
+                        location.reload();
+                    });
+                } else {
+                    document.getElementById('errorModalBody').textContent = 'Error adding service: ' + data.message;
+                    errorModal.show();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorModalBody').textContent = 'An error occurred while adding the service.';
+                errorModal.show();
+            });
+        });
+
+        // Edit Services button functionality
+        document.getElementById('editServicesBtn').addEventListener('click', function() {
+            // Only proceed if the button is not active
+            if (!this.classList.contains('btn-active')) {
+                // Target only the first services-container after the Edit Services button
+                const servicesTable = this.closest('.d-flex').nextElementSibling;
+                const actionsColumn = servicesTable.querySelectorAll('.actions-column');
+                const confirmBtn = document.getElementById('confirmServicesEditBtn');
+                
+                actionsColumn.forEach(column => {
+                    column.style.display = 'table-cell';
+                });
+                
+                confirmBtn.style.display = 'block';
+
+                // Add the active class and change text color
+                this.classList.add('btn-active');
+                if (this.classList.contains('btn-active')) {
+                    this.style.color = 'white';
+                }
+            }
+        });
+
+        // Update the Confirm button functionality
+        document.getElementById('confirmServicesEditBtn').addEventListener('click', function() {
+            // Target only the first services-container after the Edit Services button
+            const servicesTable = document.getElementById('editServicesBtn').closest('.d-flex').nextElementSibling;
+            const actionsColumn = servicesTable.querySelectorAll('.actions-column');
+            const editBtn = document.getElementById('editServicesBtn');
+            
+            actionsColumn.forEach(column => {
+                column.style.display = 'none';
+            });
+            
+            this.style.display = 'none';
+            editBtn.classList.remove('btn-active');
+            editBtn.style.color = 'black';
+        });
+
+        // Delete service functionality
+        document.querySelectorAll('.delete-service-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const serviceID = this.dataset.id;
+                const row = this.closest('tr');
+                
+                // Show confirmation modal
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteServiceConfirmModal'));
+                deleteModal.show();
+
+                // Handle delete confirmation
+                document.getElementById('confirmServiceDelete').onclick = function() {
+                    const formData = new FormData();
+                    formData.append('action', 'delete_service');
+                    formData.append('serviceID', serviceID);
+
+                    fetch('manage_services.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        deleteModal.hide();
+                        if (data.success) {
+                            row.remove();
+                            // Show success message
+                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                            document.getElementById('successMessage').innerText = 'Service deleted successfully!';
+                            successModal.show();
+                        } else {
+                            document.getElementById('errorModalBody').textContent = data.message;
+                            errorModal.show();
+                        }
+                    })
+                    .catch(error => {
+                        deleteModal.hide();
+                        console.error('Error:', error);
+                        document.getElementById('errorModalBody').textContent = 'An error occurred while deleting the service.';
+                        errorModal.show();
+                    });
+                };
+            });
+        });
+
+        // Edit service functionality
+        document.querySelectorAll('.edit-service-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const serviceID = this.dataset.id;
+                const serviceName = this.dataset.name;
+                const serviceDesc = this.dataset.desc;
+                const servicePrice = this.dataset.price;
+
+                // Populate the modal fields
+                document.getElementById('editServiceID').value = serviceID;
+                document.getElementById('editServiceName').value = serviceName;
+                document.getElementById('editServiceDesc').value = serviceDesc;
+                document.getElementById('editServicePrice').value = servicePrice;
+
+                // Show the modal
+                const editServiceModal = new bootstrap.Modal(document.getElementById('editServiceModal'));
+                editServiceModal.show();
+            });
+        });
+
+        // Handle form submission for editing a service
+        document.getElementById('editServiceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('serviceID', document.getElementById('editServiceID').value);
+            formData.append('serviceName', document.getElementById('editServiceName').value);
+            formData.append('serviceDesc', document.getElementById('editServiceDesc').value);
+            formData.append('servicePrice', document.getElementById('editServicePrice').value);
+
+            fetch('edit_service.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the edit modal
+                    const editServiceModal = bootstrap.Modal.getInstance(document.getElementById('editServiceModal'));
+                    editServiceModal.hide();
+
+                    // Show success message in modal
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    document.getElementById('successMessage').innerText = 'Service updated successfully!';
+                    successModal.show();
+                    
+                    // Refresh the page after modal is closed
+                    successModal._element.addEventListener('hidden.bs.modal', function () {
+                        location.reload();
+                    });
+                } else {
+                    document.getElementById('errorModalBody').textContent = data.message;
+                    errorModal.show();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorModalBody').textContent = 'An error occurred while updating the service.';
+                errorModal.show();
+            });
+        });
+
+        // Open the Add Add-on modal when the "Add Add-ons" button is clicked
+        document.getElementById('addAddonBtn').addEventListener('click', function() {
+            const addAddonModal = new bootstrap.Modal(document.getElementById('addAddonModal'));
+            addAddonModal.show();
+        });
+
+        // Handle form submission for adding a new add-on
+        document.getElementById('addAddonForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('addonName', document.getElementById('addonName').value);
+            formData.append('addonDesc', document.getElementById('addonDesc').value);
+            formData.append('addonPrice', document.getElementById('addonPrice').value);
+
+            fetch('add_addon.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    const addAddonModal = bootstrap.Modal.getInstance(document.getElementById('addAddonModal'));
+                    addAddonModal.hide();
+
+                    // Reset the form
+                    document.getElementById('addAddonForm').reset();
+
+                    // Show success message in modal
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    document.getElementById('successMessage').innerText = 'Add-on added successfully!';
+                    successModal.show();
+
+                    // Refresh the page after modal is closed
+                    successModal._element.addEventListener('hidden.bs.modal', function () {
+                        location.reload();
+                    });
+                } else {
+                    document.getElementById('errorModalBody').textContent = data.message;
+                    errorModal.show();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorModalBody').textContent = 'An error occurred while adding the add-on.';
+                errorModal.show();
+            });
+        });
+
+        // Delete add-on functionality
+        document.querySelectorAll('.delete-addon-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const addonID = this.dataset.id;
+                const row = this.closest('tr');
+                
+                // Show confirmation modal
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteAddonConfirmModal'));
+                deleteModal.show();
+
+                // Handle delete confirmation
+                document.getElementById('confirmAddonDelete').onclick = function() {
+                    const formData = new FormData();
+                    formData.append('action', 'delete_addon');
+                    formData.append('addonID', addonID);
+
+                    fetch('manage_services.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        deleteModal.hide();
+                        if (data.success) {
+                            row.remove();
+                            // Show success message
+                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                            document.getElementById('successMessage').innerText = 'Add-on deleted successfully!';
+                            successModal.show();
+                        } else {
+                            document.getElementById('errorModalBody').textContent = data.message;
+                            errorModal.show();
+                        }
+                    })
+                    .catch(error => {
+                        deleteModal.hide();
+                        console.error('Error:', error);
+                        document.getElementById('errorModalBody').textContent = 'An error occurred while deleting the add-on.';
+                        errorModal.show();
+                    });
+                };
+            });
+        });
+
+        // Edit Add-ons button functionality
+        document.getElementById('editAddonsBtn').addEventListener('click', function() {
+            // Only proceed if the button is not active
+            if (!this.classList.contains('btn-active')) {
+                // Target only the first services-container after the Edit Add-ons button
+                const addonsTable = this.closest('.d-flex').nextElementSibling;
+                const actionsColumn = addonsTable.querySelectorAll('.actions-column');
+                const confirmBtn = document.getElementById('confirmAddonsEditBtn');
+                
+                actionsColumn.forEach(column => {
+                    column.style.display = 'table-cell';
+                });
+
+                confirmBtn.style.display = 'block';
+
+                // Add the active class and change text color
+                this.classList.add('btn-active');
+                this.style.color = 'white';
+            }
+        });
+
+        // Confirm Add-ons button functionality
+        document.getElementById('confirmAddonsEditBtn').addEventListener('click', function() {
+            // Target only the first services-container after the Edit Add-ons button
+            const addonsTable = document.getElementById('editAddonsBtn').closest('.d-flex').nextElementSibling;
+            const actionsColumn = addonsTable.querySelectorAll('.actions-column');
+            const editBtn = document.getElementById('editAddonsBtn');
+            
+            actionsColumn.forEach(column => {
+                column.style.display = 'none';
+            });
+
+            this.style.display = 'none';
+            editBtn.classList.remove('btn-active');
+            editBtn.style.color = 'black';
+        });
+
+        // Edit add-on functionality
+        document.querySelectorAll('.edit-addon-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const addonID = this.dataset.id;
+                const addonName = this.dataset.name;
+                const addonDesc = this.dataset.desc;
+                const addonPrice = this.dataset.price;
+
+                // Populate the modal fields
+                document.getElementById('editAddonID').value = addonID;
+                document.getElementById('editAddonName').value = addonName;
+                document.getElementById('editAddonDesc').value = addonDesc;
+                document.getElementById('editAddonPrice').value = addonPrice;
+
+                // Show the modal
+                const editAddonModal = new bootstrap.Modal(document.getElementById('editAddonModal'));
+                editAddonModal.show();
+            });
+        });
+
+        // Handle form submission for editing an add-on
+        document.getElementById('editAddonForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('addonID', document.getElementById('editAddonID').value);
+            formData.append('addonName', document.getElementById('editAddonName').value);
+            formData.append('addonDesc', document.getElementById('editAddonDesc').value);
+            formData.append('addonPrice', document.getElementById('editAddonPrice').value);
+
+            fetch('edit_addon.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the edit modal
+                    const editAddonModal = bootstrap.Modal.getInstance(document.getElementById('editAddonModal'));
+                    editAddonModal.hide();
+
+                    // Show success message in modal
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    document.getElementById('successMessage').innerText = 'Add-on updated successfully!';
+                    successModal.show();
+                    
+                    // Refresh the page after modal is closed
+                    successModal._element.addEventListener('hidden.bs.modal', function () {
+                        location.reload();
+                    });
+                } else {
+                    document.getElementById('errorModalBody').textContent = data.message;
+                    errorModal.show();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorModalBody').textContent = 'An error occurred while updating the add-on.';
+                errorModal.show();
+            });
+        });
+    });
+    </script>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebarMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.querySelector('.mobile-toggle');
+            if (toggleButton) {
+                toggleButton.setAttribute('onclick', 'toggleSidebar()');
+            }
+        });
+    </script>
+
+    <!-- Add the sidebar navigation after the main content div -->
     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse">
         <div class="position-sticky">
             <div class="list-group list-group-flush mx-3 mt-5">
@@ -674,10 +1277,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             </div>
         </div>
     </nav>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
-    <script src="js/manage_services.js"></script>
 
 </body>
 </html>

@@ -28,9 +28,29 @@ if (!isset($_SESSION['firstName'])) {
 }
 
 // Fetch appointments for the logged-in customer
-$sql = "SELECT * FROM appointment_tbl WHERE customerID = $customerID ORDER BY date DESC, timeSlot DESC";
+$sql = "
+    SELECT 
+        a.appointmentID,
+        a.date, 
+        a.timeSlot, 
+        a.status, 
+        s.serviceName, 
+        ad.addonName, 
+        (s.servicePrice + ad.addonPrice) AS totalPrice
+    FROM 
+        appointment_tbl a
+    LEFT JOIN 
+        service_tbl s ON a.serviceID = s.serviceID
+    LEFT JOIN 
+        addon_tbl ad ON a.addonID = ad.addonID
+    WHERE 
+        a.customerID = $customerID
+    ORDER BY 
+        a.date DESC, a.timeSlot DESC
+";
 $result = $conn->query($sql);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -210,6 +230,9 @@ $result = $conn->query($sql);
                     <tr>
                         <th>Date</th>
                         <th>Time</th>
+                        <th>Service</th>
+                        <th>Add-On</th>
+                        <th>Total Price</th>
                         <th>Status</th>
                         <th></th>
                     </tr>
@@ -235,6 +258,9 @@ $result = $conn->query($sql);
                         echo "<tr>";
                         echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['timeSlot']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['serviceName']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['addonName']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['totalPrice']) . "</td>";
                         echo "<td class='" . $statusClass . "'>" . htmlspecialchars($row['status']) . "</td>";
 
                         if ($row['status'] === "Pending") {
@@ -246,58 +272,36 @@ $result = $conn->query($sql);
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
+                    echo "<tr><td colspan='7' class='text-center'>No appointments found.</td></tr>";
                 }
                 ?>
                 </tbody>
             </table>
         </div>
+
         <!-- Modal -->
-
         <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-
             <div class="modal-dialog">
-
                 <div class="modal-content">
-
                     <div class="modal-header">
-
                         <h5 class="modal-title" id="cancelModalLabel">Cancel Appointment</h5>
-
                     </div>
-
                     <div class="modal-body">
-
                         <p>Date: <span id="appointmentDate"></span></p>
-
                         <p>Time: <span id="appointmentTime"></span></p>
-
                         <p>Service: <span id="serviceName"></span></p>
-
                         <p>Add-On: <span id="addonName"></span></p>
-
                         <div class="mb-3">
-
                         <label for="cancelReason" class="form-label">Reason for Cancellation</label>
-
                         <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (Required)" required>
-
                     </div>
-
                     </div>
-
                     <div class="modal-footer">
-
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
-
                         <button type="button" class="btn btn-danger" id="confirmCancelButton">Cancel</button>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 <script>
 // Function to handle appointment cancellation and populate modal

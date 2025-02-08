@@ -163,10 +163,19 @@
                                     if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
                                         while ($row = mysqli_fetch_assoc($upcomingResult)) {
                                             $formattedDate = date("F d, Y", strtotime($row['date']));
-                                            echo "  <tr>
+                                            echo "<tr>
                                                     <td>{$counter}</td>
-                                                    <td>{$row['fullName']}</td>
-                                                    <td>{$formattedDate}</td>
+                                                    <td>";
+
+                                            if (!empty($row['customerID'])) {
+                                                echo "<a href='#' onclick='showAppointmentDetails(" . $row['appointmentID'] . ")' data-bs-toggle='modal' data-bs-target='#appointmentModal' style='text-decoration: none; color: inherit;'>";
+                                                echo htmlspecialchars($row['fullName']);
+                                                echo "</a>";    
+                                            } else {
+                                                echo htmlspecialchars($row['fullName']);
+                                            }
+                                                    
+                                            echo " <td>{$formattedDate}</td>
                                                     <td>{$row['timeSlot']}</td>
                                                     <td>{$row['serviceName']}</td>
                                                     <td>
@@ -304,6 +313,39 @@ function filterAppointments() {
             toggleButton.setAttribute('onclick', 'toggleSidebar()');
         }
     });
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="appointmentModalLabel">Appointment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
+                <p><strong>HC Name:</strong> <span id="hcName"></span></p>
+                <p><strong>Remarks:</strong> <span id="remarks"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showAppointmentDetails(appointmentID) {
+    fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('addonName').innerText = data.addonName || 'N/A';
+            document.getElementById('hcName').innerText = data.hcName || 'N/A';
+            document.getElementById('remarks').innerText = data.remarks || 'N/A';
+        })
+        .catch(error => console.error('Error fetching details:', error));
+}
 </script>
 
 <!-- Status Modal -->

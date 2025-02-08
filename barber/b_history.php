@@ -431,10 +431,11 @@ include 'db_connect.php';
                                         $timeSlot = $row['timeSlot'];
                                         $date = $row['date'];  
                                         $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
+                                        $formattedDate = date("F d, Y", strtotime($row['date']));
                                         echo "<tr>
                                                 <td>{$no}</td>
                                                 <td>{$fullName}</td>
-                                                <td>{$date}</td>
+                                                <td>{$formattedDate}</td>
                                                 <td>{$timeSlot}</td>
                                                 <td>{$serviceName}</td>
                                               </tr>";

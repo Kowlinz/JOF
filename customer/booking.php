@@ -414,12 +414,12 @@ $addonsResult = $conn->query($addonsQuery);
         <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5 fade-in">
             <div class="row justify-content-center">
                 <div class="col-md-4">
+                    <!-- Date Dropdown -->
                     <div class="mb-3 required">
                         <span style="color: red;">* </span>
                         <label for="date" class="form-label text-white">Date:</label>
-                        <input name="date" id="date" class="form-control text-center" placeholder="Choose Date">
+                        <input type="text" name="date" id="date" class="form-control text-center" value="Choose Date" data-db-value="">
                     </div>
-
                     <!-- Service Dropdown -->
                     <div class="mb-3" required>
                         <span style="color: red;">* </span>
@@ -517,6 +517,12 @@ $addonsResult = $conn->query($addonsQuery);
                 <script>
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function(event) {
+                        const dateField = document.getElementById('date');
+                        const dbDate = dateField.getAttribute('data-db-value');
+
+                        if (dbDate) {
+                            dateField.value = dbDate; // Set correct format for submission
+                        }
                         event.preventDefault();
 
                         // Get form values
@@ -578,90 +584,103 @@ $addonsResult = $conn->query($addonsQuery);
                     });
 
                     document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = flatpickr("#date", {
-        dateFormat: "Y-m-d",
-        minDate: "today",
-        onChange: function(selectedDates, dateStr) {
-            fetchBookedSlots(dateStr);
-        }
-    });
+                        const dateInput = flatpickr("#date", {
+                            dateFormat: "Y-m-d", // Database format
+                            minDate: "today",
+                            onChange: function(selectedDates, dateStr) {
+                                // Format date for UI display
+                                const formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
 
-    function fetchBookedSlots(date) {
-        fetch(`get_booked_slots.php?date=${date}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTimeSlots(data.bookedSlots, data.totalBarbers);
-            })
-            .catch(error => console.error('Error:', error));
-    }
+                                // Display formatted date
+                                document.getElementById('date').value = formattedDate;
 
-    function updateTimeSlots(bookedSlots, totalBarbers) {
-    const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
-    const currentDate = new Date();
-    const selectedDate = new Date(document.getElementById('date').value);
-    const isToday = selectedDate.toDateString() === currentDate.toDateString();
+                                // Store the correct database format in a dataset
+                                document.getElementById('date').setAttribute('data-db-value', dateStr);
 
-    timeSlotBtns.forEach(btn => {
-        const time = btn.getAttribute('data-time');
+                                // Fetch available slots
+                                fetchBookedSlots(dateStr);
+                            }
+                        });
 
-        // Get how many barbers are already booked at this time slot
-        const bookedCount = bookedSlots[time] || 0;
-        const remainingSlots = totalBarbers - bookedCount;
+                        function fetchBookedSlots(date) {
+                            fetch(`get_booked_slots.php?date=${date}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    updateTimeSlots(data.bookedSlots, data.totalBarbers);
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
 
-        // Convert slot time to 24-hour format
-        const [hours, minutes] = time.split(':');
-        const timeSlotDate = new Date(selectedDate);
-        timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (time.includes('PM') ? 12 : 0)));
-        timeSlotDate.setMinutes(parseInt(minutes));
+                        function updateTimeSlots(bookedSlots, totalBarbers) {
+                        const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
+                        const currentDate = new Date();
+                        const selectedDate = new Date(document.getElementById('date').value);
+                        const isToday = selectedDate.toDateString() === currentDate.toDateString();
 
-        // Disable slot if all barbers are booked or if the time is in the past
-        if (remainingSlots <= 0 || (isToday && timeSlotDate <= currentDate)) {
-            btn.classList.add('booked');
-            btn.disabled = true;
-        } else {
-            btn.classList.remove('booked');
-            btn.disabled = false;
-        }
+                        timeSlotBtns.forEach(btn => {
+                            const time = btn.getAttribute('data-time');
 
-        // Debugging log to check values
-        console.log(`Time: ${time}, Booked: ${bookedCount}, Total Barbers: ${totalBarbers}, Remaining: ${remainingSlots}`);
-    });
-}
-});
+                            // Get how many barbers are already booked at this time slot
+                            const bookedCount = bookedSlots[time] || 0;
+                            const remainingSlots = totalBarbers - bookedCount;
+
+                            // Convert slot time to 24-hour format
+                            const [hours, minutes] = time.split(':');
+                            const timeSlotDate = new Date(selectedDate);
+                            timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (time.includes('PM') ? 12 : 0)));
+                            timeSlotDate.setMinutes(parseInt(minutes));
+
+                            // Disable slot if all barbers are booked or if the time is in the past
+                            if (remainingSlots <= 0 || (isToday && timeSlotDate <= currentDate)) {
+                                btn.classList.add('booked');
+                                btn.disabled = true;
+                            } else {
+                                btn.classList.remove('booked');
+                                btn.disabled = false;
+                            }
+
+                            // Debugging log to check values
+                            console.log(`Time: ${time}, Booked: ${bookedCount}, Total Barbers: ${totalBarbers}, Remaining: ${remainingSlots}`);
+                        });
+                    }
+                    });
 
 
-                    function selectTimeSlot(time) {
-    console.log("Attempting to select time slot:", time); // Debugging log
+                                        function selectTimeSlot(time) {
+                        console.log("Attempting to select time slot:", time); // Debugging log
 
-    const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
-    
-    if (btn && btn.classList.contains('booked')) {
-        console.log("This time slot is already booked.");
-        return; // Don't allow selection of booked slots
-    }
+                        const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
+                        
+                        if (btn && btn.classList.contains('booked')) {
+                            console.log("This time slot is already booked.");
+                            return; // Don't allow selection of booked slots
+                        }
 
-    // Update the hidden input
-    document.getElementById('selectedTimeSlot').value = time;
-    
-    // Update the button text
-    document.getElementById('time-slot-button').textContent = time;
-    
-    // Remove selected class from all buttons
-    document.querySelectorAll('.time-slot-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+                        // Update the hidden input
+                        document.getElementById('selectedTimeSlot').value = time;
+                        
+                        // Update the button text
+                        document.getElementById('time-slot-button').textContent = time;
+                        
+                        // Remove selected class from all buttons
+                        document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
 
-    // Add selected class to clicked button
-    if (btn) {
-        btn.classList.add('selected');
-        console.log("Time slot selected:", time);
-    }
+                        // Add selected class to clicked button
+                        if (btn) {
+                            btn.classList.add('selected');
+                            console.log("Time slot selected:", time);
+                        }
 
-    // Close the modal
-    const timeSlotModal = bootstrap.Modal.getInstance(document.getElementById('timeSlotModal'));
-    timeSlotModal.hide();
-}
-
+                        // Close the modal
+                        const timeSlotModal = bootstrap.Modal.getInstance(document.getElementById('timeSlotModal'));
+                        timeSlotModal.hide();
+                    }
                 </script>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

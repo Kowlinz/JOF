@@ -110,27 +110,28 @@
                                     <?php
                                         $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
                                         $upcomingQuery = "
-                                            SELECT 
-                                                a.appointmentID,
-                                                a.date,
-                                                a.timeSlot,
-                                                a.status,
-                                                CASE 
-                                                    WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-                                                    ELSE 'Walk In' 
-                                                END AS fullName,
-                                                s.serviceName, 
-                                                ba.barberID
-                                            FROM 
-                                                appointment_tbl a
-                                            LEFT JOIN 
-                                                customer_tbl c ON a.customerID = c.customerID
-                                            LEFT JOIN 
-                                                service_tbl s ON a.serviceID = s.serviceID
-                                            LEFT JOIN 
-                                                barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
-                                            WHERE 
-                                                a.status = 'Pending'";
+                                        SELECT 
+                                            a.appointmentID,
+                                            a.date,
+                                            a.timeSlot,
+                                            a.status,
+                                            c.customerID,
+                                            CASE 
+                                                WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
+                                                ELSE 'Walk In' 
+                                            END AS fullName,
+                                            s.serviceName, 
+                                            ba.barberID
+                                        FROM 
+                                            appointment_tbl a
+                                        LEFT JOIN 
+                                            customer_tbl c ON a.customerID = c.customerID
+                                        LEFT JOIN 
+                                            service_tbl s ON a.serviceID = s.serviceID
+                                        LEFT JOIN 
+                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
+                                        WHERE 
+                                            a.status = 'Pending'";
 
                                     // Add date filtering if a date is selected
                                     if (!empty($selectedDate)) {
@@ -182,10 +183,11 @@
                                                         </form>
                                                     </td>
                                                     <td>
-                                                        <button type='button' class='btn btn-link' onclick='openStatusModal({$row['appointmentID']})'>
-                                                            <i class='fas fa-ellipsis-v'></i>
-                                                        </button>
-                                                    </td>
+    <button type='button' class='btn btn-link' 
+        onclick='openStatusModal({$row['appointmentID']}, " . ($row['customerID'] ? $row['customerID'] : 'null') . ")'>
+        <i class='fas fa-ellipsis-v'></i>
+    </button>
+</td>
                                                 </tr>";
                                                 $counter++;
                                         }
@@ -322,7 +324,7 @@ function filterAppointments() {
                         <button type="button" class="btn btn-danger" onclick="openCancelModal()">
                             <i class="fas fa-times me-2"></i>Cancel Appointment
                         </button>
-                        <button type="button" class="btn btn-warning" onclick="sendReminder()">
+                        <button type="button" class="btn btn-warning" id="sendReminderButton" onclick="sendReminder()">
                             <i class="fas fa-bell me-2"></i>Send Reminder
                         </button>
                     </div>
@@ -371,8 +373,18 @@ function filterAppointments() {
 </div>
 
 <script>
-function openStatusModal(appointmentId) {
+function openStatusModal(appointmentId, customerId) {
     document.getElementById('appointmentID').value = appointmentId;
+
+    const reminderButton = document.getElementById('sendReminderButton');
+    
+    // Ensure proper NULL checking
+    if (!customerId || customerId === "null" || customerId === "undefined") {
+        reminderButton.style.display = 'none'; // Hide if customerID is NULL
+    } else {
+        reminderButton.style.display = 'block'; // Show otherwise
+    }
+
     const modal = new bootstrap.Modal(document.getElementById('statusModal'));
     modal.show();
 }

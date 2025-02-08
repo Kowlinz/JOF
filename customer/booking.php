@@ -516,40 +516,47 @@ $addonsResult = $conn->query($addonsQuery);
 
                 <script>
                     // Update the form submission handling
-                    document.getElementById('form1').addEventListener('submit', function(event) {
+                    document.getElementById('form1').addEventListener('submit', function (event) {
+                        event.preventDefault(); // Prevent form from submitting immediately
+
                         const dateField = document.getElementById('date');
                         const dbDate = dateField.getAttribute('data-db-value');
 
                         if (dbDate) {
-                            dateField.value = dbDate; // Set correct format for submission
+                            dateField.value = dbDate; // Ensure correct format for submission
                         }
-                        event.preventDefault();
 
                         // Get form values
-                        const date = document.getElementById('date').value;
+                        const date = dateField.value;
                         const timeSlot = document.getElementById('selectedTimeSlot').value;
-                        const haircut = document.getElementById('haircut-button').textContent;
-                        const remarks = document.getElementById('remarks').value;
-                        const service = document.getElementById('service-button').textContent;
-                        const addon = document.getElementById('addon-button').textContent;
+                        const haircutButton = document.getElementById('haircut-button');
+                        const serviceButton = document.getElementById('service-button');
+                        const addonButton = document.getElementById('addon-button');
+
+                        // Ensure default values if dropdowns were not clicked
+                        const haircut = (haircutButton && haircutButton.textContent.trim() !== 'Choose Haircut') ? haircutButton.textContent.trim() : 'None';
+                        const service = (serviceButton && serviceButton.textContent.trim() !== 'Choose Service') ? serviceButton.textContent.trim() : 'None';
+                        const addon = (addonButton && addonButton.textContent.trim() !== 'Choose Add-on') ? addonButton.textContent.trim() : 'None';
+
+                        const remarks = document.getElementById('remarks').value || 'None';
 
                         // Calculate total price
                         let totalPrice = 0;
 
                         // Extract service price
-                        const serviceMatch = service.match(/(\d+) PHP/);
+                        const serviceMatch = service.match(/(\d+)\s*PHP/);
                         if (serviceMatch) {
                             totalPrice += parseInt(serviceMatch[1]);
                         }
 
                         // Extract addon price
-                        const addonMatch = addon.match(/(\d+) PHP/);
+                        const addonMatch = addon.match(/(\d+)\s*PHP/);
                         if (addonMatch) {
                             totalPrice += parseInt(addonMatch[1]);
                         }
 
                         // Validate required fields
-                        if (!date || !timeSlot || !document.getElementById('service').value) {
+                        if (!date || !timeSlot || service === 'None') {
                             // Show error modal instead of alert
                             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                             errorModal.show();
@@ -566,10 +573,10 @@ $addonsResult = $conn->query($addonsQuery);
                         // Populate modal with values
                         document.getElementById('confirmDate').innerText = formattedDate;
                         document.getElementById('confirmTimeSlot').innerText = timeSlot;
-                        document.getElementById('confirmHaircut').innerText = haircut === 'Choose Haircut' ? 'None' : haircut;
-                        document.getElementById('confirmRemarks').innerText = remarks || 'None';
+                        document.getElementById('confirmHaircut').innerText = haircut;
+                        document.getElementById('confirmRemarks').innerText = remarks;
                         document.getElementById('confirmService').innerText = service;
-                        document.getElementById('confirmAddon').innerText = addon === 'Choose Add-on' ? 'None' : addon;
+                        document.getElementById('confirmAddon').innerText = addon;
                         document.getElementById('confirmTotalPrice').innerText = `${totalPrice} PHP`;
 
                         // Show the modal

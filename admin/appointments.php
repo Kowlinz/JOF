@@ -165,17 +165,12 @@
                                             $formattedDate = date("F d, Y", strtotime($row['date']));
                                             echo "<tr>
                                                     <td>{$counter}</td>
-                                                    <td>";
-
-                                            if (!empty($row['customerID'])) {
-                                                echo "<a href='#' onclick='showAppointmentDetails(" . $row['appointmentID'] . ")' data-bs-toggle='modal' data-bs-target='#appointmentModal' style='text-decoration: none; color: inherit;'>";
-                                                echo htmlspecialchars($row['fullName']);
-                                                echo "</a>";    
-                                            } else {
-                                                echo htmlspecialchars($row['fullName']);
-                                            }
-                                                    
-                                            echo " <td>{$formattedDate}</td>
+                                                    <td>
+                                                        <a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, " . ($row['customerID'] ? "false" : "true") . ")' 
+                                                        data-bs-toggle='modal' data-bs-target='#appointmentModal' style='text-decoration: none; color: inherit;'>
+                                                        " . htmlspecialchars($row['fullName']) . "
+                                                        </a>
+                                                    <td>{$formattedDate}</td>
                                                     <td>{$row['timeSlot']}</td>
                                                     <td>{$row['serviceName']}</td>
                                                     <td>
@@ -315,17 +310,17 @@ function filterAppointments() {
     });
 </script>
 
-<!-- Modal -->
+<!-- Modal for additional details-->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="appointmentModalLabel">Appointment Details</h5>
+                <h5 class="modal-title" id="appointmentModalLabel">Other Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
-                <p><strong>HC Name:</strong> <span id="hcName"></span></p>
+                <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
                 <p><strong>Remarks:</strong> <span id="remarks"></span></p>
             </div>
             <div class="modal-footer">
@@ -336,13 +331,21 @@ function filterAppointments() {
 </div>
 
 <script>
-function showAppointmentDetails(appointmentID) {
+function showAppointmentDetails(appointmentID, isWalkIn) {
     fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
         .then(response => response.json())
         .then(data => {
             document.getElementById('addonName').innerText = data.addonName || 'N/A';
-            document.getElementById('hcName').innerText = data.hcName || 'N/A';
-            document.getElementById('remarks').innerText = data.remarks || 'N/A';
+            if (!isWalkIn) {
+                document.getElementById('hcName').innerText = data.hcName || 'N/A';
+                document.getElementById('remarks').innerText = data.remarks || 'N/A';
+                document.getElementById('hcName').parentElement.style.display = 'block';
+                document.getElementById('remarks').parentElement.style.display = 'block';
+            } else {
+                document.getElementById('addonName').innerText = data.addonName || 'N/A';
+                document.getElementById('hcName').parentElement.style.display = 'none';
+                document.getElementById('remarks').parentElement.style.display = 'none';
+            }
         })
         .catch(error => console.error('Error fetching details:', error));
 }

@@ -121,8 +121,16 @@
                                             if ($completedResult && mysqli_num_rows($completedResult) > 0) {
                                                 while ($row = mysqli_fetch_assoc($completedResult)) {
                                                     $formattedDate = date("F d, Y", strtotime($row['date']));
+                                                    $isWalkIn = $row['fullName'] === 'Walk In' ? 'true' : 'false';
+
                                                     echo "<tr>
-                                                            <td>{$row['fullName']}</td>
+                                                            <td>
+                                                                <a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, {$isWalkIn})' 
+                                                                data-bs-toggle='modal' data-bs-target='#appointmentModal' 
+                                                                style='text-decoration: none; color: inherit;'>
+                                                                    {$row['fullName']}
+                                                                </a>
+                                                            </td>
                                                             <td>{$formattedDate}</td>
                                                             <td>{$row['timeSlot']}</td>
                                                             <td>{$row['serviceName']}</td>
@@ -199,11 +207,19 @@
                                                     while ($row = mysqli_fetch_assoc($cancelledResult)) {
                                                         $formattedDate = date("F d, Y", strtotime($row['date']));
                                                         // Check if firstName or lastName is null (for admin bookings)
-                                                        $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
-                                                        $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
+                                                        $firstName = isset($row['firstName']) ? $row['firstName'] : 'Walk';
+                                                        $lastName = isset($row['lastName']) ? $row['lastName'] : 'In';
+                                                        $fullName = "{$firstName} {$lastName}";
+                                                        $isWalkIn = ($row['customerID'] === null) ? 'true' : 'false';
                                                 
                                                         echo "<tr>
-                                                                <td>{$firstName} {$lastName}</td>
+                                                                <td>
+                                                                    <a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, {$isWalkIn})' 
+                                                                    data-bs-toggle='modal' data-bs-target='#appointmentModal' 
+                                                                    style='text-decoration: none; color: inherit;'>
+                                                                    {$fullName}
+                                                                    </a>
+                                                                </td>
                                                                 <td>{$formattedDate}</td>
                                                                 <td>{$row['timeSlot']}</td>
                                                                 <td>{$row['reason']}</td>
@@ -383,6 +399,47 @@
                 });
         });
     });
+    </script>
+
+    <!-- Modal for additional details-->
+    <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="appointmentModalLabel">Other Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
+                    <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
+                    <p><strong>Remarks:</strong> <span id="remarks"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function showAppointmentDetails(appointmentID, isWalkIn) {
+        fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('addonName').innerText = data.addonName || 'N/A';
+                if (!isWalkIn) {
+                    document.getElementById('hcName').innerText = data.hcName || 'N/A';
+                    document.getElementById('remarks').innerText = data.remarks || 'N/A';
+                    document.getElementById('hcName').parentElement.style.display = 'block';
+                    document.getElementById('remarks').parentElement.style.display = 'block';
+                } else {
+                    document.getElementById('addonName').innerText = data.addonName || 'N/A';
+                    document.getElementById('hcName').parentElement.style.display = 'none';
+                    document.getElementById('remarks').parentElement.style.display = 'none';
+                }
+            })
+            .catch(error => console.error('Error fetching details:', error));
+    }
     </script>
 
     <!-- Add these confirmation modals -->

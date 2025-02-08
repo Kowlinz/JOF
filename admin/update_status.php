@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->begin_transaction();
         
         // Fetch customer details
-        $query = "SELECT c.email, c.firstName, c.lastName, a.date, a.timeSlot, a.serviceID
+        $query = "SELECT c.email, c.firstName, c.lastName, a.date, a.timeSlot, a.serviceID, a.customerID
                   FROM appointment_tbl a 
                   LEFT JOIN customer_tbl c ON a.customerID = c.customerID 
                   WHERE a.appointmentID = ?";
@@ -42,28 +42,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $customer = $result->fetch_assoc();
         $stmt->close();
 
-        if (!$customer || empty($customer['email'])) {
-            throw new Exception("Customer email not found.");
+        // If customerID is NULL, skip sending an email but still update status
+        if (!$customer || empty($customer['customerID'])) {
+            error_log("Skipping email notification: No valid customer for appointment ID: $appointmentID");
+            $sendEmail = false;
+        } else {
+            $sendEmail = true;
+            $email = $customer['email'];
+            $customerName = htmlspecialchars($customer['firstName'] . ' ' . $customer['lastName'], ENT_QUOTES, 'UTF-8');
+            $appointmentDate = $customer['date'];
+            $appointmentTime = $customer['timeSlot'];
         }
-
-        $email = $customer['email'];
-        $customerName = $customer['firstName'] . ' ' . $customer['lastName'];
-        $appointmentDate = $customer['date'];
-        $appointmentTime = $customer['timeSlot'];
 
         // Update appointment status
-        if ($status === 'Cancelled') {
-            $reason = mysqli_real_escape_string($conn, $_POST['reason']);
-            $updateQuery = "UPDATE appointment_tbl SET status = ?, reason = ? WHERE appointmentID = ?";
-            $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("ssi", $status, $reason, $appointmentID);
-        } else {
-            $updateQuery = "UPDATE appointment_tbl SET status = ? WHERE appointmentID = ?";
-            $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("si", $status, $appointmentID);
+        if ($status !== 'Reminder') { 
+            if ($status === 'Cancelled') {
+                $reason = htmlspecialchars($_POST['reason'] ?? '', ENT_QUOTES, 'UTF-8');
+                $updateQuery = "UPDATE appointment_tbl SET status = ?, reason = ? WHERE appointmentID = ?";
+                $stmt = $conn->prepare($updateQuery);
+                $stmt->bind_param("ssi", $status, $reason, $appointmentID);
+            } else {
+                $updateQuery = "UPDATE appointment_tbl SET status = ? WHERE appointmentID = ?";
+                $stmt = $conn->prepare($updateQuery);
+                $stmt->bind_param("si", $status, $appointmentID);
+            }
+            $stmt->execute();
+            $stmt->close();
         }
-        $stmt->execute();
-        $stmt->close();
 
         // Earnings Calculation for Completed Appointments
         if ($status === 'Completed') {
@@ -103,19 +108,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $conn->commit();
 
-        // Send Email Notification
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'jackoffadeswebsite@gmail.com'; 
-        $mail->Password = 'edol rcjc oakv imen'; 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        // Only send email if customerID is valid
+        if ($sendEmail) {
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'jackoffadeswebsite@gmail.com'; 
+            $mail->Password = 'edol rcjc oakv imen'; 
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
 
-        $mail->setFrom('jackoffadeswebsite@gmail.com', 'Jack of Fades');
-        $mail->addAddress($email, $customerName);
-        $mail->isHTML(true);
+            $mail->setFrom('jackoffadeswebsite@gmail.com', 'Jack of Fades');
+            $mail->addAddress($email, $customerName);
+            $mail->isHTML(true);
 
         if ($status == 'Completed') {
             $mail->Subject = "Thank You for Your Visit!";
@@ -128,15 +134,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->Body = "Dear $customerName,<br><br>This is a reminder for your upcoming appointment on <strong>$appointmentDate</strong> at <strong>$appointmentTime</strong>. We look forward to serving you!<br><br>Jack of Fades Team";
         }
 
-        $mail->send();
+            $mail->send();
+        }
 
         $response['success'] = true;
-        $response['message'] = "Appointment has been " . strtolower($status) . " successfully. Email notification sent.";
+        $response['message'] = "Appointment has been " . strtolower($status) . " successfully." . ($sendEmail ? " Email notification sent." : "");
     } catch (Exception $e) {
-        error_log("Transaction failed: " . $e->getMessage()); // Log the actual error
+        error_log("Transaction failed: " . $e->getMessage());
         $conn->rollback();
         $response['success'] = false;
-        $response['message'] = "Error: " . $e->getMessage();  // Send actual error message
+        $response['message'] = "Error: " . $e->getMessage();
     }
 } else {
     $response['success'] = false;

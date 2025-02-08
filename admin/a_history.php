@@ -120,9 +120,10 @@
                                             
                                             if ($completedResult && mysqli_num_rows($completedResult) > 0) {
                                                 while ($row = mysqli_fetch_assoc($completedResult)) {
+                                                    $formattedDate = date("F d, Y", strtotime($row['date']));
                                                     echo "<tr>
                                                             <td>{$row['fullName']}</td>
-                                                            <td>{$row['date']}</td>
+                                                            <td>{$formattedDate}</td>
                                                             <td>{$row['timeSlot']}</td>
                                                             <td>{$row['serviceName']}</td>
                                                             <td>{$row['barberFirstName']} {$row['barberLastName']}</td>
@@ -196,13 +197,14 @@
 
                                                 if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
                                                     while ($row = mysqli_fetch_assoc($cancelledResult)) {
+                                                        $formattedDate = date("F d, Y", strtotime($row['date']));
                                                         // Check if firstName or lastName is null (for admin bookings)
                                                         $firstName = isset($row['firstName']) ? $row['firstName'] : 'Admin';
                                                         $lastName = isset($row['lastName']) ? $row['lastName'] : 'Booking';
                                                 
                                                         echo "<tr>
                                                                 <td>{$firstName} {$lastName}</td>
-                                                                <td>{$row['date']}</td>
+                                                                <td>{$formattedDate}</td>
                                                                 <td>{$row['timeSlot']}</td>
                                                                 <td>{$row['reason']}</td>
                                                             </tr>";

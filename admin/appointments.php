@@ -162,10 +162,11 @@
                                     // Check if there are any upcoming appointments
                                     if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
                                         while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                            $formattedDate = date("F d, Y", strtotime($row['date']));
                                             echo "  <tr>
                                                     <td>{$counter}</td>
                                                     <td>{$row['fullName']}</td>
-                                                    <td>{$row['date']}</td>
+                                                    <td>{$formattedDate}</td>
                                                     <td>{$row['timeSlot']}</td>
                                                     <td>{$row['serviceName']}</td>
                                                     <td>
@@ -183,11 +184,11 @@
                                                         </form>
                                                     </td>
                                                     <td>
-    <button type='button' class='btn btn-link' 
-        onclick='openStatusModal({$row['appointmentID']}, " . ($row['customerID'] ? $row['customerID'] : 'null') . ")'>
-        <i class='fas fa-ellipsis-v'></i>
-    </button>
-</td>
+                                                        <button type='button' class='btn btn-link' 
+                                                            onclick='openStatusModal({$row['appointmentID']}, " . ($row['customerID'] ? $row['customerID'] : 'null') . ")'>
+                                                            <i class='fas fa-ellipsis-v'></i>
+                                                        </button>
+                                                    </td>
                                                 </tr>";
                                                 $counter++;
                                         }

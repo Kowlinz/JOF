@@ -34,9 +34,9 @@ $sql = "
         a.date, 
         a.timeSlot, 
         a.status, 
-        s.serviceName, 
-        ad.addonName, 
-        (s.servicePrice + ad.addonPrice) AS totalPrice
+        COALESCE(s.serviceName, 'No Service') AS serviceName, 
+        COALESCE(ad.addonName, 'No Add-on') AS addonName, 
+        COALESCE(s.servicePrice, 0) + COALESCE(ad.addonPrice, 0) AS totalPrice
     FROM 
         appointment_tbl a
     LEFT JOIN 
@@ -44,13 +44,15 @@ $sql = "
     LEFT JOIN 
         addon_tbl ad ON a.addonID = ad.addonID
     WHERE 
-        a.customerID = $customerID
+        a.customerID = ?
     ORDER BY 
         a.date DESC, a.timeSlot DESC
 ";
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $customerID);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -58,7 +60,6 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jack of Fades | My Appointment</title>
-    <link rel="icon" href="../css/images/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/style1.css">
     <link rel="stylesheet" href="css/customer.css">
@@ -149,11 +150,17 @@ $result = $conn->query($sql);
         .appointments-container.fade-in {
             animation-delay: 0.5s; /* Further delay for container */
         }
+        .appointments-container {
+            width: 90%;
+            max-width: 1200px; /* Adjusted for 7 columns */
+            margin: 0 auto;
+            overflow-x: auto; /* Allow horizontal scroll on smaller screens */
+        }
     </style>
 </head>
 <body>
     <div class="main-page">
-        <div class="header">
+    <div class="header">
             <nav class="navbar navbar-expand-lg py-4">
                 <div class="container ps-5">
                     <a class="navbar-brand ms-0" href="../index.php">
@@ -219,13 +226,12 @@ $result = $conn->query($sql);
                 </div>
             </nav>
         </div>
-
         <div class="appointments-header-wrapper">
             <h1 class="appointments-header fade-in">My Appointments</h1>
         </div>
 
-        <div class="appointments-container fade-in">
-            <table class="appointments-table">
+        <div class="appointments-container">
+            <table class="appointments-table fade-in">
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -242,7 +248,7 @@ $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $statusClass = '';
-
+                
                         switch ($row['status']) {
                             case 'Completed':
                                 $statusClass = 'status-completed';
@@ -254,26 +260,30 @@ $result = $conn->query($sql);
                                 $statusClass = 'status-pending';
                                 break;
                         }
-
+                
                         echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['date']) . "</td>";
+                        echo "<td>" . date("F d, Y", strtotime($row['date'])) . "</td>"; // Formatted date
                         echo "<td>" . htmlspecialchars($row['timeSlot']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['serviceName']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['addonName']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['totalPrice']) . "</td>";
+                        echo "<td>₱" . number_format($row['totalPrice'], 2) . "</td>";
                         echo "<td class='" . $statusClass . "'>" . htmlspecialchars($row['status']) . "</td>";
-
+                
                         if ($row['status'] === "Pending") {
-                            echo "<td><button class='cancel-button' data-id='" . $row['appointmentID'] . 
-                            "' data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button></td>";
+                            echo "<td><button class='cancel-button' 
+                                  data-id='" . $row['appointmentID'] . "' 
+                                  data-date='" . date("F d, Y", strtotime($row['date'])) . "' 
+                                  data-time='" . $row['timeSlot'] . "' 
+                                  data-service='" . $row['serviceName'] . "' 
+                                  data-addon='" . $row['addonName'] . "' 
+                                  data-total='" . $row['totalPrice'] . "' 
+                                  data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button></td>";
                         } else {
                             echo "<td></td>";
                         }
                         echo "</tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='7' class='text-center'>No appointments found.</td></tr>";
-                }
+                }                
                 ?>
                 </tbody>
             </table>
@@ -291,10 +301,11 @@ $result = $conn->query($sql);
                         <p>Time: <span id="appointmentTime"></span></p>
                         <p>Service: <span id="serviceName"></span></p>
                         <p>Add-On: <span id="addonName"></span></p>
+                        <p>Total: <span id="totalPrice"></span></p>
                         <div class="mb-3">
-                        <label for="cancelReason" class="form-label">Reason for Cancellation</label>
-                        <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (Required)" required>
-                    </div>
+                            <label for="cancelReason" class="form-label">Reason for Cancellation</label>
+                            <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (Required)" required>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
@@ -303,53 +314,83 @@ $result = $conn->query($sql);
                 </div>
             </div>
         </div>
-<script>
-// Function to handle appointment cancellation and populate modal
-function openCancelModal(appointmentID, date, time, serviceName, addonName) {
-    document.getElementById('appointmentDate').textContent = date;
-    document.getElementById('appointmentTime').textContent = time;
-    document.getElementById('serviceName').textContent = serviceName ? serviceName : 'No service selected';
-    document.getElementById('addonName').textContent = addonName ? addonName : 'No add-on selected';
 
-    // Set up the Confirm button to handle the cancellation
-    const confirmButton = document.getElementById('confirmCancelButton');
-    confirmButton.onclick = function () {
-        const reasonInput = document.getElementById('cancelReason');
-        const reason = reasonInput.value.trim();
-
-        if (reason === "") {
-            alert("Please provide a reason for cancellation.");
-            reasonInput.focus(); // Focus on input if empty
-            return;
-        }
-
-        // Redirect to cancellation PHP script with parameters
-        window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
-    };
-}
-</script>
         <script>
-            // JavaScript to toggle mobile menu
-            const menuBtn = document.getElementById('menuBtn');
-            const menuDropdown = document.getElementById('menuDropdown');
-            const menuClose = document.getElementById('menuClose');
+        document.addEventListener("DOMContentLoaded", function () {
+            const cancelButtons = document.querySelectorAll(".cancel-button");
+            let selectedAppointmentID = null;
 
-            menuBtn.addEventListener('click', function () {
-                menuDropdown.classList.toggle('show');
+            cancelButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    selectedAppointmentID = this.getAttribute("data-id"); // Store the appointment ID
+                    document.getElementById("appointmentDate").textContent = this.getAttribute("data-date");
+                    document.getElementById("appointmentTime").textContent = this.getAttribute("data-time");
+                    document.getElementById("serviceName").textContent = this.getAttribute("data-service") || "No Service";
+                    document.getElementById("addonName").textContent = this.getAttribute("data-addon") || "No Add-on";
+                    document.getElementById("totalPrice").textContent = "₱" + parseFloat(this.getAttribute("data-total")).toFixed(2);
+                });
             });
 
-            menuClose.addEventListener('click', function () {
-                menuDropdown.classList.remove('show');
-            });
+            // Add event listener to the Confirm Cancel button
+            document.getElementById("confirmCancelButton").addEventListener("click", function () {
+                const reason = document.getElementById("cancelReason").value.trim();
 
-            // Close menu when clicking outside
-            document.addEventListener('click', function (event) {
-                if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
-                    menuDropdown.classList.remove('show');
+                if (!reason) {
+                    alert("Please provide a reason for cancellation.");
+                    document.getElementById("cancelReason").focus();
+                    return;
                 }
+
+                // Redirect to cancellation PHP script with parameters
+                window.location.href = `cancel_appointment.php?appointmentID=${selectedAppointmentID}&reason=${encodeURIComponent(reason)}`;
             });
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        });
+
+
+        // Function to handle appointment cancellation and populate modal
+        function openCancelModal(appointmentID, date, time, serviceName, addonName) {
+            document.getElementById('appointmentDate').textContent = date;
+            document.getElementById('appointmentTime').textContent = time;
+            document.getElementById('serviceName').textContent = serviceName;
+            document.getElementById('addonName').textContent = addonName ? addonName : 'No add-on selected';
+            document.getElementById('totalPrice').textContent = totalPrice;
+
+            // Set up the Confirm button to handle the cancellation
+            const confirmButton = document.getElementById('confirmCancelButton');
+            confirmButton.onclick = function () {
+                const reasonInput = document.getElementById('cancelReason');
+                const reason = reasonInput.value.trim();
+
+                if (reason === "") {
+                    alert("Please provide a reason for cancellation.");
+                    reasonInput.focus(); // Focus on input if empty
+                    return;
+                }
+
+                // Redirect to cancellation PHP script with parameters
+                window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
+            };
+        }
+        // JavaScript to toggle mobile menu
+        const menuBtn = document.getElementById('menuBtn');
+        const menuDropdown = document.getElementById('menuDropdown');
+        const menuClose = document.getElementById('menuClose');
+
+        menuBtn.addEventListener('click', function () {
+        menuDropdown.classList.toggle('show');
+        });
+        menuClose.addEventListener('click', function () {
+        menuDropdown.classList.remove('show');
+        });
+        // Close menu when clicking outside
+        document.addEventListener('click', function (event) {
+        if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
+            menuDropdown.classList.remove('show');
+        }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </div>
 </body>
 </html>

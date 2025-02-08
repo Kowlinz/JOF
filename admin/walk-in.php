@@ -39,7 +39,51 @@ $addonsResult = $conn->query($addonsQuery);
             font-family: 'Lexend', sans-serif;
         }
 
-        /* Modal styles */
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .time-slot-btn {
+            background-color: #FFDE59;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .time-slot-btn.selected {
+            background-color: black;
+            color: #FFDE59;
+        }
+
+        .time-slot-btn.booked {
+            background-color: #D3D3D3;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .time-slot-btn.booked:hover {
+            background-color: #D3D3D3;
+        }
+
+        .available {
+            background-color: #FFDE59; /* Green for available */
+            color: black;
+        }
+
+        .unavailable {
+            background-color: #d6d6d6; /* Light gray for unavailable */
+            color: #555;
+            cursor: not-allowed;
+        }
+
+        /* Add these modal styles */
         .modal-content {
             background-color: #1f1f1f;
             color: #ffffff;
@@ -62,7 +106,7 @@ $addonsResult = $conn->query($addonsQuery);
         }
 
         .modal-footer {
-            border-top: none;
+            border-top: none; /* Remove the border */
         }
 
         .btn-close {
@@ -70,7 +114,6 @@ $addonsResult = $conn->query($addonsQuery);
             filter: invert(1) grayscale(100%) brightness(200%);
         }
 
-        /* Service item styles */
         .service-item {
             background-color: transparent;
             padding: 10px 15px;
@@ -84,157 +127,58 @@ $addonsResult = $conn->query($addonsQuery);
             color: #ffffff;
         }
 
-        #servicesModal .service-item,
-        #haircutsModal .service-item,
-        #addonsModal .service-item {
+        /* Add specific styling for service items in all modals */
+        #servicesModal .service-item {
             background-color: transparent;
             border: none;
             box-shadow: none !important;
         }
 
         .service-item:hover {
-            background-color: rgba(255, 222, 89, 0.2) !important;
-            color: #FFDE59 !important;
+            background-color: transparent;
+            color: #FFDE59;
             box-shadow: none !important;
             transform: translateY(-2px);
         }
 
         .service-item.selected {
-            background-color: #FFDE59 !important;
-            color: #000000 !important;
+            background-color: #FFDE59;
+            color: #000000;
             border: none;
             box-shadow: none !important;
         }
 
-        /* Button styles */
+        /* Add spacing between service name and price */
+        .service-name {
+            margin-bottom: 4px;
+        }
+
+        .service-price {
+            font-weight: bold;
+        }
+
         .btn-confirm {
             background-color: #FFDE59;
             color: #000000;
             font-weight: bold;
-            min-width: 120px;
-            padding: 8px 20px;
-            width: 120px;
-            font-size: 1rem;
         }
 
         .btn-confirm:hover {
             background-color: #e6c84f;
         }
 
-        .btn-secondary {
-            background-color: #333333;
-            color: #ffffff;
-            font-weight: bold;
-            min-width: 120px;
-            padding: 8px 20px;
-            width: 120px;
-            font-size: 1rem;
-        }
-
-        .btn-secondary:hover {
-            background-color: #444444;
-            color: #ffffff;
-        }
-
-        /* Animation styles */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeIn 1s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Modal animations */
-        .modal.fade .modal-dialog {
-            transform: scale(0.7);
-            opacity: 0;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .modal.show .modal-dialog {
-            animation: modalPop 0.3s ease-out forwards;
-        }
-
-        @keyframes modalPop {
-            0% {
-                transform: scale(0.7);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* Add these to your existing styles */
-        .time-slots-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            padding: 15px;
-        }
-
-        .time-slot-btn {
-            background-color: #FFDE59;
-            border: none;
-            padding: 10px;
-            border-radius: 20px;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .time-slot-btn:hover:not(.booked) {
-            background-color: rgba(255, 222, 89, 0.8);
-            color: #000000;
-        }
-
-        .time-slot-btn.selected {
-            background-color: #FFDE59 !important;
-            color: #000000 !important;
-        }
-
-        .time-slot-btn.booked {
-            background-color: #D3D3D3;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .service-name {
-            font-weight: bold;
-        }
-
-        .service-price {
-            color: #ffffff;
-            margin-top: 5px;
-        }
-
-        /* Add specific color for selected item price */
-        .service-item.selected .service-price {
-            color: #000000;
-        }
-
-        /* Add these modal styles */
+        /* Add these styles */
         .modal-body p:last-child {
             background-color: #FFDE59;
             padding: 10px 15px;
             border-radius: 8px;
             margin-top: 20px;
             color: #000000;
+        }
+
+        /* Add this new style for the remarks spacing */
+        #confirmRemarks {
+            display: inline-flex;
         }
 
         .modal-body p:last-child strong,
@@ -246,8 +190,19 @@ $addonsResult = $conn->query($addonsQuery);
         .modal-footer .btn {
             min-width: 120px;
             padding: 8px 20px;
-            width: 120px;
-            font-size: 1rem;
+            width: 120px; /* Set fixed width */
+            font-size: 1rem; /* Set consistent font size */
+        }
+
+        .btn-secondary {
+            background-color: #333333;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .btn-secondary:hover {
+            background-color: #444444;
+            color: #ffffff;
         }
 
         /* Add this to override the yellow background for error modal */
@@ -265,6 +220,96 @@ $addonsResult = $conn->query($addonsQuery);
             margin-top: 20px;
             color: #000000;
         }
+
+        /* Initial state for fade-in elements */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add animation delay for the form */
+        form.fade-in {
+            animation-delay: 0.4s;
+        }
+
+        /* Add animation delay for the heading */
+        h2.fade-in {
+            animation-delay: 0.2s;
+        }
+
+        /* Modal pop-up animation */
+        .modal.fade .modal-dialog {
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Optional: Add a nice bounce effect */
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+
+        /* Navbar animation */
+        .header {
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: navSlideDown 0.8s ease forwards;
+        }
+
+        @keyframes navSlideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust other animations to start after navbar */
+        .fade-in {
+            animation-delay: 0.3s; /* Start after navbar animation */
+        }
+
+        form.fade-in {
+            animation-delay: 0.6s; /* Further delay for form */
+        }
+
+        h2.fade-in {
+            animation-delay: 0.4s; /* Delay for heading */
+        }
     </style>
 </head>
 <body>
@@ -277,12 +322,12 @@ $addonsResult = $conn->query($addonsQuery);
         <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5">
             <div class="row justify-content-center">
                 <div class="col-md-4">
+                    <!-- Date Dropdown -->
                     <div class="mb-3 required">
                         <span style="color: red;">* </span>
                         <label for="date" class="form-label text-white">Date:</label>
-                        <input name="date" id="date" class="form-control text-center" placeholder="Choose Date">
+                        <input type="text" name="date" id="date" class="form-control text-center" value="Choose Date" data-db-value="">
                     </div>
-
                     <!-- Service Dropdown -->
                     <div class="mb-3" required>
                         <span style="color: red;">* </span>
@@ -313,7 +358,7 @@ $addonsResult = $conn->query($addonsQuery);
                     </div>
                 </div>
             </div>
-            <div class="col-12 text-center mt-4">
+            <div class="col-12 text-center mt-4 mb-5">
                 <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
             </div>
         </form>
@@ -365,9 +410,15 @@ $addonsResult = $conn->query($addonsQuery);
             </div>
         </div>
 
-                <script>
+        <script>
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function(event) {
+                        const dateField = document.getElementById('date');
+                        const dbDate = dateField.getAttribute('data-db-value');
+
+                        if (dbDate) {
+                            dateField.value = dbDate; // Set correct format for submission
+                        }
                         event.preventDefault();
 
                         // Get form values
@@ -393,7 +444,7 @@ $addonsResult = $conn->query($addonsQuery);
 
                         // Validate required fields
                         if (!date || !timeSlot || !document.getElementById('service').value) {
-                            // Show error modal with standard message
+                            // Show error modal instead of alert
                             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                             errorModal.show();
                             return;
@@ -425,90 +476,103 @@ $addonsResult = $conn->query($addonsQuery);
                     });
 
                     document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = flatpickr("#date", {
-        dateFormat: "Y-m-d",
-        minDate: "today",
-        onChange: function(selectedDates, dateStr) {
-            fetchBookedSlots(dateStr);
-        }
-    });
+                        const dateInput = flatpickr("#date", {
+                            dateFormat: "Y-m-d", // Database format
+                            minDate: "today",
+                            onChange: function(selectedDates, dateStr) {
+                                // Format date for UI display
+                                const formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
 
-    function fetchBookedSlots(date) {
-        fetch(`get_booked_slots.php?date=${date}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTimeSlots(data.bookedSlots, data.totalBarbers);
-            })
-            .catch(error => console.error('Error:', error));
-    }
+                                // Display formatted date
+                                document.getElementById('date').value = formattedDate;
 
-    function updateTimeSlots(bookedSlots, totalBarbers) {
-    const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
-    const currentDate = new Date();
-    const selectedDate = new Date(document.getElementById('date').value);
-    const isToday = selectedDate.toDateString() === currentDate.toDateString();
+                                // Store the correct database format in a dataset
+                                document.getElementById('date').setAttribute('data-db-value', dateStr);
 
-    timeSlotBtns.forEach(btn => {
-        const time = btn.getAttribute('data-time');
+                                // Fetch available slots
+                                fetchBookedSlots(dateStr);
+                            }
+                        });
 
-        // Get how many barbers are already booked at this time slot
-        const bookedCount = bookedSlots[time] || 0;
-        const remainingSlots = totalBarbers - bookedCount;
+                        function fetchBookedSlots(date) {
+                            fetch(`get_booked_slots.php?date=${date}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    updateTimeSlots(data.bookedSlots, data.totalBarbers);
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
 
-        // Convert slot time to 24-hour format
-        const [hours, minutes] = time.split(':');
-        const timeSlotDate = new Date(selectedDate);
-        timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (time.includes('PM') ? 12 : 0)));
-        timeSlotDate.setMinutes(parseInt(minutes));
+                        function updateTimeSlots(bookedSlots, totalBarbers) {
+                        const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
+                        const currentDate = new Date();
+                        const selectedDate = new Date(document.getElementById('date').value);
+                        const isToday = selectedDate.toDateString() === currentDate.toDateString();
 
-        // Disable slot if all barbers are booked or if the time is in the past
-        if (remainingSlots <= 0 || (isToday && timeSlotDate <= currentDate)) {
-            btn.classList.add('booked');
-            btn.disabled = true;
-        } else {
-            btn.classList.remove('booked');
-            btn.disabled = false;
-        }
+                        timeSlotBtns.forEach(btn => {
+                            const time = btn.getAttribute('data-time');
 
-        // Debugging log to check values
-        console.log(`Time: ${time}, Booked: ${bookedCount}, Total Barbers: ${totalBarbers}, Remaining: ${remainingSlots}`);
-    });
-}
-});
+                            // Get how many barbers are already booked at this time slot
+                            const bookedCount = bookedSlots[time] || 0;
+                            const remainingSlots = totalBarbers - bookedCount;
+
+                            // Convert slot time to 24-hour format
+                            const [hours, minutes] = time.split(':');
+                            const timeSlotDate = new Date(selectedDate);
+                            timeSlotDate.setHours(hours === '12' ? 12 : (parseInt(hours) + (time.includes('PM') ? 12 : 0)));
+                            timeSlotDate.setMinutes(parseInt(minutes));
+
+                            // Disable slot if all barbers are booked or if the time is in the past
+                            if (remainingSlots <= 0 || (isToday && timeSlotDate <= currentDate)) {
+                                btn.classList.add('booked');
+                                btn.disabled = true;
+                            } else {
+                                btn.classList.remove('booked');
+                                btn.disabled = false;
+                            }
+
+                            // Debugging log to check values
+                            console.log(`Time: ${time}, Booked: ${bookedCount}, Total Barbers: ${totalBarbers}, Remaining: ${remainingSlots}`);
+                        });
+                    }
+                    });
 
 
-                    function selectTimeSlot(time) {
-    console.log("Attempting to select time slot:", time); // Debugging log
+                                        function selectTimeSlot(time) {
+                        console.log("Attempting to select time slot:", time); // Debugging log
 
-    const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
-    
-    if (btn && btn.classList.contains('booked')) {
-        console.log("This time slot is already booked.");
-        return; // Don't allow selection of booked slots
-    }
+                        const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
+                        
+                        if (btn && btn.classList.contains('booked')) {
+                            console.log("This time slot is already booked.");
+                            return; // Don't allow selection of booked slots
+                        }
 
-    // Update the hidden input
-    document.getElementById('selectedTimeSlot').value = time;
-    
-    // Update the button text
-    document.getElementById('time-slot-button').textContent = time;
-    
-    // Remove selected class from all buttons
-    document.querySelectorAll('.time-slot-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+                        // Update the hidden input
+                        document.getElementById('selectedTimeSlot').value = time;
+                        
+                        // Update the button text
+                        document.getElementById('time-slot-button').textContent = time;
+                        
+                        // Remove selected class from all buttons
+                        document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
 
-    // Add selected class to clicked button
-    if (btn) {
-        btn.classList.add('selected');
-        console.log("Time slot selected:", time);
-    }
+                        // Add selected class to clicked button
+                        if (btn) {
+                            btn.classList.add('selected');
+                            console.log("Time slot selected:", time);
+                        }
 
-    // Close the modal
-    const timeSlotModal = bootstrap.Modal.getInstance(document.getElementById('timeSlotModal'));
-    timeSlotModal.hide();
-}
-
+                        // Close the modal
+                        const timeSlotModal = bootstrap.Modal.getInstance(document.getElementById('timeSlotModal'));
+                        timeSlotModal.hide();
+                    }
                 </script>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

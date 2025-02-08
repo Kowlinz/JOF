@@ -403,6 +403,7 @@ include 'db_connect.php';
                                 // Query to display previous customers for the logged-in barber
                                 $previousQuery = "SELECT 
                                     a.appointmentID,
+                                    c.customerID,
                                     CONCAT(c.firstName, ' ', c.lastName) AS fullName,
                                     a.date,
                                     a.timeSlot,
@@ -432,9 +433,16 @@ include 'db_connect.php';
                                         $date = $row['date'];  
                                         $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
                                         $formattedDate = date("F d, Y", strtotime($row['date']));
+                                        $isWalkIn = empty($row['customerID']) ? 'true' : 'false'; // Check if it's a walk-in
                                         echo "<tr>
                                                 <td>{$no}</td>
-                                                <td>{$fullName}</td>
+                                                <td>
+                                                <a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, {$isWalkIn})' 
+                                                data-bs-toggle='modal' data-bs-target='#appointmentModal' 
+                                                style='text-decoration: none; color: inherit;'>
+                                                    {$fullName}
+                                                </a>
+                                                </td>
                                                 <td>{$formattedDate}</td>
                                                 <td>{$timeSlot}</td>
                                                 <td>{$serviceName}</td>
@@ -499,6 +507,48 @@ include 'db_connect.php';
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="js/calendar.js"></script>
+
+    <!-- Modal for additional details-->
+    <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="appointmentModalLabel">Other Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
+                    <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
+                    <p><strong>Remarks:</strong> <span id="remarks"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function showAppointmentDetails(appointmentID, isWalkIn) {
+        fetch('../admin/fetch_appointment_details.php?appointmentID=' + appointmentID)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('addonName').innerText = data.addonName || 'N/A';
+                if (!isWalkIn) {
+                    document.getElementById('hcName').innerText = data.hcName || 'N/A';
+                    document.getElementById('remarks').innerText = data.remarks || 'N/A';
+                    document.getElementById('hcName').parentElement.style.display = 'block';
+                    document.getElementById('remarks').parentElement.style.display = 'block';
+                } else {
+                    document.getElementById('addonName').innerText = data.addonName || 'N/A';
+                    document.getElementById('hcName').parentElement.style.display = 'none';
+                    document.getElementById('remarks').parentElement.style.display = 'none';
+                }
+            })
+            .catch(error => console.error('Error fetching details:', error));
+    }
+    </script>
+
     <script>
         // Initialize Bootstrap dropdowns
         document.addEventListener('DOMContentLoaded', function() {

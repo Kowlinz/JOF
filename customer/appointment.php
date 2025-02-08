@@ -152,7 +152,7 @@ $result = $stmt->get_result();
         }
         .appointments-container {
             width: 90%;
-            max-width: 1200px; /* Adjusted for 7 columns */
+            max-width: 2000px; /* Adjusted for 7 columns */
             margin: 0 auto;
             overflow-x: auto; /* Allow horizontal scroll on smaller screens */
         }

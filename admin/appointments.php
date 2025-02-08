@@ -322,6 +322,9 @@ function filterAppointments() {
                         <button type="button" class="btn btn-danger" onclick="openCancelModal()">
                             <i class="fas fa-times me-2"></i>Cancel Appointment
                         </button>
+                        <button type="button" class="btn btn-warning" onclick="sendReminder()">
+                            <i class="fas fa-bell me-2"></i>Send Reminder
+                        </button>
                     </div>
                 </form>
             </div>
@@ -372,6 +375,39 @@ function openStatusModal(appointmentId) {
     document.getElementById('appointmentID').value = appointmentId;
     const modal = new bootstrap.Modal(document.getElementById('statusModal'));
     modal.show();
+}
+</script>
+
+<script>
+    function sendReminder() {
+        let appointmentID = document.getElementById("appointmentID").value;
+
+        if (!appointmentID) {
+            alert("Invalid appointment ID.");
+            return;
+        }
+
+        // Sending an AJAX request to update_status.php with "Reminder" status
+        fetch('update_status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `appointmentID=${appointmentID}&status=Reminder`
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Response:", data);  // Debug response
+        if (data.success) {
+            alert("Reminder email sent successfully!");
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while sending the reminder.");
+    });
 }
 </script>
 
@@ -495,6 +531,7 @@ function handleStatusSubmit(e) {
         })
         .then(response => response.json())
         .then(data => {
+            console.log("Response:", data);  // Debug response
             // Close the status modal
             const statusModal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
             statusModal.hide();

@@ -129,7 +129,7 @@
                                                           </tr>";
                                                 }
                                             } else {
-                                                echo "<tr><td colspan='4' class='text-center'>No completed appointments found.</td></tr>";
+                                                echo "<tr><td colspan='5' class='text-center'>No completed appointments found.</td></tr>";
                                             }
                                         ?>
                                     </tbody>

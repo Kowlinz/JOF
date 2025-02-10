@@ -401,21 +401,18 @@
     });
     </script>
 
-    <!-- Modal for additional details-->
+    <!-- Update the Modal for additional details -->
     <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
+            <div class="modal-content" style="border: none;">
+                <div class="modal-header" style="border: none;">
                     <h5 class="modal-title" id="appointmentModalLabel">Other Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="border: none;">
                     <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
                     <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
                     <p><strong>Remarks:</strong> <span id="remarks"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

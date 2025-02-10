@@ -11,74 +11,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jack of Fades | Login</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Jack of Fades | Change Password</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="icon" href="css/images/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/login.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <div class="login-background" style="background-image: url(css/images/barbershop.jpg);">
+    <div class="login-background" style="background-color: #171717;">
         <div class="container">
-            <div class="header">
-                <nav class="navbar navbar-expand-lg py-4">
-                    <div class="container ps-5">
-                        <div class="navbar-brand">
-                            <img src="css/images/jof_logo_yellow.png" alt="logo" width="45" height="45">
-                        </div>
-
-                        <button class="menu-btn d-lg-none" type="button">
-                            <i class='bx bx-menu'></i>
-                        </button>
-
-                        <div class="menu-dropdown">
-                            <div class="menu-header">
-                                <button class="menu-close">&times;</button>
-                            </div>
-                            <div class="menu-links">
-                                <a href="index.php" class="menu-link">HOME</a>
-                                <?php if (isset($_SESSION["user"])): ?>
-                                    <a href="haircuts.php" class="menu-link">HAIRCUTS</a>
-                                    <a href="customer/appointment.php" class="menu-link">MY APPOINTMENT</a>
-                                <?php else: ?>
-                                    <a href="haircuts.php" class="menu-link">HAIRCUTS</a>
-                                    <a href="login.php" class="menu-link">LOGIN</a>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-
-            <div class="login-container">
-
-            <?php
-            if (isset($_SESSION['status'])) {
-                // Default to "success" if status_type is not set
-                $alertType = isset($_SESSION['status_type']) ? $_SESSION['status_type'] : "success";
-                ?>
-                <div class="alert alert-<?= $alertType ?> alert-dismissible fade show" role="alert">
-                    <p><?= $_SESSION['status']; ?></p>
+            <div class="login-container fade-in">
+                <!-- Add Back button -->
+                <div class="d-flex justify-content-start mb-4">
+                    <a href="login.php" class="btn btn-warning text-dark fw-bold">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
                 </div>
+
+                <!-- Add the logo above the Change Password header -->
+                <div class="text-center mb-4">
+                    <img src="css/images/jof_logo_black.png" alt="Logo" style="max-width: 60px; height: auto;">
+                </div>
+
                 <?php
-                unset($_SESSION['status']);
-                unset($_SESSION['status_type']); // Unset the type to prevent persistent styling
-            }
-            ?>
+                if (isset($_SESSION['status'])) {
+                    $alertType = isset($_SESSION['status_type']) ? $_SESSION['status_type'] : "success";
+                    ?>
+                    <div class="alert alert-<?= $alertType ?> alert-dismissible fade show" role="alert">
+                        <p><?= $_SESSION['status']; ?></p>
+                    </div>
+                    <?php
+                    unset($_SESSION['status']);
+                    unset($_SESSION['status_type']);
+                }
+                ?>
 
                 <h2 class="login-header">Change Password</h2>
                 <form action="forgot-password-code.php" method="post">
-                    <input type = "hidden" name = "password_token" value="<?php if(isset($_GET['token'])) {echo $_GET['token'];} ?>">
-                    <div class="form-group">
-                        <input type="hidden" name="email" value="<?php if(isset($_GET['email'])) {echo $_GET['email'];} ?>" class="form-control" placeholder="Enter Email Address">
+                    <input type="hidden" name="password_token" value="<?php if(isset($_GET['token'])) {echo $_GET['token'];} ?>">
+                    <input type="hidden" name="email" value="<?php if(isset($_GET['email'])) {echo $_GET['email'];} ?>">
+                    
+                    <div class="form-group position-relative">
+                        <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
+                        <i class="bi bi-eye-slash password-toggle" id="togglePassword1"></i>
                     </div>
-                    <div class="form-group">
-                        <label>New Password:</label>
-                        <input type="password" name="new_password" class="form-control"  placeholder="Enter New Password" required> 
-                    </div> 
-                    <div class="form-group">
-                        <label>Confirm Password:</label>
-                        <input type="password" name="confirm_password" class="form-control" placeholder="Repeat New Password" required>
-                    </div> 
+
+                    <div class="form-group position-relative">
+                        <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+                        <i class="bi bi-eye-slash password-toggle" id="togglePassword2"></i>
+                    </div>
+
                     <div class="form-btn">
                         <button type="submit" name="password_update" class="btn btn-primary">Update Password</button>
                     </div>
@@ -87,18 +70,59 @@
         </div>
     </div>
 
+    <style>
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .password-toggle:hover {
+            color: #000;
+        }
+    </style>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.querySelector('.menu-btn');
-        const menuDropdown = document.querySelector('.menu-dropdown');
-        const menuClose = document.querySelector('.menu-close');
+        // Password toggle functionality for the new password field
+        const togglePassword1 = document.getElementById('togglePassword1');
+        const passwordInput1 = document.querySelector('input[name="new_password"]');
 
-        menuBtn.addEventListener('click', function() {
-            menuDropdown.classList.add('show');
+        togglePassword1.addEventListener('click', function() {
+            const type = passwordInput1.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput1.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
         });
 
-        menuClose.addEventListener('click', function() {
-            menuDropdown.classList.remove('show');
+        // Password toggle functionality for the confirm password field
+        const togglePassword2 = document.getElementById('togglePassword2');
+        const passwordInput2 = document.querySelector('input[name="confirm_password"]');
+
+        togglePassword2.addEventListener('click', function() {
+            const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput2.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
         });
     });
     </script>

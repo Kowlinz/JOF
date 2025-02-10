@@ -381,7 +381,9 @@ $result = $stmt->get_result();
                         echo "</td>";
                         echo "</tr>";
                     }
-                }              
+                }   else {
+                        echo "<tr><td colspan='6' class='text-center'>No appointments found.</td></tr>";
+                    }              
                 ?>
                 </tbody>
             </table>

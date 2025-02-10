@@ -63,7 +63,7 @@ $upcomingQuery = "
         a.appointmentID,
         CASE 
             WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-            ELSE 'Admin Booking' 
+            ELSE 'Walk In' 
         END AS fullName,
         a.timeSlot
     FROM 
@@ -83,7 +83,7 @@ $previousQuery = "
         a.appointmentID,
         CASE 
             WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-            ELSE 'Admin Booking' 
+            ELSE 'Walk In' 
         END AS fullName,
         a.timeSlot,
         a.date
@@ -104,7 +104,7 @@ $cancelledQuery = "
         a.appointmentID,
         CASE 
             WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
-            ELSE 'Admin Booking' 
+            ELSE 'Walk In' 
         END AS fullName,
         a.timeSlot,
         a.date

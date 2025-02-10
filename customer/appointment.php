@@ -36,7 +36,9 @@ $sql = "
         a.status, 
         COALESCE(s.serviceName, 'No Service') AS serviceName, 
         COALESCE(ad.addonName, 'No Add-on') AS addonName, 
-        COALESCE(s.servicePrice, 0) + COALESCE(ad.addonPrice, 0) AS totalPrice
+        COALESCE(s.servicePrice, 0) + COALESCE(ad.addonPrice, 0) AS totalPrice,
+        a.payment_status,
+        a.payment_amount
     FROM 
         appointment_tbl a
     LEFT JOIN 
@@ -227,7 +229,7 @@ $result = $stmt->get_result();
             </nav>
         </div>
         <div class="appointments-header-wrapper">
-            <h1 class="appointments-header fade-in">My Appointments</h1>
+            <h1 class="appointments-header fade-in">CRIMGENE KINALAWKAW PEPE NI MAAM KRIS</h1>
         </div>
 
         <div class="appointments-container">
@@ -236,11 +238,10 @@ $result = $stmt->get_result();
                     <tr>
                         <th>Date</th>
                         <th>Time</th>
-                        <th>Service</th>
-                        <th>Add-On</th>
                         <th>Total Price</th>
-                        <th>Status</th>
+                        <th>Appointment Status</th>
                         <th></th>
+                        <th>Payment Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -261,14 +262,26 @@ $result = $stmt->get_result();
                                 break;
                         }
                 
+                        $paymentStatusText = "";
+                        $payNowButton = "";
+                
+                        // Determine payment status text
+                        if ($row['payment_status'] === 'pending') {
+                            $paymentStatusText = "<span class='text-danger'>Pending</span>";
+                            $payNowButton = "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . ($row['totalPrice'] * 0.5) . "' class='btn btn-warning btn-sm'>Pay Now</a>";
+                        } elseif ($row['payment_status'] === 'partial') {
+                            $remainingBalance = $row['totalPrice'] - $row['payment_amount'];
+                            $paymentStatusText = "<span class='text-warning'>Partially Paid (₱" . number_format($row['payment_amount'], 2) . ")</span>";
+                            $payNowButton = "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . $remainingBalance . "' class='btn btn-warning btn-sm'>Pay Remaining</a>";
+                        } else {
+                            $paymentStatusText = "<span class='text-success'>Paid</span>";
+                        }
+                
                         echo "<tr>";
-                        echo "<td>" . date("F d, Y", strtotime($row['date'])) . "</td>"; // Formatted date
+                        echo "<td>" . date("F d, Y", strtotime($row['date'])) . "</td>";
                         echo "<td>" . htmlspecialchars($row['timeSlot']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['serviceName']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['addonName']) . "</td>";
                         echo "<td>₱" . number_format($row['totalPrice'], 2) . "</td>";
                         echo "<td class='" . $statusClass . "'>" . htmlspecialchars($row['status']) . "</td>";
-                
                         if ($row['status'] === "Pending") {
                             echo "<td><button class='cancel-button' 
                                   data-id='" . $row['appointmentID'] . "' 
@@ -278,12 +291,12 @@ $result = $stmt->get_result();
                                   data-addon='" . $row['addonName'] . "' 
                                   data-total='" . $row['totalPrice'] . "' 
                                   data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button></td>";
-                        } else {
-                            echo "<td></td>";
                         }
+                        echo "<td>" . $paymentStatusText . "</td>";
+                        echo "<td>" . $payNowButton . "</td>";
                         echo "</tr>";
                     }
-                }                
+                }              
                 ?>
                 </tbody>
             </table>

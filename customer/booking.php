@@ -330,6 +330,10 @@ $addonsResult = $conn->query($addonsQuery);
         h2.fade-in {
             animation-delay: 0.4s; /* Delay for heading */
         }
+
+        #paymentOption {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -438,6 +442,17 @@ $addonsResult = $conn->query($addonsQuery);
                         </button>
                         <input type="hidden" name="addon" id="addon" value="">
                     </div>
+
+                    <!-- Payment Dropdown -->
+                    <div class="mb-3" required>
+                        <span style="color: red;">* </span>
+                        <label for="paymentOption" class="form-label text-white">Payment Option:</label>
+                        <select name="paymentOption" id="paymentOption" class="form-control">
+                            <option value="" disable button hidden>Choose Payment</option>
+                            <option value="downpayment">Downpayment (50%)</option>
+                            <option value="full">Full Payment</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="col-md-4">
@@ -505,7 +520,7 @@ $addonsResult = $conn->query($addonsQuery);
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Please fill in all required fields (Date, Time Slot, and Service).</p>
+                                <p>Please fill in all required fields (Date, Time Slot, Service, or Downpayment).</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -537,7 +552,6 @@ $addonsResult = $conn->query($addonsQuery);
                         const haircut = (haircutButton && haircutButton.textContent.trim() !== 'Choose Haircut') ? haircutButton.textContent.trim() : 'None';
                         const service = (serviceButton && serviceButton.textContent.trim() !== 'Choose Service') ? serviceButton.textContent.trim() : 'None';
                         const addon = (addonButton && addonButton.textContent.trim() !== 'Choose Add-on') ? addonButton.textContent.trim() : 'None';
-
                         const remarks = document.getElementById('remarks').value || 'None';
 
                         // Calculate total price

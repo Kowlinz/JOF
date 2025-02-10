@@ -49,6 +49,8 @@ include 'admin/landing_text.php';
 			opacity: 0;
 			transform: translateY(-20px);
 			animation: navSlideDown 0.8s ease forwards;
+			position: relative;
+			z-index: 1000;
 		}
 
 		@keyframes navSlideDown {
@@ -96,10 +98,10 @@ include 'admin/landing_text.php';
 			width: 650px;
 			padding: 20px;
 			padding-right: 80px;
-			/* Add fade-in animation */
 			opacity: 0;
 			animation: carouselFadeIn 1s ease forwards;
-			animation-delay: 0.5s; /* Start after the navbar animation */
+			animation-delay: 0.5s;
+			z-index: 1;
 		}
 		
 		.swiper {
@@ -145,7 +147,7 @@ include 'admin/landing_text.php';
 
 		.swiper-button-next,
 		.swiper-button-prev {
-			color: white;
+			display: none;  /* Hide the navigation arrows */
 		}
 
 		// Add these media queries for responsiveness

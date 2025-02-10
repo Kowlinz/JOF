@@ -139,7 +139,7 @@ $addonsResult = $conn->query($addonsQuery);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: none;
+            border: 2px solid transparent;
             box-shadow: none !important;
             text-shadow: none !important;
             color: #ffffff;
@@ -155,26 +155,48 @@ $addonsResult = $conn->query($addonsQuery);
         }
 
         .service-item:hover {
-            background-color: transparent;
+            background-color: rgba(255, 222, 89, 0.1);
             color: #FFDE59;
+            border-color: #FFDE59;
             box-shadow: none !important;
             transform: translateY(-2px);
         }
 
         .service-item.selected {
-            background-color: #FFDE59;
-            color: #000000;
-            border: none;
+            background-color: rgba(255, 222, 89, 0.15);
+            color: #FFDE59;
+            border-color: #FFDE59;
             box-shadow: none !important;
+        }
+
+        /* Add these new rules for consistent styling across all modals */
+        #servicesModal .service-item.selected,
+        #haircutsModal .service-item.selected,
+        #addonsModal .service-item.selected,
+        #paymentModal .service-item.selected {
+            background-color: rgba(255, 222, 89, 0.15);
+            color: #FFDE59;
+            border-color: #FFDE59;
+        }
+
+        #servicesModal .service-item:hover,
+        #haircutsModal .service-item:hover,
+        #addonsModal .service-item:hover,
+        #paymentModal .service-item:hover {
+            background-color: rgba(255, 222, 89, 0.1);
+            color: #FFDE59;
+            border-color: #FFDE59;
         }
 
         /* Add spacing between service name and price */
         .service-name {
             margin-bottom: 4px;
+            font-weight: 500;
         }
 
         .service-price {
             font-weight: bold;
+            opacity: 0.9;
         }
 
         .btn-confirm {
@@ -334,6 +356,12 @@ $addonsResult = $conn->query($addonsQuery);
         #paymentOption {
             text-align: center;
         }
+
+        /* Add transition for smoother hover effects */
+        .service-item,
+        .service-item * {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -442,17 +470,6 @@ $addonsResult = $conn->query($addonsQuery);
                         </button>
                         <input type="hidden" name="addon" id="addon" value="">
                     </div>
-
-                    <!-- Payment Dropdown -->
-                    <div class="mb-3" required>
-                        <span style="color: red;">* </span>
-                        <label for="paymentOption" class="form-label text-white">Payment Option:</label>
-                        <select name="paymentOption" id="paymentOption" class="form-control">
-                            <option value="" disable button hidden>Choose Payment</option>
-                            <option value="downpayment">Downpayment (50%)</option>
-                            <option value="full">Full Payment</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="col-md-4">
@@ -480,6 +497,24 @@ $addonsResult = $conn->query($addonsQuery);
                         </div>
                 </div>
             </div>
+
+            <!-- Update the Payment Option section with the note -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-4">
+                    <div class="mb-2" required>
+                        <span style="color: red;">* </span>
+                        <label for="payment-button" class="form-label text-white">Payment Option:</label>
+                        <button type="button" class="form-control text-center" id="payment-button" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                            Choose Payment Option
+                        </button>
+                        <input type="hidden" name="paymentOption" id="paymentOption" value="">
+                    </div>
+                    <div class="text-center">
+                        <small class="text-warning">Note: Downpayment required to book</small>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-12 text-center mt-4 mb-5">
                 <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
             </div>
@@ -521,9 +556,6 @@ $addonsResult = $conn->query($addonsQuery);
                             </div>
                             <div class="modal-body">
                                 <p>Please fill in all required fields (Date, Time Slot, Service, or Downpayment).</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -1073,6 +1105,82 @@ $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime);
     document.addEventListener('click', function (event) {
         if (!menuBtn.contains(event.target) && !menuDropdown.contains(event.target)) {
             menuDropdown.classList.remove('show');
+        }
+    });
+    </script>
+
+    <!-- Add this new modal structure after the other modals: -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Choose Payment Option</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="services-list">
+                        <div class="service-item" 
+                             role="button"
+                             data-payment-option="downpayment"
+                             onclick="selectPayment('downpayment', 'Downpayment (50%)')">
+                            <div class="service-name">Downpayment</div>
+                            <div class="service-price">50% of Total Amount</div>
+                        </div>
+                        <div class="service-item" 
+                             role="button"
+                             data-payment-option="full"
+                             onclick="selectPayment('full', 'Full Payment')">
+                            <div class="service-name">Full Payment</div>
+                            <div class="service-price">100% of Total Amount</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function selectPayment(paymentOption, paymentText) {
+        // Update the hidden input
+        document.getElementById('paymentOption').value = paymentOption;
+        
+        // Update the button text
+        document.getElementById('payment-button').textContent = paymentText;
+        
+        // Remove selected class from all items
+        document.querySelectorAll('#paymentModal .service-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        
+        // Add selected class to clicked item
+        const selectedItem = document.querySelector(`#paymentModal .service-item[data-payment-option="${paymentOption}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+        }
+        
+        // Close the modal
+        const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+        paymentModal.hide();
+    }
+
+    // Initialize the payment modal when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the modal
+        const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+        
+        // Add click handler for close button
+        const closeButton = document.querySelector('#paymentModal .btn-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                paymentModal.hide();
+            });
+        }
+    });
+
+    // Clear selection when modal is closed
+    document.getElementById('paymentModal').addEventListener('hidden.bs.modal', function () {
+        if (!document.getElementById('paymentOption').value) {
+            document.getElementById('payment-button').textContent = 'Choose Payment Option';
         }
     });
     </script>

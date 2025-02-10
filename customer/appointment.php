@@ -62,6 +62,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jack of Fades | My Appointment</title>
+    <link rel="icon" href="../css/images/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/style1.css">
     <link rel="stylesheet" href="css/customer.css">
@@ -153,10 +154,94 @@ $result = $stmt->get_result();
             animation-delay: 0.5s; /* Further delay for container */
         }
         .appointments-container {
-            width: 90%;
-            max-width: 2000px; /* Adjusted for 7 columns */
+            width: 75%;
+            max-width: 1200px;
             margin: 0 auto;
-            overflow-x: auto; /* Allow horizontal scroll on smaller screens */
+            overflow-x: auto;
+            padding: 0 20px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        .appointments-table th,
+        .appointments-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+        }
+
+        .appointments-table th {
+            color: #333333;
+            font-weight: 600;
+            padding: 15px 12px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .appointments-table tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .appointments-table td .btn {
+            margin: 2px;
+        }
+
+        .cancel-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-right: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            display: inline-block;
+        }
+
+        .cancel-button:hover {
+            background-color: #c82333;
+        }
+
+        /* Make Pay button consistent with Cancel button */
+        .btn-warning.btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-right: 5px;
+            display: inline-block;
+        }
+
+        /* Status colors */
+        .status-completed {
+            color: #198754;
+            font-weight: 500;
+        }
+
+        .status-cancelled {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            color: #ffc107;
+            font-weight: 500;
+        }
+
+        /* Toast container styles */
+        .toast-container {
+            z-index: 1056; /* Higher than modal backdrop */
+        }
+        
+        .toast {
+            min-width: 300px;
         }
     </style>
 </head>
@@ -240,8 +325,8 @@ $result = $stmt->get_result();
                         <th>Time</th>
                         <th>Total Price</th>
                         <th>Appointment Status</th>
-                        <th></th>
                         <th>Payment Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -265,14 +350,13 @@ $result = $stmt->get_result();
                         $paymentStatusText = "";
                         $payNowButton = "";
                 
-                        // Determine payment status text
                         if ($row['payment_status'] === 'pending') {
                             $paymentStatusText = "<span class='text-danger'>Pending</span>";
-                            $payNowButton = "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . ($row['totalPrice'] * 0.5) . "' class='btn btn-warning btn-sm'>Pay Now</a>";
+                            $payNowButton = $row['status'] !== 'Cancelled' ? "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . ($row['totalPrice'] * 0.5) . "' class='btn btn-warning btn-sm'>Pay Now</a>" : "";
                         } elseif ($row['payment_status'] === 'partial') {
                             $remainingBalance = $row['totalPrice'] - $row['payment_amount'];
                             $paymentStatusText = "<span class='text-warning'>Partially Paid (₱" . number_format($row['payment_amount'], 2) . ")</span>";
-                            $payNowButton = "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . $remainingBalance . "' class='btn btn-warning btn-sm'>Pay Remaining</a>";
+                            $payNowButton = $row['status'] !== 'Cancelled' ? "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . $remainingBalance . "' class='btn btn-warning btn-sm'>Pay Remaining</a>" : "";
                         } else {
                             $paymentStatusText = "<span class='text-success'>Paid</span>";
                         }
@@ -282,18 +366,19 @@ $result = $stmt->get_result();
                         echo "<td>" . htmlspecialchars($row['timeSlot']) . "</td>";
                         echo "<td>₱" . number_format($row['totalPrice'], 2) . "</td>";
                         echo "<td class='" . $statusClass . "'>" . htmlspecialchars($row['status']) . "</td>";
+                        echo "<td>" . $paymentStatusText . "</td>";
+                        echo "<td>";
                         if ($row['status'] === "Pending") {
-                            echo "<td><button class='cancel-button' 
+                            echo "<button class='cancel-button' 
                                   data-id='" . $row['appointmentID'] . "' 
                                   data-date='" . date("F d, Y", strtotime($row['date'])) . "' 
                                   data-time='" . $row['timeSlot'] . "' 
-                                  data-service='" . $row['serviceName'] . "' 
-                                  data-addon='" . $row['addonName'] . "' 
-                                  data-total='" . $row['totalPrice'] . "' 
-                                  data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button></td>";
+                                  data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button>";
                         }
-                        echo "<td>" . $paymentStatusText . "</td>";
-                        echo "<td>" . $payNowButton . "</td>";
+                        if ($payNowButton) {
+                            echo $payNowButton;
+                        }
+                        echo "</td>";
                         echo "</tr>";
                     }
                 }              
@@ -312,9 +397,6 @@ $result = $stmt->get_result();
                     <div class="modal-body">
                         <p>Date: <span id="appointmentDate"></span></p>
                         <p>Time: <span id="appointmentTime"></span></p>
-                        <p>Service: <span id="serviceName"></span></p>
-                        <p>Add-On: <span id="addonName"></span></p>
-                        <p>Total: <span id="totalPrice"></span></p>
                         <div class="mb-3">
                             <label for="cancelReason" class="form-label">Reason for Cancellation</label>
                             <input type="text" class="form-control" id="cancelReason" placeholder="Enter your reason (Required)" required>
@@ -328,6 +410,18 @@ $result = $stmt->get_result();
             </div>
         </div>
 
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed top-50 start-50 translate-middle">
+            <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Please fill in the reason for cancellation.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
         <script>
         document.addEventListener("DOMContentLoaded", function () {
             const cancelButtons = document.querySelectorAll(".cancel-button");
@@ -335,22 +429,20 @@ $result = $stmt->get_result();
 
             cancelButtons.forEach(button => {
                 button.addEventListener("click", function () {
-                    selectedAppointmentID = this.getAttribute("data-id"); // Store the appointment ID
+                    selectedAppointmentID = this.getAttribute("data-id");
                     document.getElementById("appointmentDate").textContent = this.getAttribute("data-date");
                     document.getElementById("appointmentTime").textContent = this.getAttribute("data-time");
-                    document.getElementById("serviceName").textContent = this.getAttribute("data-service") || "No Service";
-                    document.getElementById("addonName").textContent = this.getAttribute("data-addon") || "No Add-on";
-                    document.getElementById("totalPrice").textContent = "₱" + parseFloat(this.getAttribute("data-total")).toFixed(2);
                 });
             });
 
-            // Add event listener to the Confirm Cancel button
+            // Update the Confirm Cancel button handler
             document.getElementById("confirmCancelButton").addEventListener("click", function () {
                 const reason = document.getElementById("cancelReason").value.trim();
 
                 if (!reason) {
-                    alert("Please provide a reason for cancellation.");
-                    document.getElementById("cancelReason").focus();
+                    // Show toast notification
+                    const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                    toast.show();
                     return;
                 }
 
@@ -359,31 +451,6 @@ $result = $stmt->get_result();
             });
         });
 
-
-        // Function to handle appointment cancellation and populate modal
-        function openCancelModal(appointmentID, date, time, serviceName, addonName) {
-            document.getElementById('appointmentDate').textContent = date;
-            document.getElementById('appointmentTime').textContent = time;
-            document.getElementById('serviceName').textContent = serviceName;
-            document.getElementById('addonName').textContent = addonName ? addonName : 'No add-on selected';
-            document.getElementById('totalPrice').textContent = totalPrice;
-
-            // Set up the Confirm button to handle the cancellation
-            const confirmButton = document.getElementById('confirmCancelButton');
-            confirmButton.onclick = function () {
-                const reasonInput = document.getElementById('cancelReason');
-                const reason = reasonInput.value.trim();
-
-                if (reason === "") {
-                    alert("Please provide a reason for cancellation.");
-                    reasonInput.focus(); // Focus on input if empty
-                    return;
-                }
-
-                // Redirect to cancellation PHP script with parameters
-                window.location.href = "cancel_appointment.php?appointmentID=" + appointmentID + "&reason=" + encodeURIComponent(reason);
-            };
-        }
         // JavaScript to toggle mobile menu
         const menuBtn = document.getElementById('menuBtn');
         const menuDropdown = document.getElementById('menuDropdown');

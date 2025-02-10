@@ -1,69 +1,24 @@
-<?php
-    session_start();
-    if (isset($_SESSION["user"])) {
-        header("Location: index.php");
-    }
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jack of Fades | Registration</title>
+
+    <!-- Link to Bootstrap CSS for styling -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="icon" href="css/images/favicon.ico">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Link to custom CSS -->
     <link rel="stylesheet" href="css/login.css">
+    
+    <!-- Link to Favicon -->
+    <link rel="icon" href="css/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="login-background" style="background-color: #171717;">
         <div class="container">
-            <div class="login-container fade-in">
-
-                <div class="text-center mb-4">
-                    <img src="css/images/jof_logo_black.png" alt="Logo" style="max-width: 60px; height: auto;">
-                </div>
-
-                <?php   
-                    use PHPMailer\PHPMailer\PHPMailer;
-                    use PHPMailer\PHPMailer\SMTP;
-                    use PHPMailer\PHPMailer\Exception;
-                    
-                    //Load Composer's autoloader
-                    require 'vendor/autoload.php';
-
-                    function sendemail_verify($FirstName, $LastName, $email, $verify_token) {
-                        $mail = new PHPMailer(true);
-                    
-                        try {
-                            //$mail->SMTPDebug = SMTP::DEBUG_SERVER; // Enable for debugging
-                            $mail->isSMTP();
-                            $mail->Host = 'smtp.gmail.com';
-                            $mail->SMTPAuth = true;
-                            $mail->Username = 'jackoffadeswebsite@gmail.com'; // Your Gmail Address
-                            $mail->Password = 'edol rcjc oakv imen';       // Your Gmail App Password
-                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                            $mail->Port = 587;
-                    
-                            $mail->setFrom('jackoffadeswebsite@gmail.com', 'Jack of Fades');
-                            $mail->addAddress($email);
-                    
-                            $mail->isHTML(true);
-                            $mail->Subject = 'Email Verification from JOF';
-                            $mail->Body = "
-                                <h2>You have registered your email</h2>
-                                <h5>Verify your email address to login with the given link</h5>
-                                <br/><br/>
-                                <a href='http://localhost/JOF/verify_email.php?token=$verify_token'>Click Me</a>
-                            ";
-                    
-                            $mail->send();
-                        } catch (Exception $e) {
-                            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-                        }
-                    }
-
+            <div class="login-container">
+                <?php 
                     // validate the submit button
                     if (isset($_POST["Register"])){
                         $FirstName = $_POST["FirstName"];
@@ -73,14 +28,13 @@
                         $contactNum = $_POST["contactNum"];
                         $password = $_POST["password"];
                         $RepeatPassword = $_POST["repeat_password"];
-                        $verify_token = md5(rand());
-                        
+
                         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
                         $errors = array();
                         // validate if all fields are empty
-                        if (empty ($FirstName) OR empty ($LastName) OR empty ($email) OR empty ($password) OR empty ($RepeatPassword)) {
-                            array_push($errors, "All fields are required except Middle Name"); 
+                        if (empty ($FirstName) OR empty ($LastName) OR empty ($email) OR empty ($contactNum) OR empty ($password) OR empty ($RepeatPassword)) {
+                            array_push($errors, "All fields are required"); 
                         }
                         // validate if the email is not validated 
                         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -94,15 +48,11 @@
                         if($password !== $RepeatPassword){
                             array_push($errors, "Password does not match");
                         }
-                        // validate contact number length and numeric value
-                        if (!preg_match('/^[0-9]{11}$/', $contactNum)) {
-                            array_push($errors, "Contact number must be 11 digits and numeric");
-                        }
 
                         require_once "database.php"; 
 
                         // email validation
-                        $sql = "SELECT * FROM customer_tbl WHERE email = '$email'";
+                        $sql = "SELECT * FROM admin_tbl WHERE email = '$email'";
                         $result = mysqli_query($conn, $sql);
                         $rowCount = mysqli_num_rows($result);
                         if ($rowCount>0) {
@@ -115,32 +65,28 @@
                             }
                         } else {
                             require_once "database.php";
-                            $sql = "INSERT INTO customer_tbl (firstName, middleName, lastName, email, contactNum, password, verify_token) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                            $sql = "INSERT INTO admin_tbl (firstName, middleName, lastName, email, contactNum, password) VALUES (?, ?, ?, ?, ?, ?)";
                             
                             // initializes a statement and returns an object suitable for mysqli_stmt_prepare()
                             $stmt = mysqli_stmt_init($conn); 
                             $preparestmt = mysqli_stmt_prepare($stmt, $sql);
                             
                             if ($preparestmt) {
-                                sendemail_verify("$FirstName", "$LastName", "$email", "$verify_token");
 
-                                mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash, $verify_token);
+                                mysqli_stmt_bind_param($stmt, "ssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash);
                                 mysqli_stmt_execute($stmt);
-                                    // Store success message in session
-                                    $_SESSION['status'] = "You are registered successfully! Please check your email for verification.";
-                                    $_SESSION['status_type'] = "success"; // Set alert type to success
-
-                                    // Redirect to login page
-                                    header("location: login.php");
-                                    exit(0);
+                                echo "<div class = 'alert alert-success'> You are registered succesfully! </div>";
                             } else {
                                 die("Something went wrong!");
                             }
                         }
                     }
                     ?>
-                    <h2 class="login-header">Register</h2>
-                    <form action="registration.php" method="post">
+
+                    <h2 class="login-header">Admin Registration</h2>
+
+                    <!-- Registration form -->
+                    <form action="registration-admin.php" method="post">
 
                         <div class="form-group">
                             <input type="text" class="form-control" name="FirstName" placeholder="First Name" required>
@@ -175,30 +121,19 @@
                         <div class="form-btn">
                             <input type="submit" class="btn btn-primary" value="Register" name="Register">
                         </div>
+                    
                     </form>
+                    
                     <div>
-                     <p>Already registered? <a href="login.php">Login</a></p>
+                    <!-- Link to registration page for new users -->
+                    <!-- Remove the Cancel button -->
+                    <!-- <p><a href="barbers.php">Cancel</a></p> -->
                     </div>
             </div>
         </div>
     </div>
+
     <style>
-        .fade-in {
-            animation: fadeIn 1s ease-out;
-            opacity: 1;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .password-toggle {
             position: absolute;
             right: 10px;
@@ -212,6 +147,7 @@
             color: #000;
         }
     </style>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Password toggle functionality for the first password field

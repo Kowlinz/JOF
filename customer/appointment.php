@@ -229,7 +229,7 @@ $result = $stmt->get_result();
             </nav>
         </div>
         <div class="appointments-header-wrapper">
-            <h1 class="appointments-header fade-in">CRIMGENE KINALAWKAW PEPE NI MAAM KRIS</h1>
+            <h1 class="appointments-header fade-in">MY APPOINTMENTS</h1>
         </div>
 
         <div class="appointments-container">

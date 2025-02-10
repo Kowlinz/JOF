@@ -96,6 +96,10 @@ include 'admin/landing_text.php';
 			width: 650px;
 			padding: 20px;
 			padding-right: 80px;
+			/* Add fade-in animation */
+			opacity: 0;
+			animation: carouselFadeIn 1s ease forwards;
+			animation-delay: 0.5s; /* Start after the navbar animation */
 		}
 		
 		.swiper {
@@ -171,6 +175,9 @@ include 'admin/landing_text.php';
 				top: auto;
 				margin: 80px auto;
 				padding-bottom: 80px;
+				/* Adjust animation for responsive layout */
+				animation: carouselFadeInMobile 1s ease forwards;
+				animation-delay: 0.5s;
 			}
 
 			.swiper {
@@ -219,6 +226,42 @@ include 'admin/landing_text.php';
 
 			.carousel-description {
 				font-size: 1rem;
+			}
+		}
+
+		/* Add the carousel fade-in animation */
+		@keyframes carouselFadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-45%) translateX(20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(-45%) translateX(0);
+			}
+		}
+
+		/* Add mobile animation */
+		@keyframes carouselFadeInMobile {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Add new media query for short screens */
+		@media screen and (max-height: 930px) {
+			.carousel-container {
+				width: 550px;
+				padding-right: 110px;
+			}
+
+			.swiper {
+				height: 700px;
 			}
 		}
 	</style>

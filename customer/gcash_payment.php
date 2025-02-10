@@ -3,9 +3,6 @@ session_start(); // Start the session
 if (isset($_SESSION['appointmentID'], $_SESSION['paymentAmount'])) {
     $appointmentID = $_SESSION['appointmentID'];
     $paymentAmount = $_SESSION['paymentAmount'];
-
-    // Unset session variables after use (optional for security)
-    unset($_SESSION['appointmentID'], $_SESSION['paymentAmount']);
 } else {
     die("Invalid access.");
 }
@@ -253,6 +250,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
                     <input type="hidden" name="amount" value="<?php echo $paymentAmount; ?>">
                     
                     <div class="mb-4">
+                        <span style="color: red;">* </span>
                         <label class="form-label">Attach Payment Screenshot:</label>
                         <div class="upload-container">
                             <input type="file" name="paymentProof" class="form-control" 
@@ -263,6 +261,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
                     </div>
                     
                     <div class="mb-4">
+                        <span style="color: red;">* </span>
                         <label class="form-label">Enter GCash Reference Number:</label>
                         <input type="text" name="gcashRef" required class="form-control" 
                                placeholder="Enter GCash Transaction Reference Number">

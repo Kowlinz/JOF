@@ -28,16 +28,17 @@ include 'admin/landing_text.php';
 ?>
 
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Jack of Fades | Home</title>
+	<title>Jack of Fades</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 	<link rel="icon" href="css/images/favicon.ico">
 	<link rel="stylesheet" href="css/style1.css">
 	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 	<style>
 		body {
 			font-family: 'Lexend', sans-serif;
@@ -86,9 +87,199 @@ include 'admin/landing_text.php';
 				opacity: 1;
 			}
 		}
+
+		.carousel-container {
+			position: fixed;
+			right: 0;
+			top: 50%;
+			transform: translateY(-45%);
+			width: 650px;
+			padding: 20px;
+			padding-right: 80px;
+			/* Add fade-in animation */
+			opacity: 0;
+			animation: carouselFadeIn 1s ease forwards;
+			animation-delay: 0.5s; /* Start after the navbar animation */
+		}
+		
+		.swiper {
+			width: 100%;
+			height: 760px;
+		}
+
+		.carousel-slide {
+			position: relative;
+			aspect-ratio: 3/4;
+			border-radius: 8px;
+			overflow: hidden;
+		}
+
+		.carousel-image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.carousel-content {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			padding: 24px;
+			background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+			color: white;
+		}
+
+		.carousel-title {
+			font-size: 2rem;
+			font-weight: bold;
+			margin-bottom: 8px;
+			color: #FFDE59;
+		}
+
+		.carousel-description {
+			font-size: 1.1rem;
+			color: #e5e5e5;
+			line-height: 1.5;
+		}
+
+		.swiper-button-next,
+		.swiper-button-prev {
+			color: white;
+		}
+
+		// Add these media queries for responsiveness
+		@media screen and (max-width: 1400px) {
+			.carousel-container {
+				width: 450px;
+				padding-right: 60px;
+			}
+		}
+
+		@media screen and (max-width: 1200px) {
+			.carousel-container {
+				width: 400px;
+				padding-right: 45px;
+			}
+			
+			.swiper {
+				height: 650px;
+			}
+		}
+
+		@media screen and (max-width: 1460px) {
+			.carousel-container {
+				position: relative;
+				transform: none;
+				width: 100%;
+				top: auto;
+				margin: 80px auto;
+				padding-bottom: 80px;
+				/* Adjust animation for responsive layout */
+				animation: carouselFadeInMobile 1s ease forwards;
+				animation-delay: 0.5s;
+			}
+
+			.swiper {
+				max-width: 500px;
+				margin: 0 auto;
+				height: 650px;
+			}
+		}
+
+		@media screen and (max-width: 992px) {
+			.carousel-container {
+				position: relative;
+				transform: none;
+				width: 100%;
+				top: auto;
+				margin: 80px auto;
+				padding-bottom: 80px;
+			}
+
+			.swiper {
+				max-width: 500px;
+				margin: 0 auto;
+				height: 650px;
+			}
+		}
+
+		@media screen and (max-width: 576px) {
+			.carousel-container {
+				padding: 10px;
+				margin: 60px auto;
+				padding-bottom: 60px;
+			}
+
+			.swiper {
+				max-width: 100%;
+				height: 600px;
+			}
+
+			.carousel-content {
+				padding: 20px;
+			}
+
+			.carousel-title {
+				font-size: 1.75rem;
+			}
+
+			.carousel-description {
+				font-size: 1rem;
+			}
+		}
+
+		/* Add the carousel fade-in animation */
+		@keyframes carouselFadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-45%) translateX(20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(-45%) translateX(0);
+			}
+		}
+
+		/* Add mobile animation */
+		@keyframes carouselFadeInMobile {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Add new media query for short screens */
+		@media screen and (max-height: 930px) {
+			.carousel-container {
+				width: 550px;
+				padding-right: 110px;
+			}
+
+			.swiper {
+				height: 700px;
+			}
+		}
+
+		/* Add new media query for very short screens */
+		@media screen and (max-height: 865px) {
+			.carousel-container {
+				top: 55%;  /* Move container down by increasing top percentage */
+			}
+		}
+
+		/* Add new media query for extremely short screens */
+		@media screen and (max-height: 780px) {
+			.carousel-container {
+				top: 60%;  /* Further increase top percentage for more space */
+			}
+		}
 	</style>
-  </head>
-   
+</head>
 <body>
 	<div class="main-page">
   		<div class="header">
@@ -175,10 +366,7 @@ include 'admin/landing_text.php';
 				</div>
 			</nav>
 		</div>
-		<!-- Move the logo here, below the navbar -->
-		<div class="barber-image-fixed" style="margin-top: -70px; margin-right: 300px; text-align: center;">
-			<img src="css/images/JOF-Logo.png" alt="Jack of Fades Logo" style="width: 350px; height: auto;" class="homepage-logo fade-in">
-		</div>
+
 		<div class="content">
 			<div style="display: flex; justify-content: space-between; align-items: center;">
 				<div>
@@ -194,6 +382,58 @@ include 'admin/landing_text.php';
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+
+	<div class="carousel-container">
+		<!-- Slider main container -->
+		<div class="swiper">
+			<!-- Additional required wrapper -->
+			<div class="swiper-wrapper">
+				<!-- Slides -->
+				<div class="swiper-slide">
+					<div class="carousel-slide">
+						<img src="css/images/portraits/jake.jpg" 
+							 alt="Barber working on client's hair"
+							 class="carousel-image">
+						<div class="carousel-content">
+							<h3 class="carousel-title">JAKE CLARENCE</h3>
+							<p class="carousel-description">
+							Skilled barber with expertise in Jack's Signature styles. His specialties include the Burst Fade and Taper Fade, leaving each client with a precise and stylish look.
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="carousel-slide">
+						<img src="css/images/portraits/jhun.jpg" 
+							 alt="Barber shop interior"
+							 class="carousel-image">
+						<div class="carousel-content">
+							<h3 class="carousel-title">JHUN</h3>
+							<p class="carousel-description">
+							Talented barber with expertise in Jack's Haircut, Signature, and Premium Perm. He specializes in Fades and the Mullet style, providing each client with a unique and polished appearance.
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="carousel-slide">
+						<img src="css/images/portraits/joshua.jpg" 
+							 alt="Barber shop interior"
+							 class="carousel-image">
+						<div class="carousel-content">
+							<h3 class="carousel-title">JOSHUA</h3>
+							<p class="carousel-description">
+							A stylist with expertise in Jack's Haircut, Signature, and Facial services. He specializes in Fades and Modern Haircuts, delivering a fresh and contemporary look to each client.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Navigation buttons -->
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>
 		</div>
 	</div>
 
@@ -213,5 +453,26 @@ include 'admin/landing_text.php';
 	});
 	</script>
 
+	<!-- Add Swiper JS -->
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script>
+		const swiper = new Swiper('.swiper', {
+			// Optional parameters
+			direction: 'horizontal',
+			loop: true,
+
+			// Add autoplay
+			autoplay: {
+				delay: 5000, // 5000ms = 5 seconds
+				disableOnInteraction: false, // Continue autoplay after user interaction
+			},
+
+			// Navigation arrows
+			navigation: {
+				nextEl: '.swiper-button-next',
+				prevEl: '.swiper-button-prev',
+			},
+		});
+	</script>
 </body>
 </html>

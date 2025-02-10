@@ -264,6 +264,20 @@ include 'admin/landing_text.php';
 				height: 700px;
 			}
 		}
+
+		/* Add new media query for very short screens */
+		@media screen and (max-height: 865px) {
+			.carousel-container {
+				top: 55%;  /* Move container down by increasing top percentage */
+			}
+		}
+
+		/* Add new media query for extremely short screens */
+		@media screen and (max-height: 780px) {
+			.carousel-container {
+				top: 60%;  /* Further increase top percentage for more space */
+			}
+		}
 	</style>
 </head>
 <body>

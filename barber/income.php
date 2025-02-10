@@ -50,29 +50,27 @@ if (!$incomeResult) {
     echo "Error in income query: " . mysqli_error($conn);
 }
 
-// Query to calculate the total income
-$totalIncomeQuery = "
-    SELECT SUM(e.barberEarnings) AS total_income
-    FROM earnings_tbl e
-    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-    WHERE DATE(a.date) = CURDATE() AND e.barberID = '$barberID'
-";
-$totalIncomeResult = mysqli_query($conn, $totalIncomeQuery);
-$totalIncome = mysqli_fetch_assoc($totalIncomeResult)['total_income'];
-$totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00'; // Format the income
+// Query to calculate total BarberEarnings for today
+$totalBarberEarningsQuery = "SELECT SUM(BarberEarnings) AS totalBarberEarnings 
+FROM earnings_tbl e 
+JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+WHERE DATE(a.date) = CURDATE()";
+$stmtTotalBarber = $conn->prepare($totalBarberEarningsQuery);
+$stmtTotalBarber->execute();
+$resultTotalBarber = $stmtTotalBarber->get_result();
+$totalBarberEarnings = $resultTotalBarber->fetch_assoc()['totalBarberEarnings'] ?? 0; // Default to 0 if null
 
-// Query to calculate the barber's total income for the current month
-$monthlyBarberIncomeQuery = "
-    SELECT SUM(e.barberEarnings) AS total_monthly_income
-    FROM earnings_tbl e
-    JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-    WHERE MONTH(a.date) = MONTH(CURDATE()) 
-    AND YEAR(a.date) = YEAR(CURDATE()) 
-    AND e.barberID = '$barberID'
-";
-$monthlyBarberIncomeResult = mysqli_query($conn, $monthlyBarberIncomeQuery);
-$totalMonthlyBarberIncome = mysqli_fetch_assoc($monthlyBarberIncomeResult)['total_monthly_income'] ?? 0;
-$totalMonthlyBarberIncome = number_format($totalMonthlyBarberIncome, 2);
+// Query to calculate total BarberEarnings for the current month
+$monthlyBarberEarningsQuery = "SELECT SUM(BarberEarnings) AS totalMonthlyBarberEarnings 
+FROM earnings_tbl e 
+JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+WHERE MONTH(a.date) = MONTH(CURDATE()) AND YEAR(a.date) = YEAR(CURDATE())";
+
+$stmtMonthlyBarber = $conn->prepare($monthlyBarberEarningsQuery);
+$stmtMonthlyBarber->execute();
+$resultMonthlyBarber = $stmtMonthlyBarber->get_result();
+$totalMonthlyBarberEarnings = $resultMonthlyBarber->fetch_assoc()['totalMonthlyBarberEarnings'] ?? 0; // Default to 0 if null
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -376,7 +374,7 @@ $totalMonthlyBarberIncome = number_format($totalMonthlyBarberIncome, 2);
                         </div>
                         <div class="flex-fill text-wrap">
                     <div class="h5">Today's Income</div>
-                    <div class="h6">₱<?= number_format($totalIncome, 2) ?></div>
+                    <div class="h6">₱<?= number_format($totalBarberEarnings, 2) ?></div>
                 </div>
                     </div>
                 </div>
@@ -389,7 +387,7 @@ $totalMonthlyBarberIncome = number_format($totalMonthlyBarberIncome, 2);
                         </div>
                         <div class="flex-fill text-wrap">
                     <div class="h5">This Month Earnings</div>
-                    <div class="h6">₱<?= number_format($totalMonthlyBarberIncome, 2) ?></div>
+                    <div class="h6">₱<?= number_format($totalMonthlyBarberEarnings, 2) ?></div>
                 </div>
                     </div>
                 </div>

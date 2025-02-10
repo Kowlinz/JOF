@@ -313,18 +313,15 @@ function filterAppointments() {
 <!-- Modal for additional details-->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content" style="border: none;">
+            <div class="modal-header" style="border: none;">
                 <h5 class="modal-title" id="appointmentModalLabel">Other Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="border: none;">
                 <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
                 <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
                 <p><strong>Remarks:</strong> <span id="remarks"></span></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -445,28 +442,43 @@ function openStatusModal(appointmentId, customerId) {
             return;
         }
 
+        // Close the Status Modal before sending the reminder
+        const statusModal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
+        if (statusModal) {
+            statusModal.hide();
+        }
+
         // Sending an AJAX request to update_status.php with "Reminder" status
         fetch('update_status.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `appointmentID=${appointmentID}&status=Reminder`
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Response:", data);  // Debug response
-        if (data.success) {
-            alert("Reminder email sent successfully!");
-        } else {
-            alert("Error: " + data.message);
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        alert("An error occurred while sending the reminder.");
-    });
-}
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `appointmentID=${appointmentID}&status=Reminder`
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Response:", data);  // Debug response
+            if (data.success) {
+                // Show success message in the modal
+                document.getElementById('statusMessage').innerText = "Reminder email sent successfully!";
+                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
+            } else {
+                // Show error message in the modal
+                document.getElementById('statusMessage').innerText = "Error: " + data.message;
+                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            // Show error message in the modal
+            document.getElementById('statusMessage').innerText = "An error occurred while sending the reminder.";
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+        });
+    }
 </script>
 
 <script>
@@ -492,6 +504,16 @@ function openCancelModal() {
 // Add this to handle the form submission
 document.getElementById('cancelForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    const reasonField = document.getElementById('cancelReason');
+    
+    // Check if the reason field is empty
+    if (!reasonField.value.trim()) {
+        // Show the toast notification
+        const toast = new bootstrap.Toast(document.getElementById('fillFieldToast'));
+        toast.show();
+        return; // Prevent form submission
+    }
     
     const formData = new FormData(this);
     
@@ -613,5 +635,18 @@ function handleStatusSubmit(e) {
     });
 }
 </script>
+
+<!-- Toast Notification -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="fillFieldToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Notification</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Please fill out this field.
+        </div>
+    </div>
+</div>
 </body>
 </html>

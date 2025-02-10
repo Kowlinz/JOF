@@ -365,6 +365,12 @@ $pendingCount = $notificationData['pending_count'];
             <div class="card border-0 rounded-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                     <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Upcoming Customers</h4>
+                            <!-- Date Picker for Filtering -->
+                            <div class="mb-0">
+                            <input type="date" id="appointmentDate" class="form-control" 
+                            value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
+                            oninput="filterAppointments()">
+                            </div>
                 </div>
 
                 <div class="card-body">
@@ -380,6 +386,7 @@ $pendingCount = $notificationData['pending_count'];
                         </thead>
                         <tbody>
                             <?php
+                            $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
                             // Query to display upcoming customers for the logged-in barber
                             $upcomingQuery = "SELECT 
                                 a.appointmentID,
@@ -397,11 +404,16 @@ $pendingCount = $notificationData['pending_count'];
                             LEFT JOIN 
                                 service_tbl s ON a.serviceID = s.serviceID
                             WHERE 
-                                a.date
-                                AND a.status = 'Pending'
-                                AND ba.barberID = '$barberID'
-                            ORDER BY 
-                                a.timeSlot ASC";
+                                a.status = 'Pending'
+                                AND ba.barberID = '$barberID'";
+
+                            // Add date filtering if a date is selected
+                            if (!empty($selectedDate)) {
+                                $upcomingQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                            }
+
+                            $upcomingQuery .= " ORDER BY a.timeSlot ASC";                                                        
+
                             $upcomingResult = mysqli_query($conn, $upcomingQuery);
 
                             // Check if there are any upcoming results
@@ -489,6 +501,33 @@ $pendingCount = $notificationData['pending_count'];
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 <script src="js/calendar.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let appointmentDates = <?php echo json_encode($appointmentDates); ?>;
+        
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            let date = day.getAttribute('data-date'); // Assuming your calendar days have `data-date`
+            if (appointmentDates.includes(date)) {
+                day.innerHTML += `<span class="badge bg-danger ms-1">!</span>`;
+            }
+        });
+    });
+</script>
+
+<script>
+let timeout = null;
+
+function filterAppointments() {
+    clearTimeout(timeout); // Clear previous timeout to avoid multiple reloads
+    timeout = setTimeout(() => {
+        let selectedDate = document.getElementById("appointmentDate").value;
+        if (selectedDate.length === 10) { // Ensure full date is entered
+            window.location.href = "schedule.php?date=" + selectedDate;
+        }
+    }, 800); // Delay execution to allow typing
+}
+</script>
 
 <!-- Modal for additional details-->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">

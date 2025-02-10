@@ -386,6 +386,12 @@ include 'db_connect.php';
                 <div class="card border-0 rounded-4"> 
                     <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
                         <h4 class="ms-2 mt-2 fw-bold" style="color: black;">Previous Customers</h4>
+                            <!-- Date Picker for Filtering -->
+                            <div class="mb-0">
+                            <input type="date" id="appointmentDate" class="form-control" 
+                            value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
+                            oninput="filterAppointments()">
+                            </div>
                     </div>
                     <div class="card-body"> 
                         <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">
@@ -400,6 +406,7 @@ include 'db_connect.php';
                             </thead>
                             <tbody>
                                 <?php
+                                $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
                                 // Query to display previous customers for the logged-in barber
                                 $previousQuery = "SELECT 
                                     a.appointmentID,
@@ -417,11 +424,16 @@ include 'db_connect.php';
                                 LEFT JOIN 
                                     service_tbl s ON a.serviceID = s.serviceID
                                 WHERE 
-                                    a.date 
-                                    AND a.status = 'Completed'
-                                    AND ba.barberID = '$barberID'
-                                ORDER BY 
-                                    a.timeSlot ASC";
+                                    a.status = 'Completed'
+                                    AND ba.barberID = '$barberID'";
+
+                                // Add date filtering if a date is selected
+                                if (!empty($selectedDate)) {
+                                    $previousQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                                }
+
+                                $previousQuery .= " ORDER BY a.timeSlot ASC";                                
+
                                 $previousResult = mysqli_query($conn, $previousQuery);
 
                                 // Check if there are any previous results
@@ -450,7 +462,7 @@ include 'db_connect.php';
                                         $no++;
                                     }
                                 } else {
-                                    echo "<tr><td colspan='4' class='text-center'>No Previous Customers</td></tr>";
+                                    echo "<tr><td colspan='5' class='text-center'>No Previous Customers</td></tr>";
                                 }
                                 ?>
                             </tbody>
@@ -507,6 +519,33 @@ include 'db_connect.php';
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="js/calendar.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let appointmentDates = <?php echo json_encode($appointmentDates); ?>;
+        
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            let date = day.getAttribute('data-date'); // Assuming your calendar days have `data-date`
+            if (appointmentDates.includes(date)) {
+                day.innerHTML += `<span class="badge bg-danger ms-1">!</span>`;
+            }
+        });
+    });
+    </script>
+
+    <script>
+    let timeout = null;
+
+    function filterAppointments() {
+        clearTimeout(timeout); // Clear previous timeout to avoid multiple reloads
+        timeout = setTimeout(() => {
+            let selectedDate = document.getElementById("appointmentDate").value;
+            if (selectedDate.length === 10) { // Ensure full date is entered
+                window.location.href = "b_history.php?date=" + selectedDate;
+            }
+        }, 800); // Delay execution to allow typing
+    }
+    </script>
 
     <!-- Modal for additional details-->
     <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">

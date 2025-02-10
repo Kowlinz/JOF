@@ -40,14 +40,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Fetch service price
+    $sql_price = "SELECT addonPrice FROM addon_tbl WHERE addonID = ?";
+    $stmt_price = $conn->prepare($sql_price);
+    $stmt_price->bind_param("i", $addonID);
+    $stmt_price->execute();
+    $result_price = $stmt_price->get_result();
+    $row_price = $result_price->fetch_assoc();
+    $addonPrice = $row_price['addonPrice'] ?? 0;
+    $stmt_price->close();
+
+    // Fetch service price
     $sql_price = "SELECT servicePrice FROM service_tbl WHERE serviceID = ?";
     $stmt_price = $conn->prepare($sql_price);
     $stmt_price->bind_param("i", $serviceID);
     $stmt_price->execute();
     $result_price = $stmt_price->get_result();
     $row_price = $result_price->fetch_assoc();
-    $totalPrice = $row_price['servicePrice'] ?? 0;
+    $servicePrice = $row_price['servicePrice'] ?? 0;
     $stmt_price->close();
+
+    $totalPrice = $servicePrice + $addonPrice;
 
     // Determine payment amount
     $paymentAmount = ($paymentOption === "downpayment") ? $totalPrice * 0.5 : $totalPrice;
@@ -85,10 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     );
 
     if ($stmt_insert->execute()) {
-        $appointmentID = $stmt_insert->insert_id;
-
+        $_SESSION['appointmentID'] = $stmt_insert->insert_id;
+        $_SESSION['paymentAmount'] = $paymentAmount;
+    
         // Redirect to GCash payment page
-        header("Location: gcash_payment.php?appointmentID=$appointmentID&amount=$paymentAmount");
+        header("Location: gcash_payment.php");
         exit();
     } else {
         echo "Error: " . $stmt_insert->error;

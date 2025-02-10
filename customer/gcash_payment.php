@@ -1,14 +1,16 @@
 <?php
-session_start();
-include 'db_connect.php';
+session_start(); // Start the session
+if (isset($_SESSION['appointmentID'], $_SESSION['paymentAmount'])) {
+    $appointmentID = $_SESSION['appointmentID'];
+    $paymentAmount = $_SESSION['paymentAmount'];
 
-// Get appointment details
-$appointmentID = $_GET["appointmentID"] ?? 0;
-
-if (!$appointmentID) {
-    echo "<script>alert('Error: Invalid appointment ID.'); window.location.href = 'appointments.php';</script>";
-    exit();
+    // Unset session variables after use (optional for security)
+    unset($_SESSION['appointmentID'], $_SESSION['paymentAmount']);
+} else {
+    die("Invalid access.");
 }
+
+include 'db_connect.php';
 
 // Fetch appointment details including service and addon prices
 $sql = "SELECT 

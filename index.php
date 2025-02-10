@@ -385,7 +385,7 @@ include 'admin/landing_text.php';
 						<div class="carousel-content">
 							<h3 class="carousel-title">JAKE CLARENCE</h3>
 							<p class="carousel-description">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu mauris vel nibh interdum luctus.
+							Skilled barber with expertise in Jack's Signature styles. His specialties include the Burst Fade and Taper Fade, leaving each client with a precise and stylish look.
 							</p>
 						</div>
 					</div>
@@ -398,7 +398,7 @@ include 'admin/landing_text.php';
 						<div class="carousel-content">
 							<h3 class="carousel-title">JHUN</h3>
 							<p class="carousel-description">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu mauris vel nibh interdum luctus.
+							Talented barber with expertise in Jack's Haircut, Signature, and Premium Perm. He specializes in Fades and the Mullet style, providing each client with a unique and polished appearance.
 							</p>
 						</div>
 					</div>
@@ -411,7 +411,7 @@ include 'admin/landing_text.php';
 						<div class="carousel-content">
 							<h3 class="carousel-title">JOSHUA</h3>
 							<p class="carousel-description">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu mauris vel nibh interdum luctus.
+							A stylist with expertise in Jack's Haircut, Signature, and Facial services. He specializes in Fades and Modern Haircuts, delivering a fresh and contemporary look to each client.
 							</p>
 						</div>
 					</div>

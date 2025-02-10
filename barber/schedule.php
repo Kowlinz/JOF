@@ -42,17 +42,23 @@ $pendingCount = $notificationData['pending_count'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="css/table.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="../css/images/favicon.ico">
-    <link rel="stylesheet" href="css/calendar.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="css/table.css">
+    <link rel="stylesheet" href="css/barber.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+
     <title>Schedule</title>
     <style>
-        .sidebar {
-            background-color: #F3CD32 !important;
-            min-height: 100vh;
+        body,
+        .sidebar,
+        .list-group-item,
+        .avatar-container h5 {
+            font-family: 'Lexend', sans-serif !important;
         }
         .list-group-item {
             background-color: transparent !important;
@@ -363,90 +369,88 @@ $pendingCount = $notificationData['pending_count'];
         </div>
         <div class="col-md-12 ms-5">
             <div class="card border-0 rounded-4">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
-                    <h4 class="ms-2 mt-2 fw-bold" style="color: #000000;">Upcoming Customers</h4>
-                            <!-- Date Picker for Filtering -->
-                            <div class="mb-0">
-                            <input type="date" id="appointmentDate" class="form-control" 
-                            value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
-                            oninput="filterAppointments()">
-                            </div>
+                <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
+                    <h2 class="fw-bold">Upcoming Customers</h2>
+                    <!-- Date Picker for Filtering -->
+                    <div class="mb-0">
+                        <input type="date" id="appointmentDate" class="form-control" 
+                        value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
+                        oninput="filterAppointments()">
+                    </div>
                 </div>
 
                 <div class="card-body">
-                    <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Service</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
-                            // Query to display upcoming customers for the logged-in barber
-                            $upcomingQuery = "SELECT 
-                                a.appointmentID,
-                                c.customerID,
-                                CONCAT(c.firstName, ' ', c.lastName) AS fullName,
-                                a.date,
-                                a.timeSlot,
-                                s.serviceName
-                            FROM 
-                                appointment_tbl a
-                            LEFT JOIN 
-                                customer_tbl c ON a.customerID = c.customerID
-                            LEFT JOIN 
-                                barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
-                            LEFT JOIN 
-                                service_tbl s ON a.serviceID = s.serviceID
-                            WHERE 
-                                a.status = 'Pending'
-                                AND ba.barberID = '$barberID'";
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <td>No.</td>
+                                    <td>Name</td>
+                                    <td>Date</td>
+                                    <td>Time</td>
+                                    <td>Service</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
+                                // Query to display upcoming customers for the logged-in barber
+                                $upcomingQuery = "SELECT 
+                                    a.appointmentID,
+                                    c.customerID,
+                                    CONCAT(c.firstName, ' ', c.lastName) AS fullName,
+                                    a.date,
+                                    a.timeSlot,
+                                    s.serviceName
+                                FROM 
+                                    appointment_tbl a
+                                LEFT JOIN 
+                                    customer_tbl c ON a.customerID = c.customerID
+                                LEFT JOIN 
+                                    barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
+                                LEFT JOIN 
+                                    service_tbl s ON a.serviceID = s.serviceID
+                                WHERE 
+                                    a.status = 'Pending'
+                                    AND ba.barberID = '$barberID'";
 
-                            // Add date filtering if a date is selected
-                            if (!empty($selectedDate)) {
-                                $upcomingQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
-                            }
-
-                            $upcomingQuery .= " ORDER BY a.timeSlot ASC";                                                        
-
-                            $upcomingResult = mysqli_query($conn, $upcomingQuery);
-
-                            // Check if there are any upcoming results
-                            if (mysqli_num_rows($upcomingResult) > 0) {
-                                $no = 1;
-                                while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                                    $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';  // Use "Walk In" if no name exists
-                                    $timeSlot = $row['timeSlot'];
-                                    $date = $row['date'];  
-                                    $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
-                                    $formattedDate = date("F d, Y", strtotime($row['date']));
-                                    $isWalkIn = empty($row['customerID']) ? 'true' : 'false'; // Check if it's a walk-in
-                                    echo "<tr>
-                                            <td>{$no}</td>
-                                            <td>
-                                            <a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, {$isWalkIn})' 
-                                            data-bs-toggle='modal' data-bs-target='#appointmentModal' 
-                                            style='text-decoration: none; color: inherit;'>
-                                                {$fullName}
-                                            </a>
-                                            </td>
-                                            <td>{$formattedDate}</td>
-                                            <td>{$timeSlot}</td>
-                                            <td>{$serviceName}</td>
-                                          </tr>";
-                                    $no++;
+                                // Add date filtering if a date is selected
+                                if (!empty($selectedDate)) {
+                                    $upcomingQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
                                 }
-                            } else {
-                                echo "<tr><td colspan='4' class='text-center'>No Upcoming Customers</td></tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
+
+                                $upcomingQuery .= " ORDER BY a.timeSlot ASC";                                                        
+
+                                $upcomingResult = mysqli_query($conn, $upcomingQuery);
+
+                                // Check if there are any upcoming results
+                                if (mysqli_num_rows($upcomingResult) > 0) {
+                                    $counter = 1;
+                                    while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                        $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';
+                                        $timeSlot = $row['timeSlot'];
+                                        $date = $row['date'];  
+                                        $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';
+                                        $formattedDate = date("F d, Y", strtotime($row['date']));
+                                        $isWalkIn = empty($row['customerID']) ? 'true' : 'false';
+                                        echo "<tr>";
+                                        echo "<td>{$counter}</td>";
+                                        echo "<td><a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, {$isWalkIn})' 
+                                                data-bs-toggle='modal' data-bs-target='#appointmentModal' 
+                                                style='text-decoration: none; color: inherit;'>{$fullName}</a></td>";
+                                        echo "<td>{$formattedDate}</td>";
+                                        echo "<td>{$timeSlot}</td>";
+                                        echo "<td>{$serviceName}</td>";
+                                        echo "</tr>";
+                                        $counter++;
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='5' class='text-center'>No upcoming appointments found.</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

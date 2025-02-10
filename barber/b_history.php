@@ -43,329 +43,13 @@ include 'db_connect.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="css/table.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="css/table.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/barber.css">
     <link rel="icon" href="../css/images/favicon.ico">
-    <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <title>Customer History</title>
-    <style>
-        /* ... */
-        /* Sidebar styling */
-        .sidebar {
-            background-color: #F3CD32 !important;
-            min-height: 100vh;
-        }
-        .list-group-item {
-            background-color: transparent !important;
-            border: none !important;
-            color: black !important;
-            border-radius: 10px !important;
-            margin-bottom: 5px;
-        }
-        .list-group-item:hover {
-            background-color: rgba(0, 0, 0, 0.1) !important;
-        }
-        .list-group-item.active {
-            background-color: black !important;
-            color: #F3CD32 !important;
-            border-radius: 10px !important;
-        }
-        .list-group-item.active i,
-        .list-group-item.active span {
-            color: #F3CD32 !important;
-        }
-        /* Logo and Avatar container styling */
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
-        }
-        .avatar-container .logo {
-            margin-bottom: 30px;
-        }
-        .avatar-container img.avatar {
-            display: block;
-            margin: 0 auto;
-        }
-        .avatar-container h5 {
-            margin-top: 10px;
-        }
-        /* Mobile toggle button styling */
-        .mobile-toggle {
-            position: fixed;
-            top: 25px;
-            left: 20px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: none;
-            color: #F3CD32;
-            font-size: 24px;
-        }
-
-        /* Show toggle button only on smaller screens */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-        }
-
-        /* Add these date picker styles */
-        .dropdown-menu {
-            padding: 0 !important;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-        .calendar-container {
-            background: white;
-            border-radius: 4px;
-            padding: 15px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        }
-        .btn-secondary {
-            background-color: #F3CD32;
-            border-color: #F3CD32;
-            color: black;
-        }
-        .btn-secondary:hover {
-            background-color: #dbb82e;
-            border-color: #dbb82e;
-            color: black;
-        }
-        /* Ensure dropdown menu shows properly */
-        .dropdown-menu.show {
-            display: block !important;
-        }
-        /* Add these calendar responsive styles */
-        @media screen and (max-width: 768px) {
-            .calendar-container {
-                transform: scale(0.95);
-                transform-origin: top left;
-                margin-bottom: 15px;
-            }
-            
-            .dropdown-menu {
-                width: 290px !important;
-                padding: 10px !important;
-                margin-top: 5px !important;
-            }
-        }
-
-        @media screen and (max-width: 576px) {
-            .calendar-container {
-                transform: scale(0.85);
-                margin-bottom: 25px;
-            }
-            
-            .dropdown-menu {
-                width: 260px !important;
-                padding: 15px !important;
-            }
-        }
-
-        /* Add new styles for very small screens */
-        @media screen and (max-width: 505px) {
-            .calendar-container {
-                transform: scale(0.8);
-                margin-bottom: 30px;
-            }
-            
-            .dropdown-menu {
-                width: 240px !important;
-                margin-left: -20px;
-                padding: 20px !important;
-                min-height: 380px;
-            }
-        }
-
-        /* Add this to ensure the dropdown has enough space */
-        .dropdown {
-            margin-bottom: 50px;
-        }
-
-        /* Adjust main content area to account for sidebar */
-        .container-xxl {
-            padding-left: 260px; /* Width of sidebar + some padding */
-            width: 100%;
-            transition: padding-left 0.3s ease;
-        }
-
-        /* Sidebar positioning */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            z-index: 999;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .container-xxl {
-                padding-left: 15px; /* Reset padding on mobile */
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-        }
-
-        /* Adjust margin for content */
-        @media (min-width: 992px) and (max-width: 1680px) {
-            .ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            .dashboard.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Calendar section adjustments */
-            .col-md-12.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Card adjustments */
-            .card {
-                margin-right: 15px;
-            }
-            
-            /* Table section adjustments */
-            .table-responsive {
-                margin-right: 15px;
-            }
-        }
-
-        /* Update mobile styles */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-            
-            /* Adjust calendar container on mobile */
-            .calendar-container {
-                margin: 0 10px;
-            }
-            
-            /* Adjust table container on mobile */
-            .table-responsive {
-                margin: 0;
-                padding: 0;
-            }
-            
-            .card {
-                margin: 0 10px;
-            }
-            
-            /* Adjust calendar dropdown on mobile */
-            .dropdown {
-                margin: 0 10px 20px 10px;
-            }
-            
-            /* Adjust text sizes for better mobile display */
-            .card-header h4 {
-                font-size: 1rem;
-            }
-            
-            /* Ensure proper spacing for content */
-            .col-md-12.ms-5 {
-                margin-left: 0 !important;
-                padding: 0;
-            }
-        }
-
-        /* Responsive table styles */
-        @media screen and (max-width: 768px) {
-            .table {
-                white-space: nowrap;
-            }
-            
-            .table th, 
-            .table td {
-                padding: 8px !important;
-            }
-            
-            .card-body {
-                padding: 10px;
-            }
-            
-            .card-header {
-                padding: 12px;
-            }
-            
-            /* Adjust calendar styles for better mobile view */
-            .calendar-weekdays li, 
-            .calendar-dates li {
-                font-size: 14px;
-                height: 35px;
-                width: 35px;
-                line-height: 35px;
-            }
-            
-            .calendar-header {
-                padding: 10px;
-            }
-            
-            .calendar-navigation span {
-                font-size: 20px;
-            }
-        }
-
-        /* Add background color for body */
-        body {
-            background-color: #000000;
-        }
-
-        /* Add text color for dashboard heading */
-        .dashboard {
-            color: white;
-        }
-    </style>
 </head>
 <body>
     <div class="body d-flex py-3 mt-5">
@@ -378,95 +62,88 @@ include 'db_connect.php';
             </div>
 
             <div class="col-md-12 ms-5">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                    </div>
-                </div>
-
                 <div class="card border-0 rounded-4"> 
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
-                        <h4 class="ms-2 mt-2 fw-bold" style="color: black;">Previous Customers</h4>
-                            <!-- Date Picker for Filtering -->
-                            <div class="mb-0">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
+                        <h2 class="fw-bold">Previous Customers</h2>
+                        <!-- Date Picker for Filtering -->
+                        <div class="mb-0">
                             <input type="date" id="appointmentDate" class="form-control" 
                             value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
                             oninput="filterAppointments()">
-                            </div>
+                        </div>
                     </div>
                     <div class="card-body"> 
-                        <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Service</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
-                                // Query to display previous customers for the logged-in barber
-                                $previousQuery = "SELECT 
-                                    a.appointmentID,
-                                    c.customerID,
-                                    CONCAT(c.firstName, ' ', c.lastName) AS fullName,
-                                    a.date,
-                                    a.timeSlot,
-                                    s.serviceName
-                                FROM 
-                                    appointment_tbl a
-                                LEFT JOIN 
-                                    customer_tbl c ON a.customerID = c.customerID
-                                LEFT JOIN 
-                                    barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
-                                LEFT JOIN 
-                                    service_tbl s ON a.serviceID = s.serviceID
-                                WHERE 
-                                    a.status = 'Completed'
-                                    AND ba.barberID = '$barberID'";
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>No.</td>
+                                        <td>Name</td>
+                                        <td>Date</td>
+                                        <td>Time</td>
+                                        <td>Service</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
+                                    // Query to display previous customers for the logged-in barber
+                                    $previousQuery = "SELECT 
+                                        a.appointmentID,
+                                        c.customerID,
+                                        CONCAT(c.firstName, ' ', c.lastName) AS fullName,
+                                        a.date,
+                                        a.timeSlot,
+                                        s.serviceName
+                                    FROM 
+                                        appointment_tbl a
+                                    LEFT JOIN 
+                                        customer_tbl c ON a.customerID = c.customerID
+                                    LEFT JOIN 
+                                        barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
+                                    LEFT JOIN 
+                                        service_tbl s ON a.serviceID = s.serviceID
+                                    WHERE 
+                                        a.status = 'Completed'
+                                        AND ba.barberID = '$barberID'";
 
-                                // Add date filtering if a date is selected
-                                if (!empty($selectedDate)) {
-                                    $previousQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
-                                }
-
-                                $previousQuery .= " ORDER BY a.timeSlot ASC";                                
-
-                                $previousResult = mysqli_query($conn, $previousQuery);
-
-                                // Check if there are any previous results
-                                if (mysqli_num_rows($previousResult) > 0) {
-                                    $no = 1;
-                                    while ($row = mysqli_fetch_assoc($previousResult)) {
-                                        $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';  // Use "Walk In" if no name exists
-                                        $timeSlot = $row['timeSlot'];
-                                        $date = $row['date'];  
-                                        $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
-                                        $formattedDate = date("F d, Y", strtotime($row['date']));
-                                        $isWalkIn = empty($row['customerID']) ? 'true' : 'false'; // Check if it's a walk-in
-                                        echo "<tr>
-                                                <td>{$no}</td>
-                                                <td>
-                                                <a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, {$isWalkIn})' 
-                                                data-bs-toggle='modal' data-bs-target='#appointmentModal' 
-                                                style='text-decoration: none; color: inherit;'>
-                                                    {$fullName}
-                                                </a>
-                                                </td>
-                                                <td>{$formattedDate}</td>
-                                                <td>{$timeSlot}</td>
-                                                <td>{$serviceName}</td>
-                                              </tr>";
-                                        $no++;
+                                    // Add date filtering if a date is selected
+                                    if (!empty($selectedDate)) {
+                                        $previousQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
                                     }
-                                } else {
-                                    echo "<tr><td colspan='5' class='text-center'>No Previous Customers</td></tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
+
+                                    $previousQuery .= " ORDER BY a.timeSlot ASC";                                
+
+                                    $previousResult = mysqli_query($conn, $previousQuery);
+
+                                    // Check if there are any previous results
+                                    if (mysqli_num_rows($previousResult) > 0) {
+                                        $counter = 1;
+                                        while ($row = mysqli_fetch_assoc($previousResult)) {
+                                            $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';
+                                            $timeSlot = $row['timeSlot'];
+                                            $date = $row['date'];  
+                                            $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';
+                                            $formattedDate = date("F d, Y", strtotime($row['date']));
+                                            $isWalkIn = empty($row['customerID']) ? 'true' : 'false';
+                                            echo "<tr>";
+                                            echo "<td>{$counter}</td>";
+                                            echo "<td><a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, {$isWalkIn})' 
+                                                    data-bs-toggle='modal' data-bs-target='#appointmentModal' 
+                                                    style='text-decoration: none; color: inherit;'>{$fullName}</a></td>";
+                                            echo "<td>{$formattedDate}</td>";
+                                            echo "<td>{$timeSlot}</td>";
+                                            echo "<td>{$serviceName}</td>";
+                                            echo "</tr>";
+                                            $counter++;
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='5' class='text-center'>No Previous Customers</td></tr>";
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

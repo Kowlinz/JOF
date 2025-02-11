@@ -375,9 +375,6 @@ $result = $stmt->get_result();
                                   data-time='" . $row['timeSlot'] . "' 
                                   data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button>";
                         }
-                        if ($payNowButton) {
-                            echo $payNowButton;
-                        }
                         echo "</td>";
                         echo "</tr>";
                     }

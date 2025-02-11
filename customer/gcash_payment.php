@@ -253,7 +253,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
                         <span style="color: red;">* </span>
                         <label class="form-label">Attach Payment Screenshot:</label>
                         <div class="upload-container">
-                            <input type="file" name="paymentProof" class="form-control" 
+                            <input type="file" name="paymentProof" required class="form-control" 
                                    accept="image/*"
                                    placeholder="Upload screenshot of your payment">
                             <small class="text-muted d-block mt-2">Accepted formats: JPG, PNG, JPEG</small>

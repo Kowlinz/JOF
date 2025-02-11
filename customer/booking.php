@@ -74,6 +74,12 @@ $addonsResult = $conn->query($addonsQuery);
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+        .time-slot-btn:disabled {
+            background-color: #d6d6d6 !important; /* Grey background */
+            color: #a0a0a0 !important; /* Grey text */
+            cursor: not-allowed !important;
+            opacity: 0.7 !important;
+        }
 
         .time-slot-btn.selected {
             background-color: black;
@@ -562,6 +568,26 @@ $addonsResult = $conn->query($addonsQuery);
                 </div>
 
                 <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        let dateInput = document.getElementById("date");
+                        let timeSlotButtons = document.querySelectorAll(".time-slot-btn");
+
+                        // Disable all time slot buttons initially
+                        timeSlotButtons.forEach(btn => btn.disabled = true);
+
+                        dateInput.addEventListener("change", function() {
+                            let selectedDate = dateInput.getAttribute("data-db-value");
+
+                            if (selectedDate) {
+                                // Enable time slot buttons if a date is selected
+                                timeSlotButtons.forEach(btn => btn.disabled = false);
+                            } else {
+                                // Disable them again if the date is cleared
+                                timeSlotButtons.forEach(btn => btn.disabled = true);
+                            }
+                        });
+                    });
+
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function (event) {
                         event.preventDefault(); // Prevent form from submitting immediately
@@ -570,7 +596,18 @@ $addonsResult = $conn->query($addonsQuery);
                         const dbDate = dateField.getAttribute('data-db-value');
 
                         if (dbDate) {
-                            dateField.value = dbDate; // Ensure correct format for submission
+                            // Format date for UI display
+                            const formattedDate = new Date(dbDate).toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            });
+
+                            // Show formatted date in input field
+                            dateField.value = formattedDate;
+
+                            // Store correct format for submission
+                            dateField.setAttribute("data-db-value", dbDate);
                         }
 
                         // Get form values

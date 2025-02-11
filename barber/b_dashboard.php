@@ -138,310 +138,12 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/table.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/barber.css">
     <link rel="icon" href="../css/images/favicon.ico">
     <title>Barber Dashboard</title>
-    <style>
-        body {
-            background-color: #000000;
-        }
-        .dashboard {
-            color: white;
-        }
-        /* Sidebar styling */
-        .sidebar {
-            background-color: #F3CD32 !important;
-            min-height: 100vh;
-        }
-        .list-group-item {
-            background-color: transparent !important;
-            border: none !important;
-            color: black !important;
-            border-radius: 10px !important;
-            margin-bottom: 5px;
-        }
-        .list-group-item:hover {
-            background-color: rgba(0, 0, 0, 0.1) !important;
-        }
-        .list-group-item.active {
-            background-color: black !important;
-            color: #F3CD32 !important;
-            border-radius: 10px !important;
-        }
-        .list-group-item.active i,
-        .list-group-item.active span {
-            color: #F3CD32 !important;
-        }
-        .alert {
-            background-color: white !important;
-            border-radius: 15px !important;
-            padding: 20px !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .alert-warning {
-            background-color: white !important;
-            border: none !important;
-            color: black !important;
-        }
-        .stat-icon {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-        .stat-icon.pending { color: #FFDE59; }
-        .stat-icon.completed { color: #FFDE59; }
-        .stat-icon.revenue { color: #FFDE59; }
-        .h5 { 
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        .h6 {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            margin: 0;
-        }
-        /* Logo and Avatar container styling */
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
-        }
-        .avatar-container .logo {
-            margin-bottom: 30px;
-        }
-        .avatar-container img.avatar {
-            display: block;
-            margin: 0 auto;
-        }
-        .avatar-container h5 {
-            margin-top: 10px;
-        }
-        .card {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .card-header {
-            border-bottom: 1px solid #eee;
-        }
-        .card-header h4 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #000;
-        }
-        .table {
-            margin-bottom: 0;
-        }
-        .table thead th {
-            border-bottom: 1px solid #eee;
-            color: #000;
-            font-weight: 600;
-            padding: 12px 8px;
-        }
-        .table tbody td {
-            padding: 12px 8px;
-            border-bottom: 1px solid #eee;
-            color: #333;
-        }
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        .table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-        /* Mobile toggle button styling */
-        .mobile-toggle {
-            position: fixed;
-            top: 25px;
-            left: 20px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: none;
-            color: #F3CD32;
-            font-size: 24px;
-        }
 
-        /* Show toggle button only on smaller screens */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-        }
-
-        /* Adjust main content area to account for sidebar */
-        .container-xxl {
-            padding-left: 260px; /* Width of sidebar + some padding */
-            width: 100%;
-            transition: padding-left 0.3s ease;
-        }
-
-        /* Sidebar positioning */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            z-index: 999;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .container-xxl {
-                padding-left: 15px; /* Reset padding on mobile */
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-        }
-
-        /* Adjust margin for content */
-        @media (min-width: 992px) and (max-width: 1680px) {
-            .ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            .dashboard.mb-5.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Stats cards adjustments */
-            .row.g-3.mb-3 {
-                margin-left: 0 !important;
-            }
-            
-            /* Table section adjustments */
-            .row.g-3.mb-3.ms-5 {
-                margin-left: 0 !important;
-            }
-            
-            /* Card adjustments */
-            .card {
-                margin-right: 15px;
-            }
-            
-            /* Alert adjustments */
-            .alert {
-                margin-right: 15px;
-            }
-        }
-
-        /* Update mobile styles */
-        @media (max-width: 991.98px) {
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 20px;
-            }
-            
-            .sidebar {
-                display: none;
-                background-color: #F3CD32 !important;
-            }
-            
-            .sidebar.show {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 240px;
-                z-index: 999;
-            }
-            
-            /* Adjust table container on mobile */
-            .table-responsive {
-                margin: 0;
-                padding: 0;
-            }
-            
-            .card {
-                margin: 0 10px;
-            }
-            
-            /* Adjust alert on mobile */
-            .alert {
-                margin: 0 10px 15px 10px;
-            }
-            
-            /* Adjust stats card spacing */
-            .row.g-3.mb-3 {
-                margin: 0 0 20px 0;
-            }
-            
-            /* Ensure proper spacing for tables */
-            .row.g-3.mb-3.ms-5 {
-                margin: 0 !important;
-            }
-            
-            /* Adjust text sizes for better mobile display */
-            .h5 {
-                font-size: 14px;
-            }
-            
-            .h6 {
-                font-size: 20px;
-            }
-            
-            /* Adjust stat icons on mobile */
-            .stat-icon {
-                font-size: 20px;
-                margin-right: 10px;
-            }
-        }
-
-        /* Responsive table styles */
-        @media screen and (max-width: 768px) {
-            .table {
-                white-space: nowrap;
-            }
-            
-            .table th, 
-            .table td {
-                padding: 8px !important;
-            }
-            
-            .card-body {
-                padding: 10px;
-            }
-            
-            .card-header {
-                padding: 12px;
-            }
-            
-            .card-header h4 {
-                font-size: 1rem;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="body d-flex py-3 mt-5">
@@ -454,36 +156,42 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
             </div>
             <div class="row g-3 mb-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 ms-5">
                 <div class="col">
-                    <div class="alert-warning alert mb-0">
+                    <div class="alert mb-0">
                         <div class="d-flex align-items-center">
-                            <div><i class="fa-solid fa-users fa-lg"></i></div>
-                            <div class="flex-fill ms-3 text-truncate">
-                                <div class="h5 mb-0 mt-2">Pending Customers</div>
-                                <div class="h5 mb-0"><?php echo $pendingCount; ?></div> <!-- Display Pending Count -->
+                            <div class="stat-icon pending">
+                                <i class="fa-solid fa-clock fa-fw"></i>
+                            </div>
+                            <div class="flex-fill">
+                                <div class="h5 pending-label">Pending Customers</div>
+                                <div class="h6"><?php echo $pendingCount; ?></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col">
-                    <div class="alert-warning alert mb-0">
+                    <div class="alert mb-0">
                         <div class="d-flex align-items-center">
-                            <div><i class="fa-solid fa-circle-check fa-lg"></i></div>
-                            <div class="flex-fill ms-3 text-truncate">
-                                <div class="h5 mb-0 mt-2">Completed</div>
-                                <div class="h5 mb-0"><?php echo $completedCount; ?></div> <!-- Display Completed Count -->
+                            <div class="stat-icon completed">
+                                <i class="fa-solid fa-check fa-fw"></i>
+                            </div>
+                            <div class="flex-fill">
+                                <div class="h5">Completed</div>
+                                <div class="h6"><?php echo $completedCount; ?></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col">
-                    <div class="alert-warning alert mb-0">
+                    <div class="alert mb-0">
                         <div class="d-flex align-items-center">
-                            <div><i class="fa-solid fa-peso-sign fa-lg" aria-hidden="true"></i></div>
-                            <div class="flex-fill ms-3 text-truncate">
-                                <div class="h5 mb-0 mt-2">Total Income</div>
-                                <div class="h5 mb-0"><?php echo $totalIncome; ?></div> <!-- Display Total Income -->
+                            <div class="stat-icon revenue">
+                                <i class="fa-solid fa-peso-sign fa-fw"></i>
+                            </div>
+                            <div class="flex-fill">
+                                <div class="h5">Total Income</div>
+                                <div class="h6">₱<?php echo $totalIncome; ?></div>
                             </div>
                         </div>
                     </div>
@@ -495,42 +203,43 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                 <div class="col-md-12">
                     <div class="card border-0 rounded-4">
                         <div class="card-header py-3 bg-white">
-                            <h4 class="mb-0">Upcoming Customers Today</h4>
+                            <h2 class="fw-bold">Upcoming Customers Today</h2>
                         </div>
                         <div class="card-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Time</th>
-                                        <th>Service</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    // Check if there are any upcoming results
-                                    if (mysqli_num_rows($upcomingResult) > 0) {
-                                        $no = 1;
-                                        while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                                            $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';  // Use "Admin Booking" if no name exists
-                                            $timeSlot = $row['timeSlot'];
-                                            $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';  // Ensure service name is set
-                                        $counter = 1;
-                                            echo "<tr>
-                                                    <td>{$no}</td>
-                                                    <td>{$fullName}</td>
-                                                    <td>{$timeSlot}</td>
-                                                    <td>{$serviceName}</td>
-                                                  </tr>";
-                                            $no++;
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <td>#</td>
+                                            <td>Name</td>
+                                            <td>Time</td>
+                                            <td>Service</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Check if there are any upcoming results
+                                        if (mysqli_num_rows($upcomingResult) > 0) {
+                                            $counter = 1;
+                                            while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                                $fullName = !empty($row['fullName']) ? $row['fullName'] : 'Walk In';
+                                                $timeSlot = $row['timeSlot'];
+                                                $serviceName = !empty($row['serviceName']) ? $row['serviceName'] : 'No Service';
+                                                echo "<tr>";
+                                                echo "<td>{$counter}</td>";
+                                                echo "<td>{$fullName}</td>";
+                                                echo "<td>{$timeSlot}</td>";
+                                                echo "<td>{$serviceName}</td>";
+                                                echo "</tr>";
+                                                $counter++;
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='4' class='text-center'>No upcoming appointments found.</td></tr>";
                                         }
-                                    } else {
-                                        echo "<tr><td colspan='4' class='text-center'>No Upcoming Customers</td></tr>";
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -539,20 +248,21 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                 <div class="col-md-12">
                     <div class="card border-0 rounded-4">
                         <div class="card-header py-3 bg-white">
-                            <h4 class="mb-0">Previous Customers Today</h4>
+                            <h2 class="fw-bold">Previous Customers Today</h2>
                         </div>
                         <div class="card-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Time</th>
-                                        <th>Service</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <td>#</td>
+                                            <td>Name</td>
+                                            <td>Time</td>
+                                            <td>Service</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
                                         $counter = 1;
 
                                         if ($previousResult && mysqli_num_rows($previousResult) > 0) {
@@ -568,9 +278,10 @@ $totalIncome = !empty($totalIncome) ? number_format($totalIncome, 2) : '0.00';  
                                         } else {
                                             echo "<tr><td colspan='4' class='text-center'>No previous appointments found.</td></tr>";
                                         }
-                                    ?>
-                                </tbody>
-                            </table>
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

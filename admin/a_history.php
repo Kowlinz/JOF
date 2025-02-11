@@ -206,7 +206,7 @@
                                                 if ($cancelledResult && mysqli_num_rows($cancelledResult) > 0) {
                                                     while ($row = mysqli_fetch_assoc($cancelledResult)) {
                                                         $formattedDate = date("F d, Y", strtotime($row['date']));
-                                                        // Check if firstName or lastName is null (for admin bookings)
+                                                        // Check if firstName or lastName is null (for walk in)
                                                         $firstName = isset($row['firstName']) ? $row['firstName'] : 'Walk';
                                                         $lastName = isset($row['lastName']) ? $row['lastName'] : 'In';
                                                         $fullName = "{$firstName} {$lastName}";

@@ -362,7 +362,7 @@ function showAppointmentDetails(appointmentID, isWalkIn) {
                     <input type="hidden" name="status" value="Completed">
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check me-2"></i>Mark as Done
+                            <i class="fas fa-check me-2"></i>Mark as Complete
                         </button>
                         <button type="button" class="btn btn-danger" onclick="openCancelModal()">
                             <i class="fas fa-times me-2"></i>Cancel Appointment

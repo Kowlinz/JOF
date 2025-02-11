@@ -27,7 +27,7 @@ $addonsResult = $conn->query($addonsQuery);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jack of Fades | Booking</title>
+    <title>Jack of Fades | Walk-in</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="icon" href="../css/images/favicon.ico">
     <link rel="stylesheet" href="../css/style1.css">
@@ -359,7 +359,7 @@ $addonsResult = $conn->query($addonsQuery);
                 </div>
             </div>
             <div class="col-12 text-center mt-4 mb-5">
-                <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
+                <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Add Walk-in</button>
             </div>
         </form>
 

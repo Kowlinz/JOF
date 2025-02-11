@@ -95,7 +95,7 @@
 
                                 mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash, $Availability);
                                 mysqli_stmt_execute($stmt);
-                                echo "<div class = 'alert alert-success'> You are registered succesfully! </div>";
+                                echo "<div class = 'alert alert-success'> Barber registered succesfully! </div>";
                             } else {
                                 die("Something went wrong!");
                             }

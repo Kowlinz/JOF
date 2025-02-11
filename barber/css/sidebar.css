@@ -1,0 +1,125 @@
+/* Import Lexend font */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
+/* Sidebar styling */
+.sidebar {
+    background-color: #F3CD32 !important;
+    min-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    z-index: 999;
+    font-family: 'Lexend', sans-serif !important;
+}
+
+.sidebar .list-group-item {
+    background-color: transparent !important;
+    border: none !important;
+    color: black !important;
+    border-radius: 10px !important;
+    margin-bottom: 5px;
+    display: flex !important;
+    align-items: center !important;
+    font-family: 'Lexend', sans-serif !important;
+    font-weight: 400;
+}
+
+.list-group-item > div {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.list-group-item i {
+    margin-right: 0.75rem;
+}
+
+.list-group-item:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.list-group-item.active {
+    background-color: black !important;
+    color: #F3CD32 !important;
+    border-radius: 10px !important;
+}
+
+.list-group-item.active i,
+.list-group-item.active span {
+    color: #F3CD32 !important;
+}
+
+/* Logo and Avatar container styling */
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.avatar-container .logo {
+    margin-bottom: 20px;
+}
+
+.avatar-container img.avatar {
+    display: block;
+    margin: 0 auto;
+}
+
+.avatar-container h5 {
+    margin-top: 10px;
+    text-align: center;
+    font-family: 'Lexend', sans-serif !important;
+    font-weight: 500;
+}
+
+/* Mobile toggle button styling */
+.mobile-toggle {
+    position: fixed;
+    top: 25px;
+    left: 20px;
+    z-index: 1000;
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: none;
+    color: #F3CD32;
+    font-size: 24px;
+}
+
+/* Show toggle button only on smaller screens */
+@media (max-width: 991.98px) {
+    .mobile-toggle {
+        display: block;
+        position: fixed;
+        top: 25px;
+        left: 20px;
+    }
+    
+    .sidebar {
+        display: none;
+        background-color: #F3CD32 !important;
+    }
+    
+    .sidebar.show {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 240px;
+        z-index: 999;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+}

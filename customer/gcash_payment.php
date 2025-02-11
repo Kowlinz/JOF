@@ -226,7 +226,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
             <div class="qr-code-container text-center">
                 <img src="../customer/css/images/gcash_qr.JPG" alt="GCash QR Code" class="img-fluid">
                 <div class="mt-3">
-                    <small class="text-warning">Note: Downpayment is non-refundable</small>
+                    <small class="text-warning">Note: Payment is non-refundable</small>
                 </div>
             </div>
 
@@ -276,4 +276,3 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-?>

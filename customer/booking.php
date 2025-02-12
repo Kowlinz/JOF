@@ -74,6 +74,7 @@ $addonsResult = $conn->query($addonsQuery);
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         .time-slot-btn:disabled {
             background-color: #d6d6d6 !important; /* Grey background */
             color: #a0a0a0 !important; /* Grey text */
@@ -740,9 +741,7 @@ $addonsResult = $conn->query($addonsQuery);
                     });
 
 
-                                        function selectTimeSlot(time) {
-                        console.log("Attempting to select time slot:", time); // Debugging log
-
+                    function selectTimeSlot(time) {
                         const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
                         
                         if (btn && btn.classList.contains('booked')) {

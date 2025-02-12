@@ -392,46 +392,25 @@ include 'admin/landing_text.php';
 		<div class="swiper">
 			<!-- Additional required wrapper -->
 			<div class="swiper-wrapper">
-				<!-- Slides -->
-				<div class="swiper-slide">
-					<div class="carousel-slide">
-						<img src="css/images/portraits/jake.jpg" 
-							 alt="Barber working on client's hair"
-							 class="carousel-image">
-						<div class="carousel-content">
-							<h3 class="carousel-title">JAKE CLARENCE</h3>
-							<p class="carousel-description">
-							Skilled barber with expertise in Jack's Signature styles. His specialties include the Burst Fade and Taper Fade, leaving each client with a precise and stylish look.
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="swiper-slide">
-					<div class="carousel-slide">
-						<img src="css/images/portraits/jhun.jpg" 
-							 alt="Barber shop interior"
-							 class="carousel-image">
-						<div class="carousel-content">
-							<h3 class="carousel-title">JHUN</h3>
-							<p class="carousel-description">
-							Talented barber with expertise in Jack's Haircut, Signature, and Premium Perm. He specializes in Fades and the Mullet style, providing each client with a unique and polished appearance.
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="swiper-slide">
-					<div class="carousel-slide">
-						<img src="css/images/portraits/joshua.jpg" 
-							 alt="Barber shop interior"
-							 class="carousel-image">
-						<div class="carousel-content">
-							<h3 class="carousel-title">JOSHUA</h3>
-							<p class="carousel-description">
-							A stylist with expertise in Jack's Haircut, Signature, and Facial services. He specializes in Fades and Modern Haircuts, delivering a fresh and contemporary look to each client.
-							</p>
-						</div>
-					</div>
-				</div>
+				<?php
+				include 'admin/db_connect.php';
+				$carouselQuery = "SELECT * FROM barberpic_tbl";
+				$carouselResult = mysqli_query($conn, $carouselQuery);
+				while ($row = mysqli_fetch_assoc($carouselResult)) {
+					echo '<div class="swiper-slide">
+							<div class="carousel-slide">
+								<img src="data:image/jpeg;base64,' . base64_encode($row['barberPic']) . '" 
+									 alt="' . htmlspecialchars($row['barberName']) . '"
+									 class="carousel-image">
+								<div class="carousel-content">
+									<h3 class="carousel-title">' . htmlspecialchars($row['barberName']) . '</h3>
+									<p class="carousel-description">' . htmlspecialchars($row['barbDesc']) . '</p>
+								</div>
+							</div>
+						</div>';
+				}
+				mysqli_close($conn);
+				?>
 			</div>
 			<!-- Navigation buttons -->
 			<div class="swiper-button-prev"></div>

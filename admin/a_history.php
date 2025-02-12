@@ -285,21 +285,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
-    <script src="js/calendar.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let appointmentDates = <?php echo json_encode($appointmentDates); ?>;
-            
-            document.querySelectorAll('.calendar-day').forEach(day => {
-                let date = day.getAttribute('data-date'); // Assuming your calendar days have `data-date`
-                if (appointmentDates.includes(date)) {
-                    day.innerHTML += `<span class="badge bg-danger ms-1">!</span>`;
-                }
-            });
-        });
-    </script>
-
+    
     <script> // Filtering previous appointments
     let timeout = null;
 

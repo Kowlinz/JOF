@@ -1,0 +1,170 @@
+body {
+    font-family: 'Lexend', sans-serif;
+}
+
+/* Navbar animation */
+.header {
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: navSlideDown 0.8s ease forwards;
+    position: relative;
+    z-index: 999;
+}
+
+@keyframes navSlideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Adjust other animations to start after navbar */
+.fade-in {
+    animation-delay: 0.3s; /* Start after navbar animation */
+}
+
+.container.fade-in:nth-child(3) {
+    animation-delay: 0.5s; /* Further delay for container */
+}
+
+/* Gallery item styles */
+.gallery-item {
+    opacity: 0; /* Start hidden */
+    transform: translateY(20px); /* Start slightly below */
+    animation: fadeInItem 0.5s ease forwards; /* Fade in animation */
+}
+
+@keyframes fadeInItem {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure items are fully visible when displayed */
+.gallery-item.show {
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Reset translation */
+}
+
+/* Services section styling */
+.services-section {
+    padding-top: 0;
+}
+
+.services-container {
+    margin-bottom: 30px;
+}
+
+.haircuts-header {
+    margin-bottom: 15px;
+}
+
+/* Container adjustments */
+.container.fade-in {
+    margin-bottom: 0;
+}
+
+/* Table container adjustments */
+.card-body {
+    padding: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .services-section {
+        padding-top: 15px;
+    }
+
+    .haircuts-header {
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .services-container {
+        margin-top: 0;
+        padding: 0 15px;
+    }
+
+    #gallery-container {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .services-section {
+        padding-top: 10px;
+    }
+
+    .haircuts-header {
+        font-size: 24px;
+    }
+
+    .services-container {
+        padding: 0 10px;
+    }
+}
+
+/* Gallery layout for tablets */
+@media (min-width: 576px) and (max-width: 920px) {
+    #gallery-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    #gallery-container > div {
+        width: 80%;
+        max-width: 500px;
+        flex: 0 0 auto;
+    }
+    .gallery-item {
+        width: 100%;
+        margin: 0 auto;
+    }
+    .gallery-item img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+}
+
+/* Mobile menu styles */
+.menu-dropdown {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100vh;
+    background-color: #000000;
+    z-index: 1000;
+    transition: 0.3s ease;
+}
+
+.menu-dropdown.show {
+    right: 0;
+}
+
+.menu-btn {
+    position: relative;
+    z-index: 1001;
+    transition: opacity 0.3s ease;
+}
+
+/* Hide menu button when dropdown is shown */
+body:has(.menu-dropdown.show) .menu-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.menu-header {
+    position: relative;
+    z-index: 1001;
+} 

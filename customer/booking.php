@@ -589,6 +589,8 @@ $addonsResult = $conn->query($addonsQuery);
                         });
                     });
 
+                    
+
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function (event) {
                         event.preventDefault(); // Prevent form from submitting immediately
@@ -597,20 +599,9 @@ $addonsResult = $conn->query($addonsQuery);
                         const dbDate = dateField.getAttribute('data-db-value');
 
                         if (dbDate) {
-                            // Format date for UI display
-                            const formattedDate = new Date(dbDate).toLocaleDateString('en-US', {
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric'
-                            });
-
-                            // Show formatted date in input field
-                            dateField.value = formattedDate;
-
-                            // Store correct format for submission
-                            dateField.setAttribute("data-db-value", dbDate);
+                            dateField.value = dbDate; // Ensure correct format for submission
                         }
-
+                        
                         // Get form values
                         const date = dateField.value;
                         const timeSlot = document.getElementById('selectedTimeSlot').value;

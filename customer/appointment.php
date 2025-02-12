@@ -243,6 +243,84 @@ $result = $stmt->get_result();
         .toast {
             min-width: 300px;
         }
+
+        /* Ensure header stays on top */
+        .header {
+            position: relative;
+            z-index: 1000;
+            background-color: white;
+        }
+
+        /* Menu dropdown positioning and styling */
+        .menu-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000000; /* Changed to black */
+            z-index: 1001;
+            display: none;
+            padding: 20px;
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        /* Style the menu links for better visibility on black background */
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .menu-link {
+            color: #FFDE59; /* Yellow color to match theme */
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .menu-link:hover {
+            color: #ffffff; /* White on hover */
+        }
+
+        /* Style the close button */
+        .menu-close {
+            color: #FFDE59;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .menu-close:hover {
+            color: #ffffff;
+        }
+
+        /* Adjust main content spacing */
+        @media (max-width: 991px) {
+            .appointments-header-wrapper {
+                margin-top: 60px; /* Increased from 20px */
+                position: relative;
+                z-index: 1;
+            }
+
+            .appointments-container {
+                position: relative;
+                z-index: 1;
+                padding: 0 15px; /* Added padding for better mobile spacing */
+            }
+
+            /* Add some bottom margin to the header */
+            .appointments-header {
+                margin-bottom: 30px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -314,7 +392,7 @@ $result = $stmt->get_result();
             </nav>
         </div>
         <div class="appointments-header-wrapper">
-            <h1 class="appointments-header fade-in">MY APPOINTMENTS</h1>
+            <h1 class="appointments-header fade-in">My Appointments</h1>
         </div>
 
         <div class="appointments-container">

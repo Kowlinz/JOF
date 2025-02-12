@@ -57,6 +57,13 @@ $addonsResult = $conn->query($addonsQuery);
             transition: background-color 0.3s ease;
         }
 
+        .time-slot-btn:disabled {
+            background-color: #d6d6d6 !important; /* Grey background */
+            color: #a0a0a0 !important; /* Grey text */
+            cursor: not-allowed !important;
+            opacity: 0.7 !important;
+        }
+
         .time-slot-btn.selected {
             background-color: black;
             color: #FFDE59;
@@ -121,40 +128,64 @@ $addonsResult = $conn->query($addonsQuery);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: none;
+            border: 2px solid transparent;
             box-shadow: none !important;
             text-shadow: none !important;
             color: #ffffff;
         }
 
         /* Add specific styling for service items in all modals */
-        #servicesModal .service-item {
+        #servicesModal .service-item,
+        #haircutsModal .service-item,
+        #addonsModal .service-item {
             background-color: transparent;
             border: none;
             box-shadow: none !important;
         }
 
         .service-item:hover {
-            background-color: transparent;
+            background-color: rgba(255, 222, 89, 0.1);
             color: #FFDE59;
+            border-color: #FFDE59;
             box-shadow: none !important;
             transform: translateY(-2px);
         }
 
         .service-item.selected {
-            background-color: #FFDE59;
-            color: #000000;
-            border: none;
+            background-color: rgba(255, 222, 89, 0.15);
+            color: #FFDE59;
+            border-color: #FFDE59;
             box-shadow: none !important;
+        }
+
+        /* Add these new rules for consistent styling across all modals */
+        #servicesModal .service-item.selected,
+        #haircutsModal .service-item.selected,
+        #addonsModal .service-item.selected,
+        #paymentModal .service-item.selected {
+            background-color: rgba(255, 222, 89, 0.15);
+            color: #FFDE59;
+            border-color: #FFDE59;
+        }
+
+        #servicesModal .service-item:hover,
+        #haircutsModal .service-item:hover,
+        #addonsModal .service-item:hover,
+        #paymentModal .service-item:hover {
+            background-color: rgba(255, 222, 89, 0.1);
+            color: #FFDE59;
+            border-color: #FFDE59;
         }
 
         /* Add spacing between service name and price */
         .service-name {
             margin-bottom: 4px;
+            font-weight: 500;
         }
 
         .service-price {
             font-weight: bold;
+            opacity: 0.9;
         }
 
         .btn-confirm {
@@ -310,6 +341,16 @@ $addonsResult = $conn->query($addonsQuery);
         h2.fade-in {
             animation-delay: 0.4s; /* Delay for heading */
         }
+
+        #paymentOption {
+            text-align: center;
+        }
+
+        /* Add transition for smoother hover effects */
+        .service-item,
+        .service-item * {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -411,6 +452,26 @@ $addonsResult = $conn->query($addonsQuery);
         </div>
 
         <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                            let dateInput = document.getElementById("date");
+                            let timeSlotButtons = document.querySelectorAll(".time-slot-btn");
+
+                            // Disable all time slot buttons initially
+                            timeSlotButtons.forEach(btn => btn.disabled = true);
+
+                            dateInput.addEventListener("change", function() {
+                                let selectedDate = dateInput.getAttribute("data-db-value");
+
+                                if (selectedDate) {
+                                    // Enable time slot buttons if a date is selected
+                                    timeSlotButtons.forEach(btn => btn.disabled = false);
+                                } else {
+                                    // Disable them again if the date is cleared
+                                    timeSlotButtons.forEach(btn => btn.disabled = true);
+                                }
+                            });
+                        });
+
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function (event) {
                         event.preventDefault(); // Prevent form from submitting immediately

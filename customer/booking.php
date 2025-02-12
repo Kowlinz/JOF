@@ -74,6 +74,7 @@ $addonsResult = $conn->query($addonsQuery);
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         .time-slot-btn:disabled {
             background-color: #d6d6d6 !important; /* Grey background */
             color: #a0a0a0 !important; /* Grey text */
@@ -588,6 +589,8 @@ $addonsResult = $conn->query($addonsQuery);
                         });
                     });
 
+                    
+
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function (event) {
                         event.preventDefault(); // Prevent form from submitting immediately
@@ -596,20 +599,9 @@ $addonsResult = $conn->query($addonsQuery);
                         const dbDate = dateField.getAttribute('data-db-value');
 
                         if (dbDate) {
-                            // Format date for UI display
-                            const formattedDate = new Date(dbDate).toLocaleDateString('en-US', {
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric'
-                            });
-
-                            // Show formatted date in input field
-                            dateField.value = formattedDate;
-
-                            // Store correct format for submission
-                            dateField.setAttribute("data-db-value", dbDate);
+                            dateField.value = dbDate; // Ensure correct format for submission
                         }
-
+                        
                         // Get form values
                         const date = dateField.value;
                         const timeSlot = document.getElementById('selectedTimeSlot').value;
@@ -740,9 +732,7 @@ $addonsResult = $conn->query($addonsQuery);
                     });
 
 
-                                        function selectTimeSlot(time) {
-                        console.log("Attempting to select time slot:", time); // Debugging log
-
+                    function selectTimeSlot(time) {
                         const btn = document.querySelector(`.time-slot-btn[data-time="${time}"]`);
                         
                         if (btn && btn.classList.contains('booked')) {

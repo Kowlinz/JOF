@@ -1,72 +1,34 @@
 <?php
 session_start();
 if (!isset($_SESSION["user"])) {
-    die(json_encode(['success' => false, 'message' => 'Not authorized']));
+    die(json_encode(['success' => false, 'message' => 'Unauthorized access']));
 }
 
+include 'db_connect.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_text') {
-    $type = $_POST['type'];
-    $text = $_POST['text'];
-    
-    // Validate the type
-    if (!in_array($type, ['welcome', 'heading', 'subheading'])) {
-        die(json_encode(['success' => false, 'message' => 'Invalid text type']));
-    }
-    
-    // Read the current file content
-    $filePath = 'landing_text.php';
-    
-    if (!file_exists($filePath)) {
-        // Create the file if it doesn't exist
-        $initialContent = "<?php\n" .
-            "\$welcomeText = \"Welcome to JOF Barbershop\";\n" .
-            "\$headingText = \"Your Style, Our Passion\";\n" .
-            "\$subheadingText = \"Professional Haircuts and Grooming Services\";\n";
-        file_put_contents($filePath, $initialContent);
-    }
-    
-    // Read the current content
-    $content = file_get_contents($filePath);
-    
-    if ($content === false) {
-        die(json_encode(['success' => false, 'message' => 'Could not read configuration file']));
-    }
-    
-    // Escape special characters in the text
-    $escapedText = str_replace('"', '\"', $text);
-    
-    // Update the appropriate variable using a more reliable pattern
-    switch ($type) {
-        case 'welcome':
-            $pattern = '/\$welcomeText\s*=\s*"[^"]*"/';
-            $replacement = '$welcomeText = "' . $escapedText . '"';
-            break;
-        case 'heading':
-            $pattern = '/\$headingText\s*=\s*"[^"]*"/';
-            $replacement = '$headingText = "' . $escapedText . '"';
-            break;
-        case 'subheading':
-            $pattern = '/\$subheadingText\s*=\s*"[^"]*"/';
-            $replacement = '$subheadingText = "' . $escapedText . '"';
-            break;
-    }
-    
-    $newContent = preg_replace($pattern, $replacement, $content);
-    
-    if ($newContent === null) {
-        die(json_encode(['success' => false, 'message' => 'Error processing text replacement']));
-    }
-    
-    // Write the updated content back to the file
-    if (file_put_contents($filePath, $newContent) !== false) {
-        // Clear the PHP opcode cache to ensure the changes are reflected immediately
-        if (function_exists('opcache_invalidate')) {
-            opcache_invalidate($filePath, true);
+    try {
+        // Get the text values from POST
+        $welcomeText = $_POST['welcomeText'];
+        $headingText = $_POST['headingText'];
+        $subheadingText = $_POST['subheadingText'];
+
+        // Update the text file
+        $content = "<?php\n";
+        $content .= "\$welcomeText = " . var_export($welcomeText, true) . ";\n";
+        $content .= "\$headingText = " . var_export($headingText, true) . ";\n";
+        $content .= "\$subheadingText = " . var_export($subheadingText, true) . ";\n";
+        $content .= "?>";
+
+        // Write to landing_text.php
+        if (file_put_contents('landing_text.php', $content)) {
+            echo json_encode(['success' => true]);
+        } else {
+            throw new Exception('Failed to write to file');
         }
-        
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to update text']);
+    } catch (Exception $e) {
+        error_log("Error in update_landing_text.php: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);

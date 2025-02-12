@@ -167,7 +167,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <p class="text-center mt-2"><?php echo $row['hcName']; ?></p>
+            <div class="haircut-name mt-2">
+                <span class="text-center d-block"><?php echo $row['hcName']; ?></span>
+                <input type="text" class="form-control text-center haircut-name-edit" 
+                       value="<?php echo $row['hcName']; ?>" 
+                       style="display: none;"
+                       data-original="<?php echo $row['hcName']; ?>"
+                       data-id="<?php echo $row['hcID']; ?>">
+            </div>
         </div>
         <?php
     }
@@ -208,13 +215,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             </div>
             <!-- Add Photo Button -->
             <div class="ms-5">
-                <button class="btn btn-warning" id="addPhotoBtn">
-                    + Add Haircut
-                </button>
-
-                <button class="btn btn-warning ms-2" id="editGalleryBtn">
-                    Edit
-                </button>
+                <div class="d-flex justify-content-start mb-3 gap-2">
+                    <button class="btn btn-warning" id="addPhotoBtn">
+                        + Add Haircut
+                    </button>
+                    <button class="btn btn-warning ms-1" id="editGalleryBtn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-success" id="confirmGalleryBtn" style="display: none;">
+                        <i class="fas fa-check"></i> Confirm
+                    </button>
+                </div>
 
                 <div class="haircut-gallery mt-1">
                     <ul class="nav nav-tabs">
@@ -242,16 +253,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
-                                <p class="text-center mt-2"><?php echo $row['hcName']; ?></p>
+                                <div class="haircut-name mt-2">
+                                    <span class="text-center d-block"><?php echo $row['hcName']; ?></span>
+                                    <input type="text" class="form-control text-center haircut-name-edit" 
+                                           value="<?php echo $row['hcName']; ?>" 
+                                           style="display: none;"
+                                           data-original="<?php echo $row['hcName']; ?>"
+                                           data-id="<?php echo $row['hcID']; ?>">
+                                </div>
                             </div>
                             <?php
                         }
                         ?>
                     </div>
-                    
-                    <button class="btn btn-success confirm-btn mt-3" id="confirmGalleryEditBtn" style="display: none;">
-                        Confirm
-                    </button>
                 </div>
 
                 <h1 class="dashboard mb-3">Edit Services</h1>
@@ -265,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
                         <!-- Edit Services Button -->
                         <button class="btn btn-warning ms-2" id="editServicesBtn">
-                            Edit
+                            <i class="fas fa-edit"></i> Edit
                         </button>
                     </div>
                 </div>
@@ -293,7 +307,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                             ?>
                                             <tr>
                                                 <td><?php echo $row['serviceName']; ?></td>
-                                                <td><?php echo $row['serviceDesc']; ?></td>
+                                                <td><?php echo (strlen($row['serviceDesc']) > 40 ? htmlspecialchars(substr($row['serviceDesc'], 0, 40)) . "..." : htmlspecialchars($row['serviceDesc'])); ?></td>
                                                 <td>₱<?php echo $row['servicePrice']; ?></td>
                                                 <td class="actions-column" style="display: none;">
                                                     <button class="btn btn-danger btn-sm delete-service-btn" data-id="<?php echo $row['serviceID']; ?>">
@@ -316,16 +330,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-success mt-3" id="confirmServicesEditBtn" style="display: none;">
-                        Confirm
-                    </button>
-                </div>
-
-                <!-- Confirm Button -->
-                <div class="text-center mb-3">
-                    <button class="btn btn-warning" id="confirmEditBtn" style="display: none;">
-                        Confirm
-                    </button>
                 </div>
 
                 <!-- Add Service Modal -->
@@ -398,7 +402,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             + Add Add-on
                         </button>
                         <button class="btn btn-warning ms-2" id="editAddonsBtn">
-                            Edit
+                            <i class="fas fa-edit"></i> Edit
                         </button>
                     </div>
                 </div>
@@ -427,7 +431,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                                             ?>
                                             <tr>
                                                 <td><?php echo $row['addonName']; ?></td>
-                                                <td><?php echo $row['addonDesc']; ?></td>
+                                                <td><?php echo (strlen($row['addonDesc']) > 40 ? htmlspecialchars(substr($row['addonDesc'], 0, 40)) . "..." : htmlspecialchars($row['addonDesc'])); ?></td>
                                                 <td>₱<?php echo $row['addonPrice']; ?></td>
                                                 <td class="actions-column" style="display: none;">
                                                     <button class="btn btn-danger btn-sm delete-addon-btn" data-id="<?php echo $row['addonID']; ?>">
@@ -450,9 +454,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-success mt-3" id="confirmAddonsEditBtn" style="display: none;">
-                        Confirm
-                    </button>
                 </div>
             </div>
         </div>
@@ -651,13 +652,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         function applyEditState() {
             const editBtn = document.getElementById('editGalleryBtn');
             const deleteBtns = document.querySelectorAll('.delete-btn');
-            const confirmBtn = document.querySelector('.confirm-btn');
             
             if (editBtn.classList.contains('btn-active')) {
                 deleteBtns.forEach(btn => {
                     btn.style.display = 'block';
                 });
-                confirmBtn.style.display = 'block';
             }
         }
 
@@ -679,40 +678,203 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             });
         });
 
-        // Edit button functionality
+        // Edit button functionality for Haircuts
         document.getElementById('editGalleryBtn').addEventListener('click', function() {
-            // Only proceed if the button is not active
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            const nameSpans = document.querySelectorAll('.haircut-name span');
+            const nameInputs = document.querySelectorAll('.haircut-name-edit');
+            const categoryTabs = document.querySelectorAll('.nav-tabs .nav-link');
+            const confirmBtn = document.getElementById('confirmGalleryBtn');
+            
             if (!this.classList.contains('btn-active')) {
-                const deleteBtns = document.querySelectorAll('.delete-btn');
-                const confirmBtn = document.querySelector('.confirm-btn');
-                
+                // Entering edit mode
                 deleteBtns.forEach(btn => {
                     btn.style.display = 'block';
                 });
                 
-                confirmBtn.style.display = 'block';
-
-                // Add the active class and change text color
+                // Show name input fields
+                nameSpans.forEach(span => span.style.display = 'none');
+                nameInputs.forEach(input => input.style.display = 'block');
+                
+                // Disable category tabs
+                categoryTabs.forEach(tab => {
+                    tab.style.pointerEvents = 'none';
+                    tab.style.opacity = '0.6';
+                });
+                
+                // Change to Cancel button
+                this.innerHTML = '<i class="fas fa-times"></i> Cancel';
                 this.classList.add('btn-active');
-                this.style.color = 'white';
+                this.style.backgroundColor = '#dc3545';
+                this.style.borderColor = '#dc3545';
+                this.style.color = '#fff';
+                
+                // Show confirm button (initially disabled)
+                confirmBtn.style.display = 'block';
+                confirmBtn.disabled = true;
+                
+                // Add input event listeners to detect changes
+                nameInputs.forEach(input => {
+                    input.addEventListener('input', checkForChanges);
+                });
+            } else {
+                // Exiting edit mode
+                deleteBtns.forEach(btn => {
+                    btn.style.display = 'none';
+                });
+                
+                // Hide name input fields and revert any unsaved changes
+                nameSpans.forEach(span => span.style.display = 'block');
+                nameInputs.forEach(input => {
+                    input.style.display = 'none';
+                    input.value = input.dataset.original;
+                });
+                
+                // Re-enable category tabs
+                categoryTabs.forEach(tab => {
+                    tab.style.pointerEvents = 'auto';
+                    tab.style.opacity = '1';
+                });
+                
+                // Change back to Edit button
+                this.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                this.classList.remove('btn-active');
+                this.style.backgroundColor = '#ffc107';
+                this.style.borderColor = '#ffc107';
+                this.style.color = '#000';
+                
+                // Hide confirm button
+                confirmBtn.style.display = 'none';
+                
+                // Remove input event listeners
+                nameInputs.forEach(input => {
+                    input.removeEventListener('input', checkForChanges);
+                });
             }
         });
 
-        // Confirm button functionality
-        document.querySelector('.confirm-btn').addEventListener('click', function() {
-            const deleteBtns = document.querySelectorAll('.delete-btn');
-            const confirmBtn = this;
+        // Function to check for changes in any input
+        function checkForChanges() {
+            const nameInputs = document.querySelectorAll('.haircut-name-edit');
+            const confirmBtn = document.getElementById('confirmGalleryBtn');
+            
+            // Check if any input value is different from its original value
+            const hasChanges = Array.from(nameInputs).some(input => 
+                input.value.trim() !== input.dataset.original
+            );
+            
+            // Enable/disable confirm button based on changes
+            confirmBtn.disabled = !hasChanges;
+        }
+
+        // Add confirm button functionality
+        document.getElementById('confirmGalleryBtn').addEventListener('click', function() {
+            const nameInputs = document.querySelectorAll('.haircut-name-edit');
             const editBtn = document.getElementById('editGalleryBtn');
+            
+            // Trigger save for all changed inputs
+            const promises = Array.from(nameInputs)
+                .filter(input => input.value.trim() !== input.dataset.original)
+                .map(input => {
+                    const haircutId = input.dataset.id;
+                    const newName = input.value.trim();
+                    
+                    return fetch('update_haircut.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            hcID: haircutId,
+                            hcName: newName
+                        })
+                    }).then(response => response.json());
+                });
+            
+            Promise.all(promises)
+                .then(results => {
+                    const allSuccess = results.every(result => result.success);
+                    
+                    if (allSuccess) {
+                        // Update all displays and original values
+                        nameInputs.forEach(input => {
+                            const spanElement = input.previousElementSibling;
+                            spanElement.textContent = input.value;
+                            input.dataset.original = input.value;
+                        });
+                        
+                        // Show success message
+                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                        document.getElementById('successMessage').innerText = 'All changes saved successfully!';
+                        successModal.show();
+                        
+                        // Trigger edit button to exit edit mode
+                        editBtn.click();
+                    } else {
+                        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                        document.getElementById('errorModalBody').textContent = 'Some changes could not be saved.';
+                        errorModal.show();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    document.getElementById('errorModalBody').textContent = 'An error occurred while saving changes.';
+                    errorModal.show();
+                });
+        });
 
-            // Hide delete buttons and confirm button
-            deleteBtns.forEach(btn => {
-                btn.style.display = 'none';
+        // Add event listener for name changes
+        document.querySelectorAll('.haircut-name-edit').forEach(input => {
+            input.addEventListener('change', function() {
+                const haircutId = this.dataset.id;
+                const newName = this.value.trim();
+                const spanElement = this.previousElementSibling;
+                
+                if (newName === '') {
+                    // Revert to original if empty
+                    this.value = this.dataset.original;
+                    return;
+                }
+
+                fetch('update_haircut.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        hcID: haircutId,
+                        hcName: newName
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the display and original value
+                        spanElement.textContent = newName;
+                        this.dataset.original = newName;
+                        
+                        // Show success message
+                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                        document.getElementById('successMessage').innerText = 'Haircut name updated successfully!';
+                        successModal.show();
+                    } else {
+                        // Show error and revert the change
+                        this.value = this.dataset.original;
+                        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                        document.getElementById('errorModalBody').textContent = 'Error updating haircut name: ' + data.message;
+                        errorModal.show();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Revert the change
+                    this.value = this.dataset.original;
+                    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    document.getElementById('errorModalBody').textContent = 'An error occurred while updating the haircut name.';
+                    errorModal.show();
+                });
             });
-            confirmBtn.style.display = 'none';
-
-            // Remove active state from Edit button
-            editBtn.classList.remove('btn-active');
-            editBtn.style.color = 'black';
         });
 
         // Function to attach delete event listeners
@@ -876,41 +1038,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Edit Services button functionality
         document.getElementById('editServicesBtn').addEventListener('click', function() {
-            // Only proceed if the button is not active
             if (!this.classList.contains('btn-active')) {
-                // Target only the first services-container after the Edit Services button
                 const servicesTable = this.closest('.d-flex').nextElementSibling;
                 const actionsColumn = servicesTable.querySelectorAll('.actions-column');
-                const confirmBtn = document.getElementById('confirmServicesEditBtn');
                 
                 actionsColumn.forEach(column => {
                     column.style.display = 'table-cell';
                 });
                 
-                confirmBtn.style.display = 'block';
-
-                // Add the active class and change text color
+                this.innerHTML = '<i class="fas fa-times"></i> Cancel';
                 this.classList.add('btn-active');
-                if (this.classList.contains('btn-active')) {
-                    this.style.color = 'white';
-                }
+                this.style.backgroundColor = '#dc3545';
+                this.style.borderColor = '#dc3545';
+                this.style.color = '#fff';
+            } else {
+                const servicesTable = this.closest('.d-flex').nextElementSibling;
+                const actionsColumn = servicesTable.querySelectorAll('.actions-column');
+                
+                actionsColumn.forEach(column => {
+                    column.style.display = 'none';
+                });
+                
+                this.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                this.classList.remove('btn-active');
+                this.style.backgroundColor = '#ffc107';
+                this.style.borderColor = '#ffc107';
+                this.style.color = '#000';
             }
-        });
-
-        // Update the Confirm button functionality
-        document.getElementById('confirmServicesEditBtn').addEventListener('click', function() {
-            // Target only the first services-container after the Edit Services button
-            const servicesTable = document.getElementById('editServicesBtn').closest('.d-flex').nextElementSibling;
-            const actionsColumn = servicesTable.querySelectorAll('.actions-column');
-            const editBtn = document.getElementById('editServicesBtn');
-            
-            actionsColumn.forEach(column => {
-                column.style.display = 'none';
-            });
-            
-            this.style.display = 'none';
-            editBtn.classList.remove('btn-active');
-            editBtn.style.color = 'black';
         });
 
         // Delete service functionality
@@ -1115,39 +1269,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Edit Add-ons button functionality
         document.getElementById('editAddonsBtn').addEventListener('click', function() {
-            // Only proceed if the button is not active
             if (!this.classList.contains('btn-active')) {
-                // Target only the first services-container after the Edit Add-ons button
                 const addonsTable = this.closest('.d-flex').nextElementSibling;
                 const actionsColumn = addonsTable.querySelectorAll('.actions-column');
-                const confirmBtn = document.getElementById('confirmAddonsEditBtn');
                 
                 actionsColumn.forEach(column => {
                     column.style.display = 'table-cell';
                 });
-
-                confirmBtn.style.display = 'block';
-
-                // Add the active class and change text color
+                
+                this.innerHTML = '<i class="fas fa-times"></i> Cancel';
                 this.classList.add('btn-active');
-                this.style.color = 'white';
+                this.style.backgroundColor = '#dc3545';
+                this.style.borderColor = '#dc3545';
+                this.style.color = '#fff';
+            } else {
+                const addonsTable = this.closest('.d-flex').nextElementSibling;
+                const actionsColumn = addonsTable.querySelectorAll('.actions-column');
+                
+                actionsColumn.forEach(column => {
+                    column.style.display = 'none';
+                });
+                
+                this.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                this.classList.remove('btn-active');
+                this.style.backgroundColor = '#ffc107';
+                this.style.borderColor = '#ffc107';
+                this.style.color = '#000';
             }
-        });
-
-        // Confirm Add-ons button functionality
-        document.getElementById('confirmAddonsEditBtn').addEventListener('click', function() {
-            // Target only the first services-container after the Edit Add-ons button
-            const addonsTable = document.getElementById('editAddonsBtn').closest('.d-flex').nextElementSibling;
-            const actionsColumn = addonsTable.querySelectorAll('.actions-column');
-            const editBtn = document.getElementById('editAddonsBtn');
-            
-            actionsColumn.forEach(column => {
-                column.style.display = 'none';
-            });
-
-            this.style.display = 'none';
-            editBtn.classList.remove('btn-active');
-            editBtn.style.color = 'black';
         });
 
         // Edit add-on functionality

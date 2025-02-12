@@ -510,7 +510,19 @@ $addonsResult = $conn->query($addonsQuery);
 
                         // Validate required fields
                         if (!date || !timeSlot || service === 'None') {
-                            // Show error modal instead of alert
+                            // Convert back to user-friendly format before showing the error modal
+                            const dateInput = document.getElementById('date');
+                            const dbDate = dateInput.getAttribute('data-db-value'); // Ensure correct retrieval
+
+                            if (dbDate) {
+                                const formattedDate = new Date(dbDate).toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
+                                dateInput.value = formattedDate; // Ensure the user-friendly date is displayed
+                            }
+                            
                             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                             errorModal.show();
                             return;

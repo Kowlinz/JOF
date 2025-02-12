@@ -170,6 +170,7 @@
                                                         data-bs-toggle='modal' data-bs-target='#appointmentModal' style='text-decoration: none; color: inherit;'>
                                                         " . htmlspecialchars($row['fullName']) . "
                                                         </a>
+                                                    </td>
                                                     <td>{$formattedDate}</td>
                                                     <td>{$row['timeSlot']}</td>
                                                     <td>{$row['serviceName']}</td>
@@ -310,7 +311,7 @@ function filterAppointments() {
     });
 </script>
 
-<!-- Modal for additional details-->
+<!-- Modal for additional details -->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="border: none;">
@@ -322,6 +323,12 @@ function filterAppointments() {
                 <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
                 <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
                 <p><strong>Remarks:</strong> <span id="remarks"></span></p>
+                <hr>
+                <p><strong>Payment Status:</strong> <span id="paymentStatus"></span></p>
+                <p><strong>Payment Amount:</strong> <span id="paymentAmount"></span></p>
+                <p><strong>GCash Reference:</strong> <span id="gcashReference"></span></p>
+                <p><strong>Payment Proof:</strong> <span id="paymentProof"></span></p>
+                <div id="paymentProofContainer"></div>
             </div>
         </div>
     </div>
@@ -330,21 +337,59 @@ function filterAppointments() {
 <script>
 function showAppointmentDetails(appointmentID, isWalkIn) {
     fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
+            if (data.error) {
+                console.error("Error from server:", data.error);
+                alert("Error fetching details: " + data.error);
+                return;
+            }
+
             document.getElementById('addonName').innerText = data.addonName || 'N/A';
+            document.getElementById('hcName').innerText = data.hcName || 'N/A';
+            document.getElementById('remarks').innerText = data.remarks || 'N/A';
+
+            document.getElementById('paymentStatus').innerText = data.paymentStatus || 'N/A';
+            document.getElementById('paymentAmount').innerText = "₱" + (data.paymentAmount || "0.00");
+            document.getElementById('gcashReference').innerText = data.gcashReference || 'N/A';
+
+            if (data.paymentProof) {
+                document.getElementById('paymentProofContainer').innerHTML = 
+                    `<img src="${data.paymentProof}" class="img-fluid" style="max-width: 100%;" onclick="showImageModal('${data.paymentProof}')">`;
+            } else {
+                document.getElementById('paymentProofContainer').innerHTML = "<p>No Proof Available</p>";
+            }
+
+
             if (!isWalkIn) {
-                document.getElementById('hcName').innerText = data.hcName || 'N/A';
-                document.getElementById('remarks').innerText = data.remarks || 'N/A';
                 document.getElementById('hcName').parentElement.style.display = 'block';
                 document.getElementById('remarks').parentElement.style.display = 'block';
             } else {
-                document.getElementById('addonName').innerText = data.addonName || 'N/A';
                 document.getElementById('hcName').parentElement.style.display = 'none';
                 document.getElementById('remarks').parentElement.style.display = 'none';
             }
+
+            console.log("DEBUG: Payment Proof URL:", data.paymentProof);
+
+            if (data.paymentProof && data.paymentProof !== "null") {
+                document.getElementById('paymentProof').innerHTML = 
+                    `<a href="${data.paymentProof}" target="_blank">View Payment Proof</a>`;
+            } else {
+                document.getElementById('paymentProof').innerText = "No Proof Available";
+            }
         })
         .catch(error => console.error('Error fetching details:', error));
+}
+
+function showImageModal(imageURL) {
+    document.getElementById('enlargedImage').src = imageURL;
+    let imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    imageModal.show();
 }
 </script>
 

@@ -287,7 +287,8 @@ $stmt->close();
                 <div class="mb-4">
                     <span style="color: red;">* </span>
                     <label class="form-label">Enter GCash Reference Number:</label>
-                    <input type="text" name="gcashRef" required class="form-control" placeholder="Enter GCash Transaction Reference Number">
+                    <input type="text" name="gcashRef" required class="form-control" placeholder="Enter GCash Transaction Reference Number"  maxlength="20" pattern="[0-9]{1,20}" 
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
 
                 <button type="submit" class="btn btn-confirm">Confirm Payment</button>

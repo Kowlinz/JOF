@@ -52,17 +52,41 @@
                             $mail->isHTML(true);
                             $mail->Subject = 'Email Verification from JOF';
                             $mail->Body = "
-                                <h2>You have registered your email</h2>
-                                <h5>Verify your email address to login with the given link</h5>
-                                <br/><br/>
-                                <a href='http://localhost/JOF/verify_email.php?token=$verify_token'>Click Me</a>
-                            ";
-                    
-                            $mail->send();
-                        } catch (Exception $e) {
-                            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-                        }
+                            <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #ffffff;'>
+
+                                <div style='max-width: 600px; background: #121212; padding: 20px; margin: auto; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);'>
+                                    <img src='cid:jof_logo' alt='Jack of Fades Logo' 
+                                    style='max-width: 90px; display: block; margin: 20px auto;'>
+
+                                    <h2 style='color: #F3CD32; text-align: center;'>Welcome to Jack of Fades, $FirstName!</h2>
+                                    <p style='font-size: 16px; color: #fff; text-align: center;'>
+                                        Thank you for signing up. To complete your registration, please verify your email address by clicking the button below:
+                                    </p>
+                                    <div style='text-align: center; margin: 20px 0;'>
+                                        <a href='http://localhost/JOF/verify_email.php?token=$verify_token' 
+                                           style='background: #F3CD32; color: #121212; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-size: 18px;'>
+                                           Verify Email
+                                        </a>
+                                    </div>
+                                    <p style='font-size: 14px; color: #fff; text-align: center;'>
+                                        If you did not sign up for an account, you can ignore this email.
+                                    </p>
+                                    <hr style='border: 0; height: 1px; background: #ddd;'>
+                                    <p style='font-size: 14px; color: #F3CD32; text-align: center;'>
+                                        Need help? Contact us at 
+                                        <a href='mailto:jackoffades11@gmail.com' style='color: #ffffff;'>jackoffades11@gmail.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        ";
+
+                        $mail->AddEmbeddedImage('css/images/jof_logo_yellow.png', 'jof_logo', 'jof_logo_yellow.png');
+                
+                        $mail->send();
+                    } catch (Exception $e) {
+                        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
                     }
+                }
 
                     // validate the submit button
                     if (isset($_POST["Register"])){

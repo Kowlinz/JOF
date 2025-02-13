@@ -57,6 +57,12 @@
                         <i class="bi bi-eye-slash password-toggle" id="togglePassword1"></i>
                     </div>
 
+                    <div class="form-text text-muted mb-3">
+                            <span>• At least 8 characters</span>
+                            <br><span>• At least one uppercase</span>
+                            <br><span>• At least one number</span>
+                    </div>
+
                     <div class="form-group position-relative">
                         <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
                         <i class="bi bi-eye-slash password-toggle" id="togglePassword2"></i>
@@ -99,6 +105,10 @@
         .password-toggle:hover {
             color: #000;
         }
+
+        .form-text span {
+            transition: color 0.3s ease;
+        }
     </style>
 
     <script>
@@ -125,6 +135,34 @@
             this.classList.toggle('bi-eye-slash');
         });
     });
+
+            // Add password validation
+            function validatePassword(password) {
+            const minLength = password.length >= 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            return {
+                minLength,
+                hasUpperCase,
+                hasNumber
+            };
+        }
+
+        function updatePasswordFeedback(validationResult) {
+            const bullets = document.querySelectorAll('.form-text.text-muted.mb-3 span');
+            
+            // Update the first bullet point
+            bullets[0].style.color = validationResult.minLength ? 'green' : '#6c757d';
+            // Update the second bullet point
+            bullets[1].style.color = validationResult.hasUpperCase ? 'green' : '#6c757d';
+            // Update the third bullet point
+            bullets[2].style.color = validationResult.hasNumber ? 'green' : '#6c757d';
+        }
+
+        passwordInput1.addEventListener('input', function() {
+            const validationResult = validatePassword(this.value);
+            updatePasswordFeedback(validationResult);
+        });
     </script>
 </body>
 </html>

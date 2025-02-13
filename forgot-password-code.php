@@ -28,11 +28,37 @@ function send_password_reset($get_firstName, $get_lastName, $get_email, $token) 
         $mail->isHTML(true);
         $mail->Subject = 'Account JOF Reset Password';
         $mail->Body = "
-            <h2>Hello</h2>
-            <h3>You are receiving this email because we received a password reset request from your account</h3>
-            <br/><br/>
-            <a href='http://localhost/JOF/password-change.php?token=$token&email=$get_email'>Click Me</a>
+            <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;'>
+                <div style='max-width: 600px; background: #121212; padding: 20px; margin: auto; border-radius: 8px; 
+                            box-shadow: 0px 0px 10px rgba(0,0,0,0.1); text-align: center;'>
+
+                    <img src='cid:jof_logo' alt='Jack of Fades Logo' 
+                         style='max-width: 90px; display: block; margin: 20px auto;'>
+
+                    <p style='font-size: 16px; color: #fff;'>
+                        We received a request to reset your password for your Jack of Fades account.
+                        Click the button below to set a new password.
+                    </p>
+                    <div style='margin: 20px 0;'>
+                        <a href='http://localhost/JOF/password-change.php?token=$token&email=$get_email' 
+                           style='background: #F3CD32; color: #121212; padding: 12px 20px; text-decoration: none; 
+                                  border-radius: 5px; font-size: 18px;'>
+                           Reset Password
+                        </a>
+                    </div>
+                    <p style='font-size: 14px; color: #fff;'>
+                        If you did not request this, you can safely ignore this email. Your password will not be changed.
+                    </p>
+                    <hr style='border: 0; height: 1px; background: #ddd;'>
+                    <p style='font-size: 14px; color: #F3CD32;'>
+                        Need help? Contact us at 
+                        <a href='mailto:jackoffades11@gmail.com' style='color: #ffffff;'>jackoffades11@gmail.com</a>
+                    </p>
+                </div>
+            </div>
         ";
+
+        $mail->AddEmbeddedImage('css/images/jof_logo_yellow.png', 'jof_logo', 'jof_logo_yellow.png');
 
         $mail->send();
     } catch (Exception $e) {
@@ -94,13 +120,23 @@ if (isset($_POST['password_update'])) {
     if (!empty($token)) {
         if (!empty($email) && !empty($new_password) && !empty($confirm_password)) {
             
+            $errors = []; // Initialize error array
+    
             // Check if password is at least 8 characters long
-                if (strlen($new_password) < 8) {
-                    $_SESSION['status'] = "Password must be at least 8 characters long";
-                    $_SESSION['status_type'] = "danger"; // Set alert to danger
-                    header("location: password-change.php?token=$token&email=$email");
-                    exit(0);
-                }
+            if (strlen($new_password) < 8) {
+                $_SESSION['status'] = "Password must be at least 8 characters long";
+                $_SESSION['status_type'] = "danger"; // Set alert to danger
+                header("location: password-change.php?token=$token&email=$email");
+                exit();
+            }
+    
+            // Check if password contains at least one uppercase letter and one number
+            if (!preg_match('/^(?=.*[A-Z])(?=.*\d).+$/', $new_password)) {
+                $_SESSION['status'] = "Password must contain at least one uppercase letter and one number";
+                $_SESSION['status_type'] = "danger"; // Set alert to danger
+                header("location: password-change.php?token=$token&email=$email");
+                exit();
+            }
 
             // Check if token is valid
             $check_token = "SELECT verify_token FROM customer_tbl WHERE verify_token='$token'";

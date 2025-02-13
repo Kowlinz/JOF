@@ -487,6 +487,22 @@ $result = $stmt->get_result();
             </div>
         </div>
 
+        <!-- Update the success modal HTML with better styling -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: #1f1f1f; color: #ffffff;">
+                    <div class="modal-header border-0 justify-content-center position-relative">
+                        <h5 class="modal-title fs-4 fw-bold" id="successModalLabel">Success</h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center border-0 py-4">
+                        <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+                        <p class="mb-0 fs-5">Appointment cancellation successful</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Toast Container -->
         <div class="toast-container position-fixed top-50 start-50 translate-middle">
             <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
@@ -523,8 +539,32 @@ $result = $stmt->get_result();
                     return;
                 }
 
-                // Redirect to cancellation PHP script with parameters
-                window.location.href = `cancel_appointment.php?appointmentID=${selectedAppointmentID}&reason=${encodeURIComponent(reason)}`;
+                // Close the cancel modal
+                const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
+                cancelModal.hide();
+
+                // Make the cancellation request
+                fetch(`cancel_appointment.php?appointmentID=${selectedAppointmentID}&reason=${encodeURIComponent(reason)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success modal
+                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                            successModal.show();
+
+                            // Reload the page after modal is closed
+                            document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
+                                window.location.reload();
+                            }, { once: true });
+                        } else {
+                            // Handle error if needed
+                            alert('Error cancelling appointment: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while cancelling the appointment');
+                    });
             });
         });
 

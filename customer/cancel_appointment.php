@@ -26,7 +26,7 @@ if (isset($_GET['appointmentID']) && isset($_GET['reason'])) {
 
     if (mysqli_num_rows($result) > 0) {
         // Update the appointment status
-        $updateQuery = "UPDATE appointment_tbl SET status = 'Cancelled', reason = ? WHERE appointmentID = ?";
+        $updateQuery = "UPDATE appointment_tbl SET status = 'Cancelled', payment_status = 'Cancelled', reason = ? WHERE appointmentID = ?";
         $stmt = mysqli_prepare($conn, $updateQuery);
         mysqli_stmt_bind_param($stmt, "si", $reason, $appointmentID);
         

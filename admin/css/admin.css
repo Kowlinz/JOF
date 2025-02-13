@@ -265,6 +265,27 @@ p,
     .card {
         margin: 0 10px;
     }
+    
+    /* Dashboard specific spacing */
+    body .row.ms-5:not(.row.g-3) {  /* Target dashboard tables but exclude stats row */
+        margin: 2rem 10px 0 10px !important;
+    }
+    
+    /* Stats row specific spacing */
+    body .row.g-3.mb-3.row-cols-1 {
+        margin: 0 10px !important;
+    }
+    
+    /* Barbers page specific spacing */
+    body .row.ms-5.mb-4 {
+        margin: 0 10px 15px 10px !important;
+    }
+    
+    /* Adjust form select on mobile */
+    .form-select {
+        font-size: 14px;
+        padding: 4px 8px;
+    }
 }
 
 /* Add these responsive table styles for barbers page */
@@ -580,4 +601,125 @@ p,
 /* Alternative approach using a new class */
 .alert .h5.pending-label {
     font-size: 0.9rem;
+}
+
+/* Add these specific styles for history page mobile view */
+@media (max-width: 991.98px) {
+    /* ... existing mobile styles ... */
+
+    /* History page specific styles */
+    .body .container-xxl {
+        padding: 0;
+    }
+
+    /* Adjust card layout */
+    .row.mb-4.ms-5 {
+        margin: 0 10px 1rem 10px !important;
+    }
+
+    .card.p-3 {
+        padding: 15px !important;
+        margin-bottom: 20px;
+        border-radius: 10px;
+    }
+
+    /* Header section adjustments */
+    .card .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .card .d-flex.justify-content-between h2 {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    /* Date picker and delete button container */
+    .card .d-flex.align-items-center.gap-3 {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Date picker adjustments */
+    .date-picker {
+        width: 100%;
+        max-width: none;
+        font-size: 14px;
+    }
+
+    /* Table adjustments */
+    .table-responsive {
+        margin: 0;
+        border: none;
+    }
+
+    .table {
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+    /* Specific column widths for history tables */
+    .table th,
+    .table td {
+        padding: 10px 8px;
+    }
+
+    /* Previous Customers table */
+    .table th:nth-child(1),
+    .table td:nth-child(1) {
+        min-width: 120px; /* Name column */
+    }
+
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        min-width: 120px; /* Date column */
+    }
+
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        min-width: 100px; /* Time column */
+    }
+
+    .table th:nth-child(4),
+    .table td:nth-child(4) {
+        min-width: 120px; /* Service/Reason column */
+    }
+
+    .table th:nth-child(5),
+    .table td:nth-child(5) {
+        min-width: 120px; /* Barber column */
+    }
+
+    /* Main heading adjustment */
+    .dashboard.mb-5.ms-5 {
+        margin: 1rem 20px !important;
+        font-size: 1.8rem;
+    }
+
+    /* Delete button styling */
+    .btn-delete {
+        min-width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Modal adjustments for mobile */
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        padding: 15px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
 }

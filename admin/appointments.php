@@ -1,12 +1,10 @@
 <?php
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
     session_start();
-    require 'database.php';
-
     if (!isset($_SESSION["user"])) {
         header("Location: ../login-staff.php");
     }
+
+    include 'db_connect.php'; // Make sure the database is connected
 
     // Fetch all distinct dates that have pending appointments
     $appointmentsQuery = "SELECT DISTINCT date FROM appointment_tbl WHERE status = 'Pending'";
@@ -661,47 +659,65 @@ function showAppointmentDetails(appointmentID, isWalkIn) {
             document.getElementById('addonName').innerText = data.addonName || 'N/A';
             document.getElementById('hcName').innerText = data.hcName || 'N/A';
             document.getElementById('remarks').innerText = data.remarks || 'N/A';
-            document.getElementById('paymentStatus').innerText = data.paymentStatus || 'N/A';
-            document.getElementById('paymentAmount').innerText = "₱" + (data.paymentAmount || "0.00");
-            document.getElementById('gcashReference').innerText = data.gcashReference || 'N/A';
 
-            const proofContainer = document.getElementById('paymentProofContainer');
-            proofContainer.innerHTML = '';
+            // Get payment details elements
+            const paymentDetailsElements = [
+                document.getElementById('paymentStatus').parentElement,
+                document.getElementById('paymentAmount').parentElement,
+                document.getElementById('gcashReference').parentElement,
+                document.getElementById('paymentProofContainer').previousElementSibling, // "Payment Proof:" label
+                document.getElementById('paymentProofContainer')
+            ];
 
-            // Fetch payment proof image
-            fetch('fetch_payment_proof.php?appointmentID=' + appointmentID)
-                .then(response => response.json())
-                .then(imageData => {
-                    if (imageData.success && imageData.image) {
-                        const img = document.createElement('img');
-                        // Update image styling with fixed height
-                        img.style.width = '100%'; // Full width of container
-                        img.style.maxHeight = '700px'; // Fixed maximum height
-                        img.style.objectFit = 'contain'; // Ensure image fits within dimensions while maintaining aspect ratio
-                        img.classList.add('img-fluid', 'mb-3'); // Keep it responsive
+            // Show/hide payment details based on isWalkIn
+            paymentDetailsElements.forEach(element => {
+                if (element) {
+                    element.style.display = isWalkIn ? 'none' : 'block';
+                }
+            });
 
-                        // Set up load and error handlers
-                        img.onload = function() {
-                            console.log("Image loaded successfully");
-                        };
+            // Only populate payment details if not a walk-in
+            if (!isWalkIn) {
+                document.getElementById('paymentStatus').innerText = data.paymentStatus || 'N/A';
+                document.getElementById('paymentAmount').innerText = "₱" + (data.paymentAmount || "0.00");
+                document.getElementById('gcashReference').innerText = data.gcashReference || 'N/A';
 
-                        img.onerror = function() {
-                            console.error("Error loading image");
-                            proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
-                        };
+                const proofContainer = document.getElementById('paymentProofContainer');
+                proofContainer.innerHTML = '';
 
-                        // Set the base64 image data
-                        img.src = imageData.image;
-                        proofContainer.appendChild(img);
-                    } else {
-                        proofContainer.innerHTML = '<p class="text-muted">No payment proof available</p>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching payment proof:', error);
-                    proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
-                });
+                // Fetch payment proof image only for non-walk-in appointments
+                fetch('fetch_payment_proof.php?appointmentID=' + appointmentID)
+                    .then(response => response.json())
+                    .then(imageData => {
+                        if (imageData.success && imageData.image) {
+                            const img = document.createElement('img');
+                            img.style.width = '100%';
+                            img.style.maxHeight = '300px';
+                            img.style.objectFit = 'contain';
+                            img.classList.add('img-fluid', 'mb-3');
 
+                            img.onload = function() {
+                                console.log("Image loaded successfully");
+                            };
+
+                            img.onerror = function() {
+                                console.error("Error loading image");
+                                proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
+                            };
+
+                            img.src = imageData.image;
+                            proofContainer.appendChild(img);
+                        } else {
+                            proofContainer.innerHTML = '<p class="text-muted">No payment proof available</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching payment proof:', error);
+                        proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
+                    });
+            }
+
+            // Show/hide haircut name and remarks based on isWalkIn
             if (!isWalkIn) {
                 document.getElementById('hcName').parentElement.style.display = 'block';
                 document.getElementById('remarks').parentElement.style.display = 'block';

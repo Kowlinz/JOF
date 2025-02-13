@@ -127,7 +127,7 @@
                                 mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash, $verify_token);
                                 mysqli_stmt_execute($stmt);
                                     // Store success message in session
-                                    $_SESSION['status'] = "You are registered successfully! Please check your email for verification.";
+                                    $_SESSION['status'] = "You are registered successfully! Please check your email for verification. (If not in inbox check on spam)";
                                     $_SESSION['status_type'] = "success"; // Set alert type to success
 
                                     // Redirect to login page

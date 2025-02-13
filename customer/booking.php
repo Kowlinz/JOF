@@ -369,6 +369,94 @@ $addonsResult = $conn->query($addonsQuery);
         .service-item * {
             transition: all 0.3s ease;
         }
+
+        /* Add these styles after the existing styles */
+
+        /* Ensure header stays on top */
+        .header {
+            position: relative;
+            z-index: 1000;
+            background-color: white;
+        }
+
+        /* Menu dropdown positioning and styling */
+        .menu-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000000;
+            z-index: 1001;
+            display: none;
+            padding: 20px;
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        /* Style the menu links */
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .menu-link {
+            color: #FFDE59;
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .menu-link:hover {
+            color: #ffffff;
+        }
+
+        /* Style the close button */
+        .menu-close {
+            color: #FFDE59;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .menu-close:hover {
+            color: #ffffff;
+        }
+
+        /* Adjust main content spacing for mobile */
+        @media (max-width: 991px) {
+            .header {
+                margin-top: -80px; /* Add negative margin to reduce space above navbar */
+            }
+
+            .container.mt-5 {
+                margin-top: 80px !important;
+                position: relative;
+                z-index: 1;
+            }
+
+            form.fade-in {
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Ensure proper spacing for the logo and heading */
+            .text-center.mb-4 {
+                margin-top: 60px;
+            }
+
+            h2.text-center.mb-5 {
+                margin-top: 70px;
+                margin-bottom: 40px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -589,8 +677,6 @@ $addonsResult = $conn->query($addonsQuery);
                         });
                     });
 
-                    
-
                     // Update the form submission handling
                     document.getElementById('form1').addEventListener('submit', function (event) {
                         event.preventDefault(); // Prevent form from submitting immediately
@@ -631,7 +717,20 @@ $addonsResult = $conn->query($addonsQuery);
                         }
 
                         // Validate required fields
-                        if (!date || !timeSlot || service === 'None') {
+                        if (!date || !timeSlot || service === 'None' || !document.getElementById('paymentOption').value) {
+                            // Convert back to user-friendly format before showing the error modal
+                            const dateInput = document.getElementById('date');
+                            const dbDate = dateInput.getAttribute('data-db-value'); // Ensure correct retrieval
+
+                            if (dbDate) {
+                                const formattedDate = new Date(dbDate).toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
+                                dateInput.value = formattedDate; // Ensure the user-friendly date is displayed
+                            }
+
                             // Show error modal instead of alert
                             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                             errorModal.show();

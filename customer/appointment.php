@@ -243,6 +243,84 @@ $result = $stmt->get_result();
         .toast {
             min-width: 300px;
         }
+
+        /* Ensure header stays on top */
+        .header {
+            position: relative;
+            z-index: 1000;
+            background-color: white;
+        }
+
+        /* Menu dropdown positioning and styling */
+        .menu-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000000; /* Changed to black */
+            z-index: 1001;
+            display: none;
+            padding: 20px;
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        /* Style the menu links for better visibility on black background */
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .menu-link {
+            color: #FFDE59; /* Yellow color to match theme */
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .menu-link:hover {
+            color: #ffffff; /* White on hover */
+        }
+
+        /* Style the close button */
+        .menu-close {
+            color: #FFDE59;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .menu-close:hover {
+            color: #ffffff;
+        }
+
+        /* Adjust main content spacing */
+        @media (max-width: 991px) {
+            .appointments-header-wrapper {
+                margin-top: 60px; /* Increased from 20px */
+                position: relative;
+                z-index: 1;
+            }
+
+            .appointments-container {
+                position: relative;
+                z-index: 1;
+                padding: 0 15px; /* Added padding for better mobile spacing */
+            }
+
+            /* Add some bottom margin to the header */
+            .appointments-header {
+                margin-bottom: 30px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -314,7 +392,7 @@ $result = $stmt->get_result();
             </nav>
         </div>
         <div class="appointments-header-wrapper">
-            <h1 class="appointments-header fade-in">MY APPOINTMENTS</h1>
+            <h1 class="appointments-header fade-in">My Appointments</h1>
         </div>
 
         <div class="appointments-container">
@@ -350,8 +428,8 @@ $result = $stmt->get_result();
                         $paymentStatusText = "";
                         $payNowButton = "";
                 
-                        if ($row['payment_status'] === 'pending') {
-                            $paymentStatusText = "<span class='text-danger'>Pending</span>";
+                        if ($row['payment_status'] === 'cancelled') {
+                            $paymentStatusText = "<span class='text-danger'>Cancelled</span>";
                             $payNowButton = $row['status'] !== 'Cancelled' ? "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . ($row['totalPrice'] * 0.5) . "' class='btn btn-warning btn-sm'>Pay Now</a>" : "";
                         } elseif ($row['payment_status'] === 'partial') {
                             $remainingBalance = $row['totalPrice'] - $row['payment_amount'];
@@ -409,6 +487,22 @@ $result = $stmt->get_result();
             </div>
         </div>
 
+        <!-- Update the success modal HTML with better styling -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: #1f1f1f; color: #ffffff;">
+                    <div class="modal-header border-0 justify-content-center position-relative">
+                        <h5 class="modal-title fs-4 fw-bold" id="successModalLabel">Success</h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center border-0 py-4">
+                        <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+                        <p class="mb-0 fs-5">Appointment cancellation successful</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Toast Container -->
         <div class="toast-container position-fixed top-50 start-50 translate-middle">
             <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
@@ -445,8 +539,32 @@ $result = $stmt->get_result();
                     return;
                 }
 
-                // Redirect to cancellation PHP script with parameters
-                window.location.href = `cancel_appointment.php?appointmentID=${selectedAppointmentID}&reason=${encodeURIComponent(reason)}`;
+                // Close the cancel modal
+                const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
+                cancelModal.hide();
+
+                // Make the cancellation request
+                fetch(`cancel_appointment.php?appointmentID=${selectedAppointmentID}&reason=${encodeURIComponent(reason)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success modal
+                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                            successModal.show();
+
+                            // Reload the page after modal is closed
+                            document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
+                                window.location.reload();
+                            }, { once: true });
+                        } else {
+                            // Handle error if needed
+                            alert('Error cancelling appointment: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while cancelling the appointment');
+                    });
             });
         });
 

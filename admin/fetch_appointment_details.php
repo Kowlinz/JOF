@@ -1,62 +1,78 @@
 <?php
 include 'db_connect.php'; // Ensure correct DB connection
 
-header('Content-Type: application/json'); // Set JSON response
+// Ensure no whitespace or output before this point
+header('Content-Type: application/json');
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ob_start(); // Prevent unwanted output
+ini_set('display_errors', 0); // Disable error output to prevent it from corrupting JSON
 
-$response = [];
+// Buffer all output
+ob_start();
 
-if (isset($_GET['appointmentID'])) {
-    $appointmentID = intval($_GET['appointmentID']);
-
-    $query = "
-    SELECT 
-        a.appointmentID, 
-        COALESCE(ad.addonName, 'N/A') AS addonName, 
-        COALESCE(hc.hcName, 'N/A') AS hcName, 
-        COALESCE(a.remarks, 'N/A') AS remarks,
-        COALESCE(a.payment_status, 'N/A') AS paymentStatus,
-        COALESCE(a.payment_amount, '0.00') AS paymentAmount,
-        COALESCE(a.gcash_reference, 'N/A') AS gcashReference,
-        a.payment_proof AS paymentProof
-    FROM appointment_tbl a
-    LEFT JOIN addon_tbl ad ON a.addonID = ad.addonID
-    LEFT JOIN haircut_tbl hc ON a.hcID = hc.hcID
-    WHERE a.appointmentID = $appointmentID";
-
-    $result = mysqli_query($conn, $query);
-
-    if (!$result) {
-        $response['error'] = "Database query failed: " . mysqli_error($conn);
-    } else {
-        if ($row = mysqli_fetch_assoc($result)) {
-            // If payment proof is stored as a file path, return the file URL
-            if (!empty($row['paymentProof'])) {
-                $filePath = 'customer/uploads/' . $row['paymentProof']; // Ensure correct folder
-            
-                if (file_exists($filePath)) {
-                    error_log("DEBUG:  File found at path: " . $filePath);
-                    $row['paymentProof'] = $filePath;
-                } else {
-                    error_log("DEBUG:  File does not exist at path: " . $filePath);
-                    $row['paymentProof'] = null;
-                }
-            } else {
-                error_log("DEBUG:  paymentProof column is empty or NULL");
-                $row['paymentProof'] = null;
-            }       
-            $response = $row;
-        } else {
-            $response['error'] = "No appointment found";
-        }
+try {
+    if (!isset($_GET['appointmentID'])) {
+        throw new Exception('No appointment ID provided');
     }
-} else {
-    $response['error'] = "Invalid request: appointmentID missing";
-}
 
-ob_end_clean(); // Remove any unwanted output before JSON
-echo json_encode($response);
-exit;
+    $appointmentID = mysqli_real_escape_string($conn, $_GET['appointmentID']);
+    
+    // Get all data including payment_proof in one query
+    $query = "SELECT 
+        a.*,
+        s.serviceName as hcName,
+        ad.addonName
+    FROM appointment_tbl a
+    LEFT JOIN service_tbl s ON a.serviceID = s.serviceID
+    LEFT JOIN addon_tbl ad ON a.addonID = ad.addonID
+    WHERE a.appointmentID = ?";
+
+    if (!$stmt = mysqli_prepare($conn, $query)) {
+        throw new Exception('Failed to prepare statement: ' . mysqli_error($conn));
+    }
+
+    if (!mysqli_stmt_bind_param($stmt, "i", $appointmentID)) {
+        throw new Exception('Failed to bind parameters: ' . mysqli_stmt_error($stmt));
+    }
+
+    if (!mysqli_stmt_execute($stmt)) {
+        throw new Exception('Failed to execute statement: ' . mysqli_stmt_error($stmt));
+    }
+
+    $result = mysqli_stmt_get_result($stmt);
+    if ($result === false) {
+        throw new Exception('Failed to get result: ' . mysqli_error($conn));
+    }
+
+    if ($row = mysqli_fetch_assoc($result)) {
+        $response = array(
+            'addonName' => $row['addonName'] ?? 'N/A',
+            'hcName' => $row['hcName'] ?? 'N/A',
+            'remarks' => $row['remarks'] ?? 'N/A',
+            'paymentStatus' => $row['payment_status'] ?? 'Pending',
+            'paymentAmount' => $row['payment_amount'] ?? '0.00',
+            'gcashReference' => $row['gcash_reference'] ?? 'N/A'
+        );
+    } else {
+        throw new Exception('No appointment found with ID: ' . $appointmentID);
+    }
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
+
+    // Clear any output buffered so far
+    ob_clean();
+    
+    // Send the JSON response
+    echo json_encode($response);
+} catch (Exception $e) {
+    // Log the detailed error
+    error_log("Error in fetch_appointment_details.php: " . $e->getMessage());
+    
+    ob_clean();
+    // Return a more specific error message to the client
+    echo json_encode([
+        'error' => $e->getMessage(),
+        'details' => 'Please check the server logs for more information'
+    ]);
+}
 ?>

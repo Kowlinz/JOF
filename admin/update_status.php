@@ -58,9 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($status !== 'Reminder') { 
             if ($status === 'Cancelled') {
                 $reason = htmlspecialchars($_POST['reason'] ?? '', ENT_QUOTES, 'UTF-8');
-                $updateQuery = "UPDATE appointment_tbl SET status = ?, reason = ? WHERE appointmentID = ?";
+                $updateQuery = "UPDATE appointment_tbl SET status = ?, reason = ?, payment_status = 'cancelled' WHERE appointmentID = ?";
                 $stmt = $conn->prepare($updateQuery);
                 $stmt->bind_param("ssi", $status, $reason, $appointmentID);
+            } elseif ($status === 'Completed') {
+                $updateQuery = "UPDATE appointment_tbl SET status = ?, payment_status = 'paid' WHERE appointmentID = ?";
+                $stmt = $conn->prepare($updateQuery);
+                $stmt->bind_param("si", $status, $appointmentID);
             } else {
                 $updateQuery = "UPDATE appointment_tbl SET status = ? WHERE appointmentID = ?";
                 $stmt = $conn->prepare($updateQuery);

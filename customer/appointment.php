@@ -428,8 +428,8 @@ $result = $stmt->get_result();
                         $paymentStatusText = "";
                         $payNowButton = "";
                 
-                        if ($row['payment_status'] === 'pending') {
-                            $paymentStatusText = "<span class='text-danger'>Pending</span>";
+                        if ($row['payment_status'] === 'cancelled') {
+                            $paymentStatusText = "<span class='text-danger'>Cancelled</span>";
                             $payNowButton = $row['status'] !== 'Cancelled' ? "<a href='gcash_payment.php?appointmentID=" . $row['appointmentID'] . "&amount=" . ($row['totalPrice'] * 0.5) . "' class='btn btn-warning btn-sm'>Pay Now</a>" : "";
                         } elseif ($row['payment_status'] === 'partial') {
                             $remainingBalance = $row['totalPrice'] - $row['payment_amount'];

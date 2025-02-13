@@ -161,10 +161,23 @@ if (isset($_POST["Login"])) {
             transform: translateY(-50%);
             cursor: pointer;
             color: #6c757d;
+            z-index: 10;
+            background: none;
+            border: none;
+            padding: 0;
         }
 
         .password-toggle:hover {
             color: #000;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            padding-right: 40px;
         }
     </style>
 
@@ -189,19 +202,24 @@ if (isset($_POST["Login"])) {
             }
         });
 
-        // Password toggle functionality
+        // Updated password toggle functionality
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('passwordInput');
 
-        togglePassword.addEventListener('click', function() {
-            // Toggle the password input type
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            // Toggle the eye icon
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
-        });
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function(e) {
+                // Prevent the click from submitting the form
+                e.preventDefault();
+                
+                // Toggle the password input type
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Toggle the eye icon
+                this.classList.toggle('bi-eye');
+                this.classList.toggle('bi-eye-slash');
+            });
+        }
     });
     </script>
 </body>

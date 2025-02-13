@@ -407,6 +407,34 @@ function filterAppointments() {
 function openStatusModal(appointmentId, customerId) {
     document.getElementById('appointmentID').value = appointmentId;
 
+    // Get the appointment date from the row
+    const appointmentRow = document.querySelector(`[onclick*="${appointmentId}"]`).closest('tr');
+    const appointmentDateCell = appointmentRow.children[2].textContent; // Get the date from the third column
+    
+    // Get current date and format it similarly
+    const today = new Date();
+    const formattedToday = today.toLocaleDateString('en-US', { 
+        month: 'long', 
+        day: 'numeric', 
+        year: 'numeric' 
+    });
+
+    // Get the complete button
+    const completeButton = document.querySelector('#statusForm button[type="submit"]');
+    
+    // Compare dates and disable button if not today
+    if (appointmentDateCell !== formattedToday) {
+        completeButton.disabled = true;
+        completeButton.title = 'Can only complete appointments scheduled for today';
+        completeButton.classList.add('btn-secondary');
+        completeButton.classList.remove('btn-success');
+    } else {
+        completeButton.disabled = false;
+        completeButton.title = '';
+        completeButton.classList.add('btn-success');
+        completeButton.classList.remove('btn-secondary');
+    }
+
     const reminderButton = document.getElementById('sendReminderButton');
     
     // Ensure proper NULL checking

@@ -458,6 +458,32 @@ $addonsResult = $conn->query($addonsQuery);
                 margin-bottom: 40px !important;
             }
         }
+
+        /* Add these updated style rules */
+        .flatpickr-input::placeholder,
+        .flatpickr-input::-webkit-input-placeholder,
+        .flatpickr-alt-input::placeholder,
+        .form-control[readonly]::placeholder {
+            color: black !important;
+            opacity: 1 !important;
+        }
+
+        .flatpickr-input,
+        .flatpickr-alt-input,
+        .form-control[readonly] {
+            color: black !important;
+        }
+
+        /* Target Flatpickr's alternate input specifically */
+        .flatpickr-calendar + input.form-control {
+            color: black !important;
+        }
+
+        /* Add this style rule after the existing styles */
+        #remarks::placeholder {
+            font-style: italic;
+            color: black;
+        }
     </style>
 </head>
 <body>

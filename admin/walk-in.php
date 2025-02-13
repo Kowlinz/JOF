@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Manila'); // Add this line to set timezone
 
 // Check if the user is logged in as a admin
 if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "admin") {
@@ -362,43 +363,45 @@ $addonsResult = $conn->query($addonsQuery);
 
         <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5">
             <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <!-- Date Dropdown -->
-                    <div class="mb-3 required">
-                        <span style="color: red;">* </span>
-                        <label for="date" class="form-label text-white">Date:</label>
-                        <input type="text" name="date" id="date" class="form-control text-center" value="Choose Date" data-db-value="">
-                    </div>
-                    <!-- Service Dropdown -->
-                    <div class="mb-3" required>
-                        <span style="color: red;">* </span>
-                        <label for="service" class="form-label text-white">Service:</label>
-                        <button type="button" class="form-control text-center" id="service-button" data-bs-toggle="modal" data-bs-target="#servicesModal">
-                            Choose Service
-                        </button>
-                        <input type="hidden" name="service" id="service" value="">
-                    </div>
-                </div>
+                <div class="col-md-8"> <!-- Increased width to accommodate horizontal layout -->
+                    <div class="row"> <!-- New row for horizontal alignment -->
+                        <!-- Service Dropdown -->
+                        <div class="col-md-4 mb-3" required>
+                            <span style="color: red;">* </span>
+                            <label for="service" class="form-label text-white">Service:</label>
+                            <button type="button" class="form-control text-center" id="service-button" data-bs-toggle="modal" data-bs-target="#servicesModal">
+                                Choose Service
+                            </button>
+                            <input type="hidden" name="service" id="service" value="">
+                        </div>
 
-                <div class="col-md-4">
-                    <div class="mb-3 required">
-                        <span style="color: red;">* </span>
-                        <label for="time-slot" class="form-label text-white">Preferred Time Slot:</label>
-                        <button type="button" class="form-control text-center" id="time-slot-button" data-bs-toggle="modal" data-bs-target="#timeSlotModal">
-                            Choose Preferred Time
-                        </button>
-                        <input type="hidden" name="timeSlot" id="selectedTimeSlot">
-                    </div>
-                                        <!-- Add-On Dropdown -->
-                                        <div class="mb-3">
-                        <label for="addon" class="form-label text-white">Add-on:</label>
-                        <button type="button" class="form-control text-center" id="addon-button" data-bs-toggle="modal" data-bs-target="#addonsModal">
-                            Choose Add-on
-                        </button>
-                        <input type="hidden" name="addon" id="addon" value="">
+                        <!-- Time Slot -->
+                        <div class="col-md-4 mb-3 required">
+                            <span style="color: red;">* </span>
+                            <label for="time-slot" class="form-label text-white">Preferred Time Slot:</label>
+                            <button type="button" class="form-control text-center" id="time-slot-button" data-bs-toggle="modal" data-bs-target="#timeSlotModal">
+                                Choose Preferred Time
+                            </button>
+                            <input type="hidden" name="timeSlot" id="selectedTimeSlot">
+                        </div>
+
+                        <!-- Add-On Dropdown -->
+                        <div class="col-md-4 mb-3">
+                            <label for="addon" class="form-label text-white">Add-on:</label>
+                            <button type="button" class="form-control text-center" id="addon-button" data-bs-toggle="modal" data-bs-target="#addonsModal">
+                                Choose Add-on
+                            </button>
+                            <input type="hidden" name="addon" id="addon" value="">
+                        </div>
+
+                        <!-- Hidden date input -->
+                        <input type="hidden" name="date" id="date" value="<?php 
+                            echo date('Y-m-d'); // This will now use Manila timezone
+                        ?>" data-db-value="<?php echo date('Y-m-d'); ?>">
                     </div>
                 </div>
             </div>
+
             <div class="col-12 text-center mt-4 mb-5">
                 <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Add Walk-in</button>
             </div>
@@ -554,27 +557,16 @@ $addonsResult = $conn->query($addonsQuery);
                     });
 
                     document.addEventListener('DOMContentLoaded', function() {
-                        const dateInput = flatpickr("#date", {
-                            dateFormat: "Y-m-d", // Database format
-                            minDate: "today",
-                            onChange: function(selectedDates, dateStr) {
-                                // Format date for UI display
-                                const formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
-                                    month: 'long',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                });
-
-                                // Display formatted date
-                                document.getElementById('date').value = formattedDate;
-
-                                // Store the correct database format in a dataset
-                                document.getElementById('date').setAttribute('data-db-value', dateStr);
-
-                                // Fetch available slots
-                                fetchBookedSlots(dateStr);
-                            }
+                        // Get current date in Manila timezone
+                        const currentDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+                        const formattedDate = currentDate.toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
                         });
+
+                        // Fetch available slots for current date
+                        fetchBookedSlots(document.getElementById('date').value);
 
                         function fetchBookedSlots(date) {
                             fetch(`get_booked_slots.php?date=${date}`)

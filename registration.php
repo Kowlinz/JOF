@@ -216,10 +216,23 @@
             transform: translateY(-50%);
             cursor: pointer;
             color: #6c757d;
+            z-index: 10;
+            background: none;
+            border: none;
+            padding: 0;
         }
 
         .password-toggle:hover {
             color: #000;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            padding-right: 40px;
         }
 
         .form-text span {
@@ -247,36 +260,41 @@
         function updatePasswordFeedback(validationResult) {
             const bullets = document.querySelectorAll('.form-text.text-muted.mb-3 span');
             
-            // Update the first bullet point
             bullets[0].style.color = validationResult.minLength ? 'green' : '#6c757d';
-            // Update the second bullet point
             bullets[1].style.color = validationResult.hasUpperCase ? 'green' : '#6c757d';
-            // Update the third bullet point
             bullets[2].style.color = validationResult.hasNumber ? 'green' : '#6c757d';
         }
 
-        passwordInput1.addEventListener('input', function() {
-            const validationResult = validatePassword(this.value);
-            updatePasswordFeedback(validationResult);
-        });
+        if (passwordInput1) {
+            passwordInput1.addEventListener('input', function() {
+                const validationResult = validatePassword(this.value);
+                updatePasswordFeedback(validationResult);
+            });
+        }
 
-        togglePassword1.addEventListener('click', function() {
-            const type = passwordInput1.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput1.setAttribute('type', type);
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
-        });
+        if (togglePassword1 && passwordInput1) {
+            togglePassword1.addEventListener('click', function(e) {
+                e.preventDefault();
+                const type = passwordInput1.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput1.setAttribute('type', type);
+                this.classList.toggle('bi-eye');
+                this.classList.toggle('bi-eye-slash');
+            });
+        }
 
         // Password toggle functionality for the repeat password field
         const togglePassword2 = document.getElementById('togglePassword2');
         const passwordInput2 = document.querySelector('input[name="repeat_password"]');
 
-        togglePassword2.addEventListener('click', function() {
-            const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput2.setAttribute('type', type);
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
-        });
+        if (togglePassword2 && passwordInput2) {
+            togglePassword2.addEventListener('click', function(e) {
+                e.preventDefault();
+                const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput2.setAttribute('type', type);
+                this.classList.toggle('bi-eye');
+                this.classList.toggle('bi-eye-slash');
+            });
+        }
     });
     </script>
 </body>

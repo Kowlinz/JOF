@@ -81,8 +81,10 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
         }
 
         .qr-code-container img {
-            max-width: 300px;
+            max-width: 70%;
             height: auto;
+            margin: 0 auto;
+            display: block;
         }
 
         .price-details {
@@ -230,7 +232,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
             }
 
             .qr-code-container img {
-                max-width: 100%;
+                max-width: 80%;
                 width: auto;
                 height: auto;
                 object-fit: contain;
@@ -273,7 +275,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
         }
 
         .qr-code-container img {
-            max-width: 100%;
+            max-width: 70%;
             height: auto;
             object-fit: contain;
         }

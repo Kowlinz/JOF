@@ -55,6 +55,7 @@ $addonsResult = $conn->query($addonsQuery);
     <style>
         body {
             font-family: 'Lexend', sans-serif;
+            background-color: #171717;
         }
 
         .time-slots-grid {
@@ -545,7 +546,13 @@ $addonsResult = $conn->query($addonsQuery);
                     <div class="mb-3 required">
                         <span style="color: red;">* </span>
                         <label for="date" class="form-label text-white">Date:</label>
-                        <input type="text" name="date" id="date" class="form-control text-center" value="Choose Date" data-db-value="">
+                        <input type="text" 
+                               name="date" 
+                               id="date" 
+                               class="form-control text-center" 
+                               placeholder="Choose Date"
+                               readonly
+                               data-db-value="">
                     </div>
                     <!-- Service Dropdown -->
                     <div class="mb-3" required>
@@ -768,17 +775,11 @@ $addonsResult = $conn->query($addonsQuery);
                         const dateInput = flatpickr("#date", {
                             dateFormat: "Y-m-d", // Database format
                             minDate: "today",
+                            altInput: true, // Enable alternate input
+                            altFormat: "F j, Y", // Format for display (Month Day, Year)
+                            placeholder: "Choose Date",
+                            allowInput: false,
                             onChange: function(selectedDates, dateStr) {
-                                // Format date for UI display
-                                const formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
-                                    month: 'long',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                });
-
-                                // Display formatted date
-                                document.getElementById('date').value = formattedDate;
-
                                 // Store the correct database format in a dataset
                                 document.getElementById('date').setAttribute('data-db-value', dateStr);
 

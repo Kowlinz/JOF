@@ -212,6 +212,71 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
         .mb-4 {
             margin-bottom: 1.5rem !important;
         }
+
+        /* Add these responsive styles for mobile */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .payment-container {
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .qr-code-container {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .qr-code-container img {
+                max-width: 100%;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+            }
+
+            /* Adjust other elements for mobile */
+            .price-details {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .total-amount {
+                padding: 0.8rem;
+                margin-top: 1rem;
+            }
+
+            .form-container {
+                padding: 0;
+            }
+
+            .upload-container {
+                padding: 0.8rem;
+            }
+
+            /* Adjust button size for mobile */
+            .btn-confirm {
+                width: 100%;
+                padding: 0.8rem;
+            }
+        }
+
+        /* Add this to ensure the QR code image stays within its container */
+        .qr-code-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .qr-code-container img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body>

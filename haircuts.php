@@ -56,7 +56,7 @@ $conn->close();
 </head>
 
 <body>
-    <div class="main-page">
+    <div class="main-page" style="background-color: #171717;">
         <!-- Header -->
         <div class="header">
             <nav class="navbar navbar-expand-lg py-4">

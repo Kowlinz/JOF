@@ -71,6 +71,7 @@ $result = $stmt->get_result();
     <style>
         body {
             font-family: 'Lexend', sans-serif;
+            background-color: #171717;
         }
 
         /* Initial state for fade-in elements */

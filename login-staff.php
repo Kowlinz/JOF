@@ -38,9 +38,7 @@ if (isset($_SESSION["user"])) {
             <div class="header">
                 <nav class="navbar navbar-expand-lg py-4">
                     <div class="container ps-5">
-                        <div class="navbar-brand">
-                            <img src="css/images/jof_logo_yellow.png" alt="logo" width="45" height="45">
-                        </div>
+                        <!-- Remove the navbar-brand div entirely -->
                     </div>
                 </nav>
             </div>

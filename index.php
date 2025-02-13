@@ -42,7 +42,7 @@ include 'admin/landing_text.php';
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 </head>
 <body>
-	<div class="main-page">
+	<div class="main-page" style="background-color: #171717;">
   		<div class="header">
 			<nav class="navbar navbar-expand-lg py-4">
 				<div class="container ps-5">

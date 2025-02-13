@@ -251,36 +251,12 @@ $stmt->close();
 
             <div class="price-details">
                 <div class="price-item">
-                    <span>Date:</span>
-                    <span><?php echo htmlspecialchars($bookingData['date']); ?></span>
-                </div>
-                <div class="price-item">
-                    <span>Time Slot:</span>
-                    <span><?php echo htmlspecialchars($bookingData['timeSlot']); ?></span>
-                </div>
-                <div class="price-item">
-                    <span>Service:</span>
-                    <span><?php echo htmlspecialchars($serviceName); ?></span>
-                </div>
-                <div class="price-item">
                     <span>Service Price:</span>
                     <span>₱<?php echo number_format($servicePrice, 2); ?></span>
                 </div>
                 <div class="price-item">
-                    <span>Addon:</span>
-                    <span><?php echo htmlspecialchars($addonName); ?></span>
-                </div>
-                <div class="price-item">
                     <span>Addon Price:</span>
                     <span>₱<?php echo number_format($addonPrice, 2); ?></span>
-                </div>
-                <div class="price-item">
-                    <span>Remarks:</span>
-                    <span><?php echo !empty($bookingData['remarks']) ? htmlspecialchars($bookingData['remarks']) : 'No remarks'; ?></span>
-                </div>
-                <div class="price-item">
-                    <span>Payment Option:</span>
-                    <span><?php echo htmlspecialchars($bookingData['paymentOption']); ?></span>
                 </div>
                 <div class="total-amount text-center">
                 <span>Total Amount to Pay: ₱<?php echo number_format($paymentAmount, 2); ?></span>

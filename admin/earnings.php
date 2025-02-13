@@ -18,13 +18,15 @@
     $notificationData = mysqli_fetch_assoc($notificationResult);
     $notificationCount = $notificationData['notif_count'];
 
-    // Query to fetch today's earnings
+    $selectedDate = $_GET['date'] ?? date('Y-m-d');
+
     $todayQuery = "SELECT e.adminEarnings, e.barberEarnings, CONCAT(b.firstName, ' ', b.lastName) AS barberFullName, a.date, a.timeSlot
-               FROM earnings_tbl e 
-               JOIN barbers_tbl b ON e.barberID = b.barberID
-               JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-               WHERE DATE(a.date) = CURDATE()";
+                   FROM earnings_tbl e 
+                   JOIN barbers_tbl b ON e.barberID = b.barberID
+                   JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
+                   WHERE DATE(a.date) = ?";
     $stmtToday = $conn->prepare($todayQuery);
+    $stmtToday->bind_param("s", $selectedDate);
     $stmtToday->execute();
     $resultToday = $stmtToday->get_result();
 
@@ -105,9 +107,11 @@
         <div class="row g-3 mb-3 ms-5">
             <div class="col-md-12">
                 <div class="card border-0 rounded-4">
-                    <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
-                        <h2 class="fw-bold">Today</h2>
-                    </div>
+                <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="fw-bold">Earnings</h2>
+                    <input type="date" id="earningsDate" class="form-control w-auto" value="<?= isset($_GET['date']) ? $_GET['date'] : date('Y-m-d') ?>">
+
+                </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
@@ -186,8 +190,6 @@
         </div>
     </div>
 </nav>
-
-    <!-- Add this script before closing body tag -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebarMenu');
@@ -201,6 +203,13 @@
             if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
                 sidebar.classList.remove('show');
             }
+        });
+    </script>
+
+    <script>
+        document.getElementById("earningsDate").addEventListener("change", function () {
+            const selectedDate = this.value;
+            window.location.href = "earnings.php?date=" + selectedDate;
         });
     </script>
 </body>

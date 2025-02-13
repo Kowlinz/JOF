@@ -22,7 +22,7 @@ function send_password_reset($get_firstName, $get_lastName, $get_email, $token) 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('jackoffadeswebsite@gmail.com', "$get_firstName $get_lastName");
+        $mail->setFrom('jackoffadeswebsite@gmail.com', 'Jack of Fades');
         $mail->addAddress($get_email);
 
         $mail->isHTML(true);

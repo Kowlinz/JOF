@@ -30,25 +30,25 @@ if (!isset($_SESSION['firstName'])) {
 // Fetch appointments for the logged-in customer
 $sql = "
     SELECT 
-        a.appointmentID,
-        a.date, 
-        a.timeSlot, 
-        a.status, 
-        COALESCE(s.serviceName, 'No Service') AS serviceName, 
-        COALESCE(ad.addonName, 'No Add-on') AS addonName, 
-        COALESCE(s.servicePrice, 0) + COALESCE(ad.addonPrice, 0) AS totalPrice,
-        a.payment_status,
-        a.payment_amount
-    FROM 
-        appointment_tbl a
-    LEFT JOIN 
-        service_tbl s ON a.serviceID = s.serviceID
-    LEFT JOIN 
-        addon_tbl ad ON a.addonID = ad.addonID
-    WHERE 
-        a.customerID = ?
-    ORDER BY 
-        a.date DESC, a.timeSlot DESC
+    a.appointmentID,
+    a.date, 
+    a.timeSlot, 
+    a.status, 
+    IFNULL(s.serviceName, 'No Service') AS serviceName, 
+    IFNULL(ad.addonName, 'No Add-on') AS addonName, 
+    IFNULL(s.servicePrice, 0) + IFNULL(ad.addonPrice, 0) AS totalPrice,
+    a.payment_status,
+    a.payment_amount
+FROM 
+    appointment_tbl a
+LEFT JOIN 
+    service_tbl s ON a.serviceID = s.serviceID
+LEFT JOIN 
+    addon_tbl ad ON a.addonID = ad.addonID
+WHERE 
+    a.customerID = ?
+ORDER BY 
+    a.appointmentID DESC, a.date DESC, a.timeSlot DESC;
 ";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $customerID);

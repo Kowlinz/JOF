@@ -1,46 +1,63 @@
 <?php
-session_start(); // Start the session
-if (isset($_SESSION['appointmentID'], $_SESSION['paymentAmount'])) {
-    $appointmentID = $_SESSION['appointmentID'];
-    $paymentAmount = $_SESSION['paymentAmount'];
-} else {
-    die("Invalid access.");
+session_start();
+require_once '../db_connect.php';
+
+// Check if the user is logged in as a customer
+if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "customer") {
+    header("Location: ../login.php"); // Redirect to login if not logged in or not a customer
+    exit();
 }
 
-include 'db_connect.php';
+// Get the logged-in customer's ID from the session
+$customerID = $_SESSION["customerID"];
 
-// Fetch appointment details including service and addon prices
+// Ensure $bookingData is set before accessing keys
+$bookingData = $_POST ?? []; // Get data from form submission
+
+$appointmentID = isset($bookingData['appointmentID']) ? intval($bookingData['appointmentID']) : 0;
+$date = isset($bookingData['date']) ? htmlspecialchars($bookingData['date']) : 'Not Set';
+$timeslot = isset($bookingData['timeslot']) ? htmlspecialchars($bookingData['timeslot']) : 'Not Set';
+$serviceID = isset($bookingData['service']) ? intval($bookingData['service']) : 0;
+$addonID = isset($bookingData['addon']) ? intval($bookingData['addon']) : 0;
+$remarks = isset($bookingData['remarks']) ? htmlspecialchars($bookingData['remarks']) : 'No remarks';
+$paymentOption = isset($bookingData['paymentOption']) ? htmlspecialchars($bookingData['paymentOption']) : 'full';
+
+// Fetch service and addon details
 $sql = "SELECT 
-            a.serviceID, a.addonID, a.payment_status, 
-            s.servicePrice, 
-            COALESCE(ad.addonPrice, 0) AS addonPrice 
-        FROM appointment_tbl a
-        LEFT JOIN service_tbl s ON a.serviceID = s.serviceID
-        LEFT JOIN addon_tbl ad ON a.addonID = ad.addonID
-        WHERE a.appointmentID = ?";
+            s.serviceName, CAST(s.servicePrice AS DECIMAL(10,2)) AS servicePrice, 
+            COALESCE(ad.addonName, 'None') AS addonName, 
+            COALESCE(CAST(ad.addonPrice AS DECIMAL(10,2)), 0) AS addonPrice 
+        FROM service_tbl s
+        LEFT JOIN addon_tbl ad ON ad.addonID = ?
+        WHERE s.serviceID = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $appointmentID);
+$stmt->bind_param("ii", $addonID, $serviceID);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 
-// If no result found, show error and exit
-if (!$row) {
-    echo "<script>alert('Error: Appointment not found.'); window.location.href = 'appointments.php';</script>";
-    exit();
-}
+$serviceName = $row['serviceName'] ?? 'Unknown Service';
+$servicePrice = $row['servicePrice'] ?? 0.00;
+$addonName = $row['addonName'] ?? 'None';
+$addonPrice = $row['addonPrice'] ?? 0.00;
 
-// Get service and addon prices
-$servicePrice = $row['servicePrice'] ?? 0;
-$addonPrice = $row['addonPrice'] ?? 0;
+// Calculate total price
 $fullPrice = $servicePrice + $addonPrice;
 
-// Determine the payment amount based on selected payment option
-$paymentStatus = $row['payment_status']; // Should be 'downpayment' or 'full'
-$paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
+// Apply downpayment logic (50%) or full price
+if ($paymentOption === 'downpayment') {
+    $paymentAmount = $fullPrice * 0.5; // 50% of total
+    $finalPaymentStatus = 'partial';   // Set status to partial
+} else {
+    $paymentAmount = $fullPrice;       // Full payment
+    $finalPaymentStatus = 'paid';      // Set status to paid
+}
 
+// Close the statement
+$stmt->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -232,7 +249,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
             }
 
             .qr-code-container img {
-                max-width: 80%;
+                max-width: 100%;
                 width: auto;
                 height: auto;
                 object-fit: contain;
@@ -275,7 +292,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
         }
 
         .qr-code-container img {
-            max-width: 70%;
+            max-width: 100%;
             height: auto;
             object-fit: contain;
         }
@@ -291,7 +308,7 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
             <h2 class="text-center mb-4" style="color: #FFDE59;">GCash Payment</h2>
             
             <div class="qr-code-container text-center">
-                <img src="../customer/css/images/gcash_qr.JPG" alt="GCash QR Code" class="img-fluid">
+                <img src="../customer/css/images/shop-qr.jpg" alt="GCash QR Code" class="img-fluid">
                 <div class="mt-3">
                     <small class="text-warning">Note: Downpayment is non-refundable</small>
                 </div>
@@ -307,35 +324,40 @@ $paymentAmount = ($paymentStatus === 'partial') ? $fullPrice * 0.5 : $fullPrice;
                     <span>₱<?php echo number_format($addonPrice, 2); ?></span>
                 </div>
                 <div class="total-amount text-center">
-                    <span>Total Amount to Pay: ₱<?php echo number_format($paymentAmount, 2); ?></span>
-                </div>
+                <span>Total Amount to Pay: ₱<?php echo number_format($paymentAmount, 2); ?></span>
             </div>
+        </div>
+
 
             <div class="form-container fade-in">
-                <form action="verify_payment.php" method="POST" class="text-center" enctype="multipart/form-data">
-                    <input type="hidden" name="appointmentID" value="<?php echo $appointmentID; ?>">
-                    <input type="hidden" name="amount" value="<?php echo $paymentAmount; ?>">
-                    
-                    <div class="mb-4">
-                        <span style="color: red;">* </span>
-                        <label class="form-label">Attach Payment Screenshot:</label>
-                        <div class="upload-container">
-                            <input type="file" name="paymentProof" class="form-control" 
-                                   accept="image/*"
-                                   placeholder="Upload screenshot of your payment">
-                            <small class="text-muted d-block mt-2">Accepted formats: JPG, PNG, JPEG</small>
-                        </div>
+            <form action="verify_payment.php" method="POST" class="text-center" enctype="multipart/form-data">
+                <input type="hidden" name="appointmentID" value="<?php echo $appointmentID; ?>">
+                <input type="hidden" name="amount" value="<?php echo $paymentAmount; ?>">
+                <input type="hidden" name="serviceID" value="<?php echo $serviceID; ?>">
+                <input type="hidden" name="addonID" value="<?php echo $addonID; ?>">
+                <input type="hidden" name="date" value="<?php echo $bookingData['date']; ?>">
+                <input type="hidden" name="timeSlot" value="<?php echo $bookingData['timeSlot']; ?>">
+                <input type="hidden" name="remarks" value="<?php echo htmlspecialchars($bookingData['remarks']); ?>">
+                <input type="hidden" name="paymentOption" value="<?php echo htmlspecialchars($bookingData['paymentOption']); ?>">
+
+                <div class="mb-4">
+                    <span style="color: red;">* </span>
+                    <label class="form-label">Attach Payment Screenshot:</label>
+                    <div class="upload-container">
+                        <input type="file" name="paymentProof" class="form-control" accept="image/*">
+                        <small class="text-muted d-block mt-2">Accepted formats: JPG, PNG, JPEG</small>
                     </div>
-                    
-                    <div class="mb-4">
-                        <span style="color: red;">* </span>
-                        <label class="form-label">Enter GCash Reference Number:</label>
-                        <input type="text" name="gcashRef" required class="form-control" 
-                               placeholder="Enter GCash Transaction Reference Number">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-confirm">Confirm Payment</button>
-                </form>
+                </div>
+
+                <div class="mb-4">
+                    <span style="color: red;">* </span>
+                    <label class="form-label">Enter GCash Reference Number:</label>
+                    <input type="text" name="gcashRef" required class="form-control" placeholder="Enter GCash Transaction Reference Number" maxlength="20" pattern="[0-9]{1,20}" 
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <button type="submit" class="btn btn-confirm">Confirm Payment</button>
+            </form>
             </div>
         </div>
     </div>

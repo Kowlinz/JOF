@@ -565,88 +565,106 @@ $addonsResult = $conn->query($addonsQuery);
         </div>
         <h2 class="text-center mb-5 fade-in" style="color: #FFDF60;">Make an Appointment</h2>
 
-        <form name="form1" id="form1" action="submit_booking.php" method="POST" class="row g-3 mt-5 fade-in">
-            <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <!-- Date Dropdown -->
-                    <div class="mb-3 required">
-                        <span style="color: red;">* </span>
-                        <label for="date" class="form-label text-white">Date:</label>
-                        <input type="text" 
-                               name="date" 
-                               id="date" 
-                               class="form-control text-center" 
-                               placeholder="Choose Date"
-                               readonly
-                               data-db-value="">
-                    </div>
-                    <!-- Service Dropdown -->
-                    <div class="mb-3" required>
-                        <span style="color: red;">* </span>
-                        <label for="service" class="form-label text-white">Service:</label>
-                        <button type="button" class="form-control text-center" id="service-button" data-bs-toggle="modal" data-bs-target="#servicesModal">
-                            Choose Service
-                        </button>
-                        <input type="hidden" name="service" id="service" value="">
-                    </div>
-
-                    <!-- Add-On Dropdown -->
-                    <div class="mb-3">
-                        <label for="addon" class="form-label text-white">Add-on:</label>
-                        <button type="button" class="form-control text-center" id="addon-button" data-bs-toggle="modal" data-bs-target="#addonsModal">
-                            Choose Add-on
-                        </button>
-                        <input type="hidden" name="addon" id="addon" value="">
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="mb-3 required">
-                        <span style="color: red;">* </span>
-                        <label for="time-slot" class="form-label text-white">Preferred Time Slot:</label>
-                        <button type="button" class="form-control text-center" id="time-slot-button" data-bs-toggle="modal" data-bs-target="#timeSlotModal">
-                            Choose Preferred Time
-                        </button>
-                        <input type="hidden" name="timeSlot" id="selectedTimeSlot">
-                    </div>
-
-                    <!-- Haircut Dropdown -->
-                    <div class="mb-3">
-                        <label for="haircut" class="form-label text-white">Haircut:</label>
-                        <button type="button" class="form-control text-center" id="haircut-button" data-bs-toggle="modal" data-bs-target="#haircutsModal">
-                            Choose Haircut
-                        </button>
-                        <input type="hidden" name="haircut" id="haircut" value="">
-                    </div>
-                    <!-- Remarks Dropdown -->
-                        <div class="mb-3">
-                            <label for="remarks" class="form-label text-white">Remarks:</label>
-                            <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="ex. I prefer Jonathan as my Barber."></textarea>
-                        </div>
-                </div>
+        <form name="form1" id="form1" action="gcash_payment.php" method="POST" class="row g-3 mt-5 fade-in">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <!-- Date Selection -->
+            <div class="mb-3 required">
+                <span style="color: red;">* </span>
+                <label for="date" class="form-label text-white">Date:</label>
+                <input type="text" name="date" id="date" class="form-control text-center" placeholder="Choose Date" readonly value="<?= htmlspecialchars($_POST['date'] ?? '') ?>">
             </div>
 
-            <!-- Update the Payment Option section with the note -->
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-4">
-                    <div class="mb-2" required>
-                        <span style="color: red;">* </span>
-                        <label for="payment-button" class="form-label text-white">Payment Option:</label>
-                        <button type="button" class="form-control text-center" id="payment-button" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                            Choose Payment Option
-                        </button>
-                        <input type="hidden" name="paymentOption" id="paymentOption" value="">
-                    </div>
-                    <div class="text-center">
-                        <small class="text-warning">Note: Downpayment required to book</small>
-                    </div>
-                </div>
+            <!-- Service Selection -->
+            <div class="mb-3 required">
+                <span style="color: red;">* </span>
+                <label for="service" class="form-label text-white">Service:</label>
+                <button type="button" class="form-control text-center" id="service-button" data-bs-toggle="modal" data-bs-target="#servicesModal">
+                    Choose Service
+                </button>
+                <input type="hidden" name="service" id="service" value="<?= htmlspecialchars($_POST['service'] ?? '') ?>">
             </div>
 
-            <div class="col-12 text-center mt-4 mb-5">
-                <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
+            <!-- Add-On Selection -->
+            <div class="mb-3">
+                <label for="addon" class="form-label text-white">Add-on:</label>
+                <button type="button" class="form-control text-center" id="addon-button" data-bs-toggle="modal" data-bs-target="#addonsModal">
+                    Choose Add-on
+                </button>
+                <input type="hidden" name="addon" id="addon" value="<?= htmlspecialchars($_POST['addon'] ?? '') ?>">
             </div>
-        </form>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Time Slot Selection -->
+            <div class="mb-3 required">
+                <span style="color: red;">* </span>
+                <label for="time-slot" class="form-label text-white">Preferred Time Slot:</label>
+                <button type="button" class="form-control text-center" id="time-slot-button" data-bs-toggle="modal" data-bs-target="#timeSlotModal">
+                    Choose Preferred Time
+                </button>
+                <input type="hidden" name="timeSlot" id="selectedTimeSlot" value="<?= htmlspecialchars($_POST['timeSlot'] ?? '') ?>">
+            </div>
+
+            <!-- Haircut Selection -->
+            <div class="mb-3">
+                <label for="haircut" class="form-label text-white">Haircut:</label>
+                <button type="button" class="form-control text-center" id="haircut-button" data-bs-toggle="modal" data-bs-target="#haircutsModal">
+                    Choose Haircut
+                </button>
+                <input type="hidden" name="haircut" id="haircut" value="<?= htmlspecialchars($_POST['haircut'] ?? '') ?>">
+            </div>
+
+            <!-- Remarks -->
+            <div class="mb-3">
+                <label for="remarks" class="form-label text-white">Remarks:</label>
+                <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="ex. I prefer Jonathan as my Barber."><?= htmlspecialchars($_POST['remarks'] ?? '') ?></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Option -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-4">
+            <div class="mb-2" required>
+                <span style="color: red;">* </span>
+                <label for="payment-button" class="form-label text-white">Payment Option:</label>
+                <button type="button" class="form-control text-center" id="payment-button" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                    Choose Payment Option
+                </button>
+                <input type="hidden" name="paymentOption" id="paymentOption" value="<?= htmlspecialchars($_POST['paymentOption'] ?? '') ?>">
+            </div>
+            <div class="text-center">
+                <small class="text-warning">Note: Downpayment required to book</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 text-center mt-4 mb-5">
+        <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
+    </div>
+</form>
+
+<!-- JavaScript to Update Hidden Inputs -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function setInputValue(buttonId, inputId) {
+            document.getElementById(buttonId).addEventListener("click", function () {
+                if (selectedValue) {
+                    document.getElementById(inputId).value = selectedValue;
+                    document.getElementById(buttonId).innerText = selectedValue;
+                }
+            });
+        }
+
+        setInputValue("service-button", "service");
+        setInputValue("addon-button", "addon");
+        setInputValue("time-slot-button", "selectedTimeSlot");
+        setInputValue("haircut-button", "haircut");
+        setInputValue("payment-button", "paymentOption");
+    });
+</script>
+
     </div>
 
                 <!-- Confirmation Modal -->

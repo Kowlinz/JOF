@@ -11,6 +11,8 @@ if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "barber") {
 $barberID = $_SESSION["barberID"];
 
 include 'db_connect.php';
+mysqli_query($conn, "SET time_zone = '+08:00'");
+date_default_timezone_set('Asia/Manila'); // Set to your desired timezone
 
 // Query to get the barber's full name
 $barberQuery = "SELECT firstName, lastName FROM barbers_tbl WHERE barberID = '$barberID'";
@@ -37,11 +39,13 @@ $barberFullName = $barber ? $barber['firstName'] . ' ' . $barber['lastName'] : '
     
 
 // Query for Total Barber Earnings (Income) and Time
+$selectedDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
+
 $incomeQuery = "
     SELECT a.timeSlot, e.barberEarnings 
     FROM earnings_tbl e
     JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-    WHERE DATE(a.date) = CURDATE() AND e.barberID = '$barberID'
+    WHERE DATE(a.date) = '$selectedDate' AND e.barberID = '$barberID'
     ORDER BY a.timeSlot ASC
 ";
 
@@ -54,7 +58,7 @@ if (!$incomeResult) {
 $totalBarberEarningsQuery = "SELECT SUM(BarberEarnings) AS totalBarberEarnings 
 FROM earnings_tbl e 
 JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-WHERE DATE(a.date) = CURDATE()";
+WHERE DATE(a.date) = '$selectedDate' AND e.barberID = '$barberID'";
 $stmtTotalBarber = $conn->prepare($totalBarberEarningsQuery);
 $stmtTotalBarber->execute();
 $resultTotalBarber = $stmtTotalBarber->get_result();
@@ -64,7 +68,9 @@ $totalBarberEarnings = $resultTotalBarber->fetch_assoc()['totalBarberEarnings'] 
 $monthlyBarberEarningsQuery = "SELECT SUM(BarberEarnings) AS totalMonthlyBarberEarnings 
 FROM earnings_tbl e 
 JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-WHERE MONTH(a.date) = MONTH(CURDATE()) AND YEAR(a.date) = YEAR(CURDATE())";
+WHERE MONTH(a.date) = MONTH('$selectedDate') 
+AND YEAR(a.date) = YEAR('$selectedDate') 
+AND e.barberID = '$barberID'";
 
 $stmtMonthlyBarber = $conn->prepare($monthlyBarberEarningsQuery);
 $stmtMonthlyBarber->execute();
@@ -102,7 +108,7 @@ $totalMonthlyBarberEarnings = $resultMonthlyBarber->fetch_assoc()['totalMonthlyB
                             <i class="fa-solid fa-coins"></i>
                         </div>
                         <div class="flex-fill">
-                            <div class="h5">Today's Income</div>
+                            <div class="h5">This Day Income</div>
                             <div class="h6">₱<?= number_format($totalBarberEarnings, 2) ?></div>
                         </div>
                     </div>
@@ -115,7 +121,7 @@ $totalMonthlyBarberEarnings = $resultMonthlyBarber->fetch_assoc()['totalMonthlyB
                             <i class="fa-solid fa-sack-dollar"></i>
                         </div>
                         <div class="flex-fill">
-                            <div class="h5">This Month Earnings</div>
+                            <div class="h5">This Month Income</div>
                             <div class="h6">₱<?= number_format($totalMonthlyBarberEarnings, 2) ?></div>
                         </div>
                     </div>
@@ -125,8 +131,13 @@ $totalMonthlyBarberEarnings = $resultMonthlyBarber->fetch_assoc()['totalMonthlyB
           <div class="row g-3 mb-5 ms-5">
             <div class="col-md-12">
                 <div class="card border-0 rounded-4">
-                    <div class="card-header py-3 bg-white">
-                        <h2 class="fw-bold">Today</h2>
+                <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
+                        <?php
+                            $prettyDate = date('F j, Y', strtotime($selectedDate));
+                        ?>
+                        <h2 class="fw-bold"><?= $prettyDate ?> Income</h2>
+                        <input type="date" id="earningsDate" class="form-control w-auto" 
+                        value="<?= htmlspecialchars($_GET['date'] ?? date('Y-m-d')) ?>">
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -203,6 +214,19 @@ $totalMonthlyBarberEarnings = $resultMonthlyBarber->fetch_assoc()['totalMonthlyB
         }
     });
 </script>
+
+<script>
+        document.getElementById("earningsDate").addEventListener("change", function () {
+            const selectedDate = this.value;
+    
+            // Format selected date to a more readable format
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const prettyDate = new Date(selectedDate).toLocaleDateString('en-US', options);
+    
+            // Redirect to update earnings based on the selected date
+            window.location.href = "income.php?date=" + selectedDate;
+        });
+    </script>
 
 </body>
 </html>

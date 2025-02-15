@@ -1,11 +1,15 @@
 <?php
-    session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+session_start();
+require 'db_connect.php';
+mysqli_query($conn, "SET time_zone = '+08:00'");
+date_default_timezone_set('Asia/Manila'); 
+
     if (!isset($_SESSION["user"])) {
         header("Location: ../login-staff.php");
         exit;
     }
-
-    include 'db_connect.php'; // Include database connection
 
     // Fetch the number of pending appointments without an assigned barber
     $notificationQuery = "
@@ -18,6 +22,7 @@
     $notificationData = mysqli_fetch_assoc($notificationResult);
     $notificationCount = $notificationData['notif_count'];
 
+    // Query to fetch today's earnings
     $selectedDate = $_GET['date'] ?? date('Y-m-d');
 
     $todayQuery = "SELECT e.adminEarnings, e.barberEarnings, CONCAT(b.firstName, ' ', b.lastName) AS barberFullName, a.date, a.timeSlot
@@ -34,8 +39,9 @@
     $totalAdminEarningsQuery = "SELECT SUM(adminEarnings) AS totalAdminEarnings 
     FROM earnings_tbl e 
     JOIN appointment_tbl a ON e.appointmentID = a.appointmentID
-    WHERE DATE(a.date) = CURDATE()";
+    WHERE DATE(a.date) = ?";
     $stmtTotalAdmin = $conn->prepare($totalAdminEarningsQuery);
+    $stmtTotalAdmin->bind_param("s", $selectedDate);
     $stmtTotalAdmin->execute();
     $resultTotalAdmin = $stmtTotalAdmin->get_result();
     $totalAdminEarnings = $resultTotalAdmin->fetch_assoc()['totalAdminEarnings'] ?? 0; // Default to 0 if null
@@ -66,7 +72,6 @@
     <title>Earnings</title>
 </head>
 <body>
-    <?php include 'db_connect.php'; ?>
 
     <!-- Add the mobile toggle button -->
     <button class="mobile-toggle d-lg-none" onclick="toggleSidebar()">
@@ -84,7 +89,7 @@
                             <i class="fa-solid fa-coins"></i>
                         </div>
                         <div class="flex-fill text-wrap">
-                            <div class="h5">Today's Admin Earnings</div>
+                            <div class="h5">This Day Earnings</div>
                             <div class="h6">₱<?= number_format($totalAdminEarnings, 2) ?></div>
                         </div>
                     </div>
@@ -107,11 +112,13 @@
         <div class="row g-3 mb-3 ms-5">
             <div class="col-md-12">
                 <div class="card border-0 rounded-4">
-                <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="fw-bold">Earnings</h2>
-                    <input type="date" id="earningsDate" class="form-control w-auto" value="<?= isset($_GET['date']) ? $_GET['date'] : date('Y-m-d') ?>">
-
-                </div>
+                    <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
+                        <?php
+                            $prettyDate = date('F j, Y', strtotime($selectedDate));
+                        ?>
+                        <h2 class="fw-bold"><?= $prettyDate ?> Earnings</h2>
+                        <input type="date" id="earningsDate" class="form-control w-auto" value="<?= htmlspecialchars($selectedDate) ?>">
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
@@ -190,6 +197,8 @@
         </div>
     </div>
 </nav>
+
+    <!-- Add this script before closing body tag -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebarMenu');
@@ -205,12 +214,19 @@
             }
         });
     </script>
-
+    
     <script>
         document.getElementById("earningsDate").addEventListener("change", function () {
             const selectedDate = this.value;
+    
+            // Format selected date to a more readable format
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const prettyDate = new Date(selectedDate).toLocaleDateString('en-US', options);
+    
+            // Redirect to update earnings based on the selected date
             window.location.href = "earnings.php?date=" + selectedDate;
         });
     </script>
+
 </body>
 </html>

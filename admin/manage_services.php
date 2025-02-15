@@ -685,11 +685,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             const nameInputs = document.querySelectorAll('.haircut-name-edit');
             const categoryTabs = document.querySelectorAll('.nav-tabs .nav-link');
             const confirmBtn = document.getElementById('confirmGalleryBtn');
+            const addButtons = document.querySelectorAll('#addPhotoBtn, #addServiceBtn, #addAddonBtn');
             
             if (!this.classList.contains('btn-active')) {
                 // Entering edit mode
                 deleteBtns.forEach(btn => {
                     btn.style.display = 'block';
+                });
+                
+                // Disable all Add buttons
+                addButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                    btn.style.cursor = 'not-allowed';
                 });
                 
                 // Show name input fields
@@ -721,6 +729,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 // Exiting edit mode
                 deleteBtns.forEach(btn => {
                     btn.style.display = 'none';
+                });
+                
+                // Enable all Add buttons
+                addButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
                 });
                 
                 // Hide name input fields and revert any unsaved changes
@@ -1038,12 +1053,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Edit Services button functionality
         document.getElementById('editServicesBtn').addEventListener('click', function() {
+            const addButtons = document.querySelectorAll('#addPhotoBtn, #addServiceBtn, #addAddonBtn');
+            
             if (!this.classList.contains('btn-active')) {
                 const servicesTable = this.closest('.d-flex').nextElementSibling;
                 const actionsColumn = servicesTable.querySelectorAll('.actions-column');
                 
                 actionsColumn.forEach(column => {
                     column.style.display = 'table-cell';
+                });
+                
+                // Disable all Add buttons
+                addButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                    btn.style.cursor = 'not-allowed';
                 });
                 
                 this.innerHTML = '<i class="fas fa-times"></i> Cancel';
@@ -1057,6 +1081,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 
                 actionsColumn.forEach(column => {
                     column.style.display = 'none';
+                });
+                
+                // Enable all Add buttons
+                addButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
                 });
                 
                 this.innerHTML = '<i class="fas fa-edit"></i> Edit';
@@ -1269,12 +1300,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         // Edit Add-ons button functionality
         document.getElementById('editAddonsBtn').addEventListener('click', function() {
+            const addButtons = document.querySelectorAll('#addPhotoBtn, #addServiceBtn, #addAddonBtn');
+            
             if (!this.classList.contains('btn-active')) {
                 const addonsTable = this.closest('.d-flex').nextElementSibling;
                 const actionsColumn = addonsTable.querySelectorAll('.actions-column');
                 
                 actionsColumn.forEach(column => {
                     column.style.display = 'table-cell';
+                });
+                
+                // Disable all Add buttons
+                addButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                    btn.style.cursor = 'not-allowed';
                 });
                 
                 this.innerHTML = '<i class="fas fa-times"></i> Cancel';
@@ -1288,6 +1328,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 
                 actionsColumn.forEach(column => {
                     column.style.display = 'none';
+                });
+                
+                // Enable all Add buttons
+                addButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
                 });
                 
                 this.innerHTML = '<i class="fas fa-edit"></i> Edit';

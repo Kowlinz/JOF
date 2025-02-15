@@ -56,6 +56,12 @@
                         <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
                         <i class="bi bi-eye-slash password-toggle" id="togglePassword1"></i>
                     </div>
+                    
+                    <div class="form-text text-muted mb-3">
+                        <span>• At least 8 characters</span>
+                        <br><span>• At least one uppercase</span>
+                        <br><span>• At least one number</span>
+                    </div>
 
                     <div class="form-group position-relative">
                         <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
@@ -99,30 +105,55 @@
         .password-toggle:hover {
             color: #000;
         }
+        
+        .form-text span {
+            transition: color 0.3s ease;
+        }
     </style>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Password toggle functionality for the new password field
-        const togglePassword1 = document.getElementById('togglePassword1');
+        // Get password input elements
         const passwordInput1 = document.querySelector('input[name="new_password"]');
-
-        togglePassword1.addEventListener('click', function() {
-            const type = passwordInput1.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput1.setAttribute('type', type);
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
-        });
-
-        // Password toggle functionality for the confirm password field
-        const togglePassword2 = document.getElementById('togglePassword2');
         const passwordInput2 = document.querySelector('input[name="confirm_password"]');
+        const togglePassword1 = document.getElementById('togglePassword1');
+        const togglePassword2 = document.getElementById('togglePassword2');
 
-        togglePassword2.addEventListener('click', function() {
-            const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput2.setAttribute('type', type);
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
+        // Password toggle functionality
+        function togglePasswordVisibility(passwordInput, toggleButton) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            toggleButton.classList.toggle('bi-eye');
+            toggleButton.classList.toggle('bi-eye-slash');
+        }
+
+        // Add click events for password toggles
+        togglePassword1.addEventListener('click', () => togglePasswordVisibility(passwordInput1, togglePassword1));
+        togglePassword2.addEventListener('click', () => togglePasswordVisibility(passwordInput2, togglePassword2));
+
+        // Password validation functions
+        function validatePassword(password) {
+            const minLength = password.length >= 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            return {
+                minLength,
+                hasUpperCase,
+                hasNumber
+            };
+        }
+
+        function updatePasswordFeedback(validationResult) {
+            const bullets = document.querySelectorAll('.form-text.text-muted.mb-3 span');
+            bullets[0].style.color = validationResult.minLength ? 'green' : '#6c757d';
+            bullets[1].style.color = validationResult.hasUpperCase ? 'green' : '#6c757d';
+            bullets[2].style.color = validationResult.hasNumber ? 'green' : '#6c757d';
+        }
+
+        // Add input event for password validation
+        passwordInput1.addEventListener('input', function() {
+            const validationResult = validatePassword(this.value);
+            updatePasswordFeedback(validationResult);
         });
     });
     </script>

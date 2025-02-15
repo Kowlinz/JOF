@@ -71,25 +71,6 @@ if (isset($_POST["Login"])) {
                             <img src="css/images/jof_logo_yellow.png" alt="logo" width="45" height="45">
                         </div>
 
-                        <button class="menu-btn d-lg-none" type="button" id="menuBtn">
-                            <i class='bx bx-menu'></i>
-                        </button>
-
-                        <div class="menu-dropdown" id="menuDropdown">
-                            <div class="menu-header">
-                                <button class="menu-close" id="menuClose">&times;</button>
-                            </div>
-                            <div class="menu-links">
-                                <a href="index.php" class="menu-link">HOME</a>
-                                <a href="haircuts.php" class="menu-link">HAIRCUTS & SERVICES</a>
-                                <?php if (isset($_SESSION["user"])): ?>
-                                    <a href="customer/appointment.php" class="menu-link">MY APPOINTMENT</a>
-                                    <a href="logout.php" class="menu-link">LOGOUT</a>
-                                <?php else: ?>
-                                    <a href="login.php" class="menu-link">LOGIN</a>
-                                <?php endif; ?>
-                            </div>
-                        </div>
                     </div>
                 </nav>
             </div>
@@ -170,7 +151,7 @@ if (isset($_POST["Login"])) {
         .password-toggle:hover {
             color: #000;
         }
-
+        
         .form-group {
             position: relative;
             margin-bottom: 1rem;
@@ -183,39 +164,14 @@ if (isset($_POST["Login"])) {
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.getElementById('menuBtn');
-        const menuClose = document.getElementById('menuClose');
-        const menuDropdown = document.getElementById('menuDropdown');
-
-        menuBtn.addEventListener('click', function() {
-            menuDropdown.classList.add('show');
-        });
-
-        menuClose.addEventListener('click', function() {
-            menuDropdown.classList.remove('show');
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!menuDropdown.contains(event.target) && !menuBtn.contains(event.target)) {
-                menuDropdown.classList.remove('show');
-            }
-        });
-
-        // Updated password toggle functionality
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('passwordInput');
 
         if (togglePassword && passwordInput) {
             togglePassword.addEventListener('click', function(e) {
-                // Prevent the click from submitting the form
                 e.preventDefault();
-                
-                // Toggle the password input type
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
-                
-                // Toggle the eye icon
                 this.classList.toggle('bi-eye');
                 this.classList.toggle('bi-eye-slash');
             });

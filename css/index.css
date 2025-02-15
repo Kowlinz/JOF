@@ -1,5 +1,6 @@
 body {
     font-family: 'Lexend', sans-serif;
+    background-color: #171717;
 }
 
 /* Navbar animation */
@@ -102,6 +103,13 @@ body {
     font-size: 1.1rem;
     color: #e5e5e5;
     line-height: 1.5;
+}
+
+/* Hide navigation arrows and pagination */
+.swiper-button-next,
+.swiper-button-prev,
+.swiper-pagination {
+    display: none !important;
 }
 
 @media screen and (max-width: 1400px) {

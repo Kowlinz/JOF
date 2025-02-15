@@ -220,17 +220,6 @@ body {
     .navbar-brand img {
         display: none !important;
     }
-
-    .menu-btn {
-        display: block;
-        background: none;
-        border: none;
-        color: #FFDE59;
-        font-size: 28px;
-        cursor: pointer;
-        margin-left: auto;
-        z-index: 1001;
-    }
 }
 
 @media (max-width: 576px) {

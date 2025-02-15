@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../db_connect.php';
 
 // Check if the user is logged in as a customer
 if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "customer") {
@@ -9,9 +10,6 @@ if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "customer") {
 
 // Get the logged-in customer's ID from the session
 $customerID = $_SESSION["customerID"];
-
-// Database connection
-include 'db_connect.php';
 
 // Fetch customer's firstName if not in session
 if (!isset($_SESSION['firstName'])) {
@@ -458,7 +456,7 @@ $addonsResult = $conn->query($addonsQuery);
                 margin-bottom: 40px !important;
             }
         }
-
+        
         /* Add these updated style rules */
         .flatpickr-input::placeholder,
         .flatpickr-input::-webkit-input-placeholder,
@@ -482,8 +480,9 @@ $addonsResult = $conn->query($addonsQuery);
         /* Add this style rule after the existing styles */
         #remarks::placeholder {
             font-style: italic;
-            color: black;
+            color: gray;
         }
+        
     </style>
 </head>
 <body>
@@ -635,7 +634,7 @@ $addonsResult = $conn->query($addonsQuery);
                 <input type="hidden" name="paymentOption" id="paymentOption" value="<?= htmlspecialchars($_POST['paymentOption'] ?? '') ?>">
             </div>
             <div class="text-center">
-                <small class="text-warning">Note: Downpayment required to book</small>
+                <small class="text-warning">Note: At least a down payment is required to book an appointment</small>
             </div>
         </div>
     </div>
@@ -1012,8 +1011,6 @@ $addonsResult = $conn->query($addonsQuery);
             <div class="modal-body">
     <div class="time-slots-grid">
     <?php 
-// Database connection
-$conn = new mysqli("localhost", "root", "", "jof_db");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

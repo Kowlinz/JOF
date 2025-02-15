@@ -1,5 +1,6 @@
 <?php
 session_start();
+require 'database.php';
 
 // Assume `customerID` is stored in the session after login
 $customerID = $_SESSION['customerID'] ?? null;
@@ -7,10 +8,8 @@ $customerID = $_SESSION['customerID'] ?? null;
 // Only connect to DB and fetch name if user is logged in
 $firstName = null;
 if ($customerID) {
-    include 'customer/db_connect.php';
-    
     // Fetch user's firstName from customer_tbl
-  	$sql = "SELECT firstName FROM customer_tbl WHERE customerID = ?";
+    $sql = "SELECT firstName FROM customer_tbl WHERE customerID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $customerID);
     $stmt->execute();
@@ -20,7 +19,6 @@ if ($customerID) {
         $firstName = $row['firstName'];
     }
     $stmt->close();
-    $conn->close();
 }
 
 // Include the landing text file
@@ -42,7 +40,7 @@ include 'admin/landing_text.php';
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 </head>
 <body>
-	<div class="main-page" style="background-color: #171717;">
+	<div class="main-page">
   		<div class="header">
 			<nav class="navbar navbar-expand-lg py-4">
 				<div class="container ps-5">
@@ -152,21 +150,28 @@ include 'admin/landing_text.php';
 			<!-- Additional required wrapper -->
 			<div class="swiper-wrapper">
 				<?php
-				include 'admin/db_connect.php';
+				// Create a new connection for the carousel
+				include 'database.php';
+				
 				$carouselQuery = "SELECT * FROM barberpic_tbl";
 				$carouselResult = mysqli_query($conn, $carouselQuery);
-				while ($row = mysqli_fetch_assoc($carouselResult)) {
-					echo '<div class="swiper-slide">
-							<div class="carousel-slide">
-								<img src="data:image/jpeg;base64,' . base64_encode($row['barberPic']) . '" 
-									 alt="' . htmlspecialchars($row['barberName']) . '"
-									 class="carousel-image">
-								<div class="carousel-content">
-									<h3 class="carousel-title">' . htmlspecialchars($row['barberName']) . '</h3>
-									<p class="carousel-description">' . htmlspecialchars($row['barbDesc']) . '</p>
+				
+				if (!$carouselResult) {
+					echo "Error: " . mysqli_error($conn);
+				} else {
+					while ($row = mysqli_fetch_assoc($carouselResult)) {
+						echo '<div class="swiper-slide">
+								<div class="carousel-slide">
+									<img src="data:image/jpeg;base64,' . base64_encode($row['barberPic']) . '" 
+										 alt="' . htmlspecialchars($row['barberName']) . '"
+										 class="carousel-image">
+									<div class="carousel-content">
+										<h3 class="carousel-title">' . htmlspecialchars($row['barberName']) . '</h3>
+										<p class="carousel-description">' . htmlspecialchars($row['barbDesc']) . '</p>
+									</div>
 								</div>
-							</div>
-						</div>';
+							</div>';
+					}
 				}
 				mysqli_close($conn);
 				?>
@@ -190,19 +195,29 @@ include 'admin/landing_text.php';
 	});
 	</script>
 
-	<!-- Add Swiper JS -->
+	<!-- Move scripts right before closing body tag -->
 	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 	<script>
-		const swiper = new Swiper('.swiper', {
-			// Optional parameters
-			direction: 'horizontal',
-			loop: true,
-
-			// Add autoplay
-			autoplay: {
-				delay: 5000, // 5000ms = 5 seconds
-				disableOnInteraction: false, // Continue autoplay after user interaction
-			}
+		document.addEventListener('DOMContentLoaded', function() {
+			// Initialize Swiper
+			const swiper = new Swiper('.swiper', {
+				direction: 'horizontal',
+				loop: true,
+				autoplay: {
+					delay: 5000,
+					disableOnInteraction: false,
+				},
+				breakpoints: {
+					320: {
+						slidesPerView: 1,
+						spaceBetween: 20
+					},
+					768: {
+						slidesPerView: 1,
+						spaceBetween: 30
+					}
+				}
+			});
 		});
 	</script>
 </body>

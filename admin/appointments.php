@@ -84,11 +84,26 @@
                     <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
                         <h2 class="fw-bold">Upcoming Customers</h2>
                         <div class="d-flex align-items-center gap-3">
+                            <!-- Barber Filter Dropdown -->
+                            <div class="mb-0">
+                                <select id="barberFilter" class="form-select bg-white text-dark form-control" onchange="filterAppointments()">
+                                    <option value="">All Barbers</option>
+                                    <?php
+                                    // Fetch all barbers
+                                    $barberListQuery = "SELECT barberID, firstName, lastName FROM barbers_tbl";
+                                    $barberListResult = mysqli_query($conn, $barberListQuery);
+                                    while ($barber = mysqli_fetch_assoc($barberListResult)) {
+                                        $selected = isset($_GET['barber']) && $_GET['barber'] == $barber['barberID'] ? 'selected' : '';
+                                        echo "<option value='{$barber['barberID']}' {$selected}>{$barber['firstName']} {$barber['lastName']}</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
                             <!-- Date Picker for Filtering -->
                             <div class="mb-0">
-                            <input type="date" id="appointmentDate" class="form-control" 
-                            value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
-                            oninput="filterAppointments()">
+                                <input type="date" id="appointmentDate" class="form-control" 
+                                    value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>" 
+                                    onchange="filterAppointments()">
                             </div>
                         </div>
                     </div>
@@ -109,6 +124,8 @@
                                 <tbody>
                                     <?php
                                         $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
+                                        $selectedBarber = isset($_GET['barber']) ? $_GET['barber'] : null;
+                                        
                                         $upcomingQuery = "
                                         SELECT 
                                             a.appointmentID,
@@ -136,6 +153,11 @@
                                     // Add date filtering if a date is selected
                                     if (!empty($selectedDate)) {
                                         $upcomingQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                                    }
+
+                                    // Add barber filtering if a barber is selected
+                                    if (!empty($selectedBarber)) {
+                                        $upcomingQuery .= " AND ba.barberID = '" . mysqli_real_escape_string($conn, $selectedBarber) . "'";
                                     }
 
                                     $upcomingQuery .= " ORDER BY a.timeSlot ASC";
@@ -276,13 +298,25 @@
 let timeout = null;
 
 function filterAppointments() {
-    clearTimeout(timeout); // Clear previous timeout to avoid multiple reloads
+    clearTimeout(timeout);
     timeout = setTimeout(() => {
         let selectedDate = document.getElementById("appointmentDate").value;
-        if (selectedDate.length === 10) { // Ensure full date is entered
-            window.location.href = "appointments.php?date=" + selectedDate;
+        let selectedBarber = document.getElementById("barberFilter").value;
+        
+        let url = "appointments.php?";
+        let params = [];
+        
+        if (selectedDate) {
+            params.push("date=" + selectedDate);
         }
-    }, 800); // Delay execution to allow typing
+        
+        if (selectedBarber) {
+            params.push("barber=" + selectedBarber);
+        }
+        
+        url += params.join("&");
+        window.location.href = url;
+    }, 800);
 }
 </script>
 

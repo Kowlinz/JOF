@@ -100,6 +100,7 @@ include 'admin/landing_text.php';
 								</div>
 
 								<div class="dropdown-menu" id="dropdownMenu">
+									<a href="customer/account.php" class="dropdown-item">Account</a>
 									<a href="logout.php" class="dropdown-item">Logout</a>
 								</div>
 							</div>

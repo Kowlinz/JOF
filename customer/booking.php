@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db_connect.php';
+require_once 'db_connect.php';
 
 // Check if the user is logged in as a customer
 if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "customer") {

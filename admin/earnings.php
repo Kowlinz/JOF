@@ -124,10 +124,10 @@ date_default_timezone_set('Asia/Manila');
                             <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
                                 <thead>
                                     <tr>
-                                        <td>Total</td>
-                                        <td>My Earnings</td>
                                         <td>Barber Name</td>
                                         <td>Barber Earnings</td>
+                                        <td>My Earnings</td>
+                                        <td>Total</td>
                                         <td>Time</td>
                                     </tr>
                                 </thead>
@@ -135,10 +135,10 @@ date_default_timezone_set('Asia/Manila');
                                     <?php if ($resultToday->num_rows > 0): ?>
                                         <?php while ($row = $resultToday->fetch_assoc()): ?>
                                             <tr>
-                                                <td><?= number_format($row['adminEarnings'] + $row['barberEarnings'], 2) ?></td>
-                                                <td><?= number_format($row['adminEarnings'], 2) ?></td>
                                                 <td><?= htmlspecialchars($row['barberFullName']) ?></td>
-                                                <td><?= number_format($row['barberEarnings'], 2) ?></td>
+                                                <td>₱<?= number_format($row['barberEarnings'], 2) ?></td>
+                                                <td>₱<?= number_format($row['adminEarnings'], 2) ?></td>
+                                                <td>₱<?= number_format($row['adminEarnings'] + $row['barberEarnings'], 2) ?></td>
                                                 <td><?= htmlspecialchars($row['timeSlot']) ?></td>
                                             </tr>
                                         <?php endwhile; ?>
@@ -149,6 +149,13 @@ date_default_timezone_set('Asia/Manila');
                                     <?php endif; ?>
                                 </tbody>
                             </table>
+
+                            <div class="d-flex justify-content-end mb-3">
+                                <a href="export_earnings.php?date=<?= $selectedDate ?>" class="btn btn-success">
+                                    <i class="fa fa-file-excel"></i> Download Excel
+                                </a>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -198,7 +205,8 @@ date_default_timezone_set('Asia/Manila');
     </div>
 </nav>
 
-    <!-- Add this script before closing body tag -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebarMenu');

@@ -241,10 +241,26 @@
                                                         </form>
                                                     </td>
                                                     <td>
-                                                        <button type='button' class='btn btn-link' 
-                                                            onclick='openStatusModal({$row['appointmentID']}, " . ($row['customerID'] ? $row['customerID'] : 'null') . ")'>
-                                                            <i class='fas fa-ellipsis-v'></i>
-                                                        </button>
+                                                        <div class='d-flex gap-2'>
+                                                            <button type='button' class='btn btn-sm btn-success' 
+                                                                onclick='confirmComplete({$row['appointmentID']})' 
+                                                                " . (date('F d, Y') !== $formattedDate ? "disabled title='Can only complete appointments scheduled for today'" : "") . ">
+                                                                <i class='fas fa-check'></i>
+                                                            </button>
+                                                            <button type='button' class='btn btn-sm btn-danger' 
+                                                                onclick='confirmCancel({$row['appointmentID']})'>
+                                                                <i class='fas fa-times'></i>
+                                                            </button>";
+                                                            
+                                                            // Only show reminder button for non-walk-in customers
+                                                            if ($row['customerID']) {
+                                                                echo "<button type='button' class='btn btn-sm btn-warning' 
+                                                                        onclick='confirmReminder({$row['appointmentID']})'>
+                                                                        <i class='fas fa-bell'></i>
+                                                                    </button>";
+                                                            }
+
+                                                            echo "</div>
                                                     </td>
                                                 </tr>";
                                                 $counter++;
@@ -400,53 +416,43 @@ function filterAppointments() {
     </div>
 </div>
 
-<!-- Status Modal -->
-<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+<!-- Complete Confirmation Modal -->
+<div class="modal fade" id="completeConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header border-0 justify-content-center position-relative">
-                <h5 class="modal-title fs-4 fw-bold" id="statusModalLabel">Update Appointment Status</h5>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Confirm Completion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center border-0">
-                <form id="statusForm" action="update_status.php" method="POST" onsubmit="handleStatusSubmit(event)">
-                    <input type="hidden" id="appointmentID" name="appointmentID">
+            <div class="modal-body">
+                Are you sure you want to mark this appointment as complete?
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="completeForm" action="update_status.php" method="POST" style="display: inline;">
+                    <input type="hidden" id="completeAppointmentID" name="appointmentID">
                     <input type="hidden" name="status" value="Completed">
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check me-2"></i>Mark as Complete
-                        </button>
-                        <button type="button" class="btn btn-danger" onclick="openCancelModal()">
-                            <i class="fas fa-times me-2"></i>Cancel Appointment
-                        </button>
-                        <button type="button" class="btn btn-warning" id="sendReminderButton" onclick="sendReminder()">
-                            <i class="fas fa-bell me-2"></i>Send Reminder
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-success">Complete</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Reason for Cancellation Modal -->
-<div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
+<!-- Reminder Confirmation Modal -->
+<div class="modal fade" id="reminderConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header border-0 justify-content-center position-relative">
-                <h5 class="modal-title fs-4 fw-bold" id="cancelReasonModalLabel">Cancel Appointment</h5>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Send Reminder</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center border-0">
-                <form id="cancelForm" action="update_status.php" method="POST">
-                    <input type="hidden" id="cancelAppointmentID" name="appointmentID">
-                    <input type="hidden" name="status" value="Cancelled">
-                    <label for="cancelReason" class="form-label">Reason for Cancellation (Required)</label>
-                    <textarea id="cancelReason" name="reason" class="form-control" rows="3" required></textarea>
-                    <div class="d-flex justify-content-end mt-3">
-                        <button type="submit" class="btn btn-danger">Cancel</button>
-                    </div>
-                </form>
+            <div class="modal-body">
+                Are you sure you want to send a reminder for this appointment?
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="sendReminder()">Send Reminder</button>
             </div>
         </div>
     </div>
@@ -466,6 +472,93 @@ function filterAppointments() {
         </div>
     </div>
 </div>
+
+<!-- Cancel Reason Modal -->
+<div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 justify-content-center position-relative">
+                <h5 class="modal-title fs-4 fw-bold" id="cancelReasonModalLabel">Cancel Appointment</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center border-0">
+                <form id="cancelForm" action="update_status.php" method="POST">
+                    <input type="hidden" id="cancelAppointmentID" name="appointmentID">
+                    <input type="hidden" name="status" value="Cancelled">
+                    <label for="cancelReason" class="form-label">Reason for Cancellation (Required)</label>
+                    <textarea id="cancelReason" name="reason" class="form-control" rows="3" required></textarea>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Cancel Appointment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmComplete(appointmentId) {
+    // First check if a barber is assigned
+    fetch(`check_barber.php?appointmentID=${appointmentId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (!data.hasBarber) {
+            document.getElementById('statusMessage').innerText = 'Please assign a barber before marking the appointment as done.';
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+            return;
+        }
+        
+        document.getElementById('completeAppointmentID').value = appointmentId;
+        const modal = new bootstrap.Modal(document.getElementById('completeConfirmModal'));
+        modal.show();
+    });
+}
+
+function confirmCancel(appointmentId) {
+    document.getElementById('cancelAppointmentID').value = appointmentId;
+    const modal = new bootstrap.Modal(document.getElementById('cancelReasonModal'));
+    modal.show();
+}
+
+function confirmReminder(appointmentId) {
+    document.getElementById('appointmentID').value = appointmentId;
+    const modal = new bootstrap.Modal(document.getElementById('reminderConfirmModal'));
+    modal.show();
+}
+
+// Update the existing sendReminder function to use the new modal
+function sendReminder() {
+    let appointmentID = document.getElementById("appointmentID").value;
+    
+    const reminderModal = bootstrap.Modal.getInstance(document.getElementById('reminderConfirmModal'));
+    if (reminderModal) {
+        reminderModal.hide();
+    }
+
+    fetch('update_status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `appointmentID=${appointmentID}&status=Reminder`
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('statusMessage').innerText = data.success ? 
+            "Reminder email sent successfully!" : "Error: " + data.message;
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        document.getElementById('statusMessage').innerText = "An error occurred while sending the reminder.";
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+    });
+}
+</script>
 
 <script>
 function openStatusModal(appointmentId, customerId) {
@@ -514,74 +607,138 @@ function openStatusModal(appointmentId, customerId) {
 </script>
 
 <script>
-    function sendReminder() {
-        let appointmentID = document.getElementById("appointmentID").value;
+    function showAppointmentDetails(appointmentID, isWalkIn) {
+        fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Received data:", data);
 
-        if (!appointmentID) {
-            alert("Invalid appointment ID.");
-            return;
-        }
+                if (data.error) {
+                    console.error("Server error:", data.error);
+                    console.error("Error details:", data.details);
+                    alert("Error: " + data.error);
+                    return;
+                }
 
-        // Close the Status Modal before sending the reminder
-        const statusModal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
-        if (statusModal) {
-            statusModal.hide();
-        }
+                document.getElementById('addonName').innerText = data.addonName || 'N/A';
+                document.getElementById('hcName').innerText = data.hcName || 'N/A';
+                document.getElementById('remarks').innerText = data.remarks || 'N/A';
 
-        // Sending an AJAX request to update_status.php with "Reminder" status
-        fetch('update_status.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `appointmentID=${appointmentID}&status=Reminder`
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Response:", data);  // Debug response
-            if (data.success) {
-                // Show success message in the modal
-                document.getElementById('statusMessage').innerText = "Reminder email sent successfully!";
-                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-                messageModal.show();
-            } else {
-                // Show error message in the modal
-                document.getElementById('statusMessage').innerText = "Error: " + data.message;
-                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-                messageModal.show();
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            // Show error message in the modal
-            document.getElementById('statusMessage').innerText = "An error occurred while sending the reminder.";
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            messageModal.show();
-        });
+                // Get payment details elements
+                const paymentDetailsElements = [
+                    document.getElementById('paymentStatus').parentElement,
+                    document.getElementById('paymentAmount').parentElement,
+                    document.getElementById('gcashReference').parentElement,
+                    document.getElementById('paymentProofContainer').previousElementSibling, // "Payment Proof:" label
+                    document.getElementById('paymentProofContainer')
+                ];
+
+                // Show/hide payment details based on isWalkIn
+                paymentDetailsElements.forEach(element => {
+                    if (element) {
+                        element.style.display = isWalkIn ? 'none' : 'block';
+                    }
+                });
+
+                // Only populate payment details if not a walk-in
+                if (!isWalkIn) {
+                    document.getElementById('paymentStatus').innerText = data.paymentStatus || 'N/A';
+                    document.getElementById('paymentAmount').innerText = "₱" + (data.paymentAmount || "0.00");
+                    document.getElementById('gcashReference').innerText = data.gcashReference || 'N/A';
+
+                    const proofContainer = document.getElementById('paymentProofContainer');
+                    proofContainer.innerHTML = '';
+
+                    // Fetch payment proof image only for non-walk-in appointments
+                    fetch('fetch_payment_proof.php?appointmentID=' + appointmentID)
+                        .then(response => response.json())
+                        .then(imageData => {
+                            if (imageData.success && imageData.image) {
+                                const img = document.createElement('img');
+                                img.style.width = '100%';
+                                img.style.maxHeight = '300px';
+                                img.style.objectFit = 'contain';
+                                img.classList.add('img-fluid', 'mb-3');
+
+                                img.onload = function() {
+                                    console.log("Image loaded successfully");
+                                };
+
+                                img.onerror = function() {
+                                    console.error("Error loading image");
+                                    proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
+                                };
+
+                                img.src = imageData.image;
+                                proofContainer.appendChild(img);
+                            } else {
+                                proofContainer.innerHTML = '<p class="text-muted">No payment proof available</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching payment proof:', error);
+                            proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
+                        });
+                }
+
+                // Show/hide haircut name and remarks based on isWalkIn
+                if (!isWalkIn) {
+                    document.getElementById('hcName').parentElement.style.display = 'block';
+                    document.getElementById('remarks').parentElement.style.display = 'block';
+                } else {
+                    document.getElementById('hcName').parentElement.style.display = 'none';
+                    document.getElementById('remarks').parentElement.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching details:', error);
+                console.error('Error stack:', error.stack);
+                alert('Error fetching appointment details. Please check the console for more information.');
+            });
     }
 </script>
 
 <script>
-function openCancelModal() {
-    // Get the appointment ID from the Status Modal
-    let appointmentID = document.getElementById("appointmentID").value;
+// Add form submission handler for Complete action
+document.getElementById('completeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('update_status.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Close the complete confirmation modal
+        const completeModal = bootstrap.Modal.getInstance(document.getElementById('completeConfirmModal'));
+        completeModal.hide();
+        
+        // Show the message modal
+        document.getElementById('statusMessage').innerText = data.message;
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+        
+        // Reload the page after closing the message modal
+        document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+            window.location.reload();
+        }, { once: true });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('statusMessage').innerText = 'An error occurred while updating the appointment status.';
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+    });
+});
 
-    // Set the appointment ID inside the Cancel Reason Modal
-    document.getElementById("cancelAppointmentID").value = appointmentID;
-
-    // Close the Status Modal
-    let statusModalEl = document.getElementById("statusModal");
-    let statusModal = bootstrap.Modal.getInstance(statusModalEl);
-    if (statusModal) {
-        statusModal.hide();
-    }
-
-    // Open the Cancel Reason Modal
-    let cancelModal = new bootstrap.Modal(document.getElementById("cancelReasonModal"));
-    cancelModal.show();
-}
-
-// Add this to handle the form submission
+// Add form submission handler for Cancel action
 document.getElementById('cancelForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -589,10 +746,10 @@ document.getElementById('cancelForm').addEventListener('submit', function(e) {
     
     // Check if the reason field is empty
     if (!reasonField.value.trim()) {
-        // Show the toast notification
-        const toast = new bootstrap.Toast(document.getElementById('fillFieldToast'));
-        toast.show();
-        return; // Prevent form submission
+        document.getElementById('statusMessage').innerText = 'Please provide a reason for cancellation.';
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+        return;
     }
     
     const formData = new FormData(this);
@@ -615,215 +772,18 @@ document.getElementById('cancelForm').addEventListener('submit', function(e) {
         // Reload the page after closing the message modal
         document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
             window.location.reload();
-        });
+        }, { once: true });
     })
     .catch(error => {
         console.error('Error:', error);
-        document.getElementById('statusMessage').innerText = 'An error occurred while processing your request.';
+        document.getElementById('statusMessage').innerText = 'An error occurred while cancelling the appointment.';
         const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
         messageModal.show();
     });
 });
-</script>
 
-<script>
-// Handle barber assignment forms
-document.querySelectorAll('.assign-barber-form select').forEach(select => {
-    select.addEventListener('change', function() {
-        const form = this.closest('form');
-        const formData = new FormData(form);
-        
-        fetch('assign_barber.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Always show the message modal for both success and error
-            document.getElementById('statusMessage').innerText = data.message || 'Barber assigned successfully.';
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            messageModal.show();
-            
-            // If successful, reload the page after the modal is closed
-            if (data.success) {
-                document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
-                    window.location.reload();
-                }, { once: true }); // Use once: true to prevent multiple event listeners
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('statusMessage').innerText = 'An error occurred while assigning the barber.';
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            messageModal.show();
-        });
-    });
-});
-</script>
-
-<script>
-function handleStatusSubmit(e) {
-    e.preventDefault();
-    
-    const form = e.target;
-    const appointmentID = form.querySelector('#appointmentID').value;
-    
-    // First check if a barber is assigned
-    fetch(`check_barber.php?appointmentID=${appointmentID}`)
-    .then(response => response.json())
-    .then(data => {
-        if (!data.hasBarber) {
-            // Show error message if no barber is assigned
-            const statusModal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
-            statusModal.hide();
-            
-            document.getElementById('statusMessage').innerText = 'Please assign a barber before marking the appointment as done.';
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            messageModal.show();
-            return;
-        }
-        
-        // If barber is assigned, proceed with the status update
-        const formData = new FormData(form);
-        return fetch('update_status.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Response:", data);  // Debug response
-            // Close the status modal
-            const statusModal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
-            statusModal.hide();
-            
-            // Show the message modal
-            document.getElementById('statusMessage').innerText = data.message;
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            messageModal.show();
-            
-            // Reload the page after closing the message modal
-            document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
-                window.location.reload();
-            }, { once: true });
-        });
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('statusMessage').innerText = 'An error occurred while updating the appointment status.';
-        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-        messageModal.show();
-    });
-}
-</script>
-
-<!-- Toast Notification -->
-<div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="fillFieldToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <strong class="me-auto">Notification</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            Please fill out this field.
-        </div>
-    </div>
-</div>
-
-<script>
-function showAppointmentDetails(appointmentID, isWalkIn) {
-    fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("HTTP error " + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Received data:", data);
-
-            if (data.error) {
-                console.error("Server error:", data.error);
-                console.error("Error details:", data.details);
-                alert("Error: " + data.error);
-                return;
-            }
-
-            document.getElementById('addonName').innerText = data.addonName || 'N/A';
-            document.getElementById('hcName').innerText = data.hcName || 'N/A';
-            document.getElementById('remarks').innerText = data.remarks || 'N/A';
-
-            // Get payment details elements
-            const paymentDetailsElements = [
-                document.getElementById('paymentStatus').parentElement,
-                document.getElementById('paymentAmount').parentElement,
-                document.getElementById('gcashReference').parentElement,
-                document.getElementById('paymentProofContainer').previousElementSibling, // "Payment Proof:" label
-                document.getElementById('paymentProofContainer')
-            ];
-
-            // Show/hide payment details based on isWalkIn
-            paymentDetailsElements.forEach(element => {
-                if (element) {
-                    element.style.display = isWalkIn ? 'none' : 'block';
-                }
-            });
-
-            // Only populate payment details if not a walk-in
-            if (!isWalkIn) {
-                document.getElementById('paymentStatus').innerText = data.paymentStatus || 'N/A';
-                document.getElementById('paymentAmount').innerText = "₱" + (data.paymentAmount || "0.00");
-                document.getElementById('gcashReference').innerText = data.gcashReference || 'N/A';
-
-                const proofContainer = document.getElementById('paymentProofContainer');
-                proofContainer.innerHTML = '';
-
-                // Fetch payment proof image only for non-walk-in appointments
-                fetch('fetch_payment_proof.php?appointmentID=' + appointmentID)
-                    .then(response => response.json())
-                    .then(imageData => {
-                        if (imageData.success && imageData.image) {
-                            const img = document.createElement('img');
-                            img.style.width = '100%';
-                            img.style.maxHeight = '300px';
-                            img.style.objectFit = 'contain';
-                            img.classList.add('img-fluid', 'mb-3');
-
-                            img.onload = function() {
-                                console.log("Image loaded successfully");
-                            };
-
-                            img.onerror = function() {
-                                console.error("Error loading image");
-                                proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
-                            };
-
-                            img.src = imageData.image;
-                            proofContainer.appendChild(img);
-                        } else {
-                            proofContainer.innerHTML = '<p class="text-muted">No payment proof available</p>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching payment proof:', error);
-                        proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
-                    });
-            }
-
-            // Show/hide haircut name and remarks based on isWalkIn
-            if (!isWalkIn) {
-                document.getElementById('hcName').parentElement.style.display = 'block';
-                document.getElementById('remarks').parentElement.style.display = 'block';
-            } else {
-                document.getElementById('hcName').parentElement.style.display = 'none';
-                document.getElementById('remarks').parentElement.style.display = 'none';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching details:', error);
-            console.error('Error stack:', error.stack);
-            alert('Error fetching appointment details. Please check the console for more information.');
-        });
-}
+// Add hidden input for reminder action
+document.body.insertAdjacentHTML('beforeend', '<input type="hidden" id="appointmentID">');
 </script>
 </body>
 </html>

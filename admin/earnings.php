@@ -81,7 +81,7 @@ date_default_timezone_set('Asia/Manila');
     <div class="body d-flex py-3 mt-5">
       <div class="container-xxl">
         <h1 class="dashboard mb-5 ms-5">Earnings</h1>
-        <div class="row g-3 mb-3 ms-5">
+        <div class="row g-3 mb-3 ms-5 justify-content-center">
             <div class="col-md-4 col-sm-6">
                 <div class="alert mb-0">
                     <div class="d-flex align-items-center">

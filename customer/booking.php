@@ -153,6 +153,7 @@ $addonsResult = $conn->query($addonsQuery);
 
         /* Add specific styling for service items in all modals */
         #servicesModal .service-item,
+        #barbersModal .service-item,
         #haircutsModal .service-item,
         #addonsModal .service-item {
             background-color: transparent;
@@ -177,6 +178,7 @@ $addonsResult = $conn->query($addonsQuery);
 
         /* Add these new rules for consistent styling across all modals */
         #servicesModal .service-item.selected,
+        #barbersModal .service-item.selected,
         #haircutsModal .service-item.selected,
         #addonsModal .service-item.selected,
         #paymentModal .service-item.selected {
@@ -186,6 +188,7 @@ $addonsResult = $conn->query($addonsQuery);
         }
 
         #servicesModal .service-item:hover,
+        #barbersModal .service-item:hover,
         #haircutsModal .service-item:hover,
         #addonsModal .service-item:hover,
         #paymentModal .service-item:hover {
@@ -552,6 +555,29 @@ $addonsResult = $conn->query($addonsQuery);
                                 dropdownMenu.classList.remove('show');
                             }
                         });
+
+                        function formatReferenceNumber(input) {
+                            let value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
+                            let formattedValue = '';
+
+                            if (value.length > 13) {
+                                value = value.substring(0, 13); // Ensure max of 13 digits
+                            }
+
+                            // Format as XXXX XXX XXXXXX
+                            if (value.length > 4) {
+                                formattedValue = value.substring(0, 4) + ' ';
+                                if (value.length > 7) {
+                                    formattedValue += value.substring(4, 7) + ' ' + value.substring(7);
+                                } else {
+                                    formattedValue += value.substring(4);
+                                }
+                            } else {
+                                formattedValue = value;
+                            }
+
+                            input.value = formattedValue;
+                        }
                     </script>
                 </div>
             </div>
@@ -592,6 +618,19 @@ $addonsResult = $conn->query($addonsQuery);
                 </button>
                 <input type="hidden" name="addon" id="addon" value="<?= htmlspecialchars($_POST['addon'] ?? '') ?>">
             </div>
+            
+            <!-- Payment Option -->
+            <div class="mb-3" required>
+                <span style="color: red;">* </span>
+                    <label for="payment-button" class="form-label text-white">Payment Option:</label>
+                    <button type="button" class="form-control text-center" id="payment-button" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                        Choose Payment Option
+                    </button>
+                    <input type="hidden" name="paymentOption" id="paymentOption" value="<?= htmlspecialchars($_POST['paymentOption'] ?? '') ?>">
+                </div>
+                <div class="text-center">
+                <small class="text-warning">Note: At least a down payment is required to book an appointment</small>
+            </div>
         </div>
 
         <div class="col-md-4">
@@ -607,11 +646,20 @@ $addonsResult = $conn->query($addonsQuery);
 
             <!-- Haircut Selection -->
             <div class="mb-3">
-                <label for="haircut" class="form-label text-white">Haircut:</label>
+                <label for="haircut" class="form-label text-white">Haircut Style:</label>
                 <button type="button" class="form-control text-center" id="haircut-button" data-bs-toggle="modal" data-bs-target="#haircutsModal">
                     Choose Haircut
                 </button>
                 <input type="hidden" name="haircut" id="haircut" value="<?= htmlspecialchars($_POST['haircut'] ?? '') ?>">
+            </div>
+
+            <!-- Barber Selection -->
+            <div class="mb-3">
+                <label for="barber" class="form-label text-white">Preferred Barber:</label>
+                <button type="button" class="form-control text-center" id="barber-button" data-bs-toggle="modal" data-bs-target="#barbersModal">
+                    Choose Barber
+                </button>
+                <input type="hidden" name="barber" id="barber" value="<?= htmlspecialchars($_POST['barber'] ?? '') ?>">
             </div>
 
             <!-- Remarks -->
@@ -621,23 +669,56 @@ $addonsResult = $conn->query($addonsQuery);
             </div>
         </div>
     </div>
+            <div class="qr-code-container text-center">
+                <img src="../customer/css/images/gcash_qr.jpg" alt="GCash QR Code" class="img-fluid">
+                <div class="mt-3">
+                    <small class="text-warning">Note: Downpayment is non-refundable</small>
+                </div>
+            </div>
 
-    <!-- Payment Option -->
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-4">
-            <div class="mb-2" required>
-                <span style="color: red;">* </span>
-                <label for="payment-button" class="form-label text-white">Payment Option:</label>
-                <button type="button" class="form-control text-center" id="payment-button" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                    Choose Payment Option
-                </button>
-                <input type="hidden" name="paymentOption" id="paymentOption" value="<?= htmlspecialchars($_POST['paymentOption'] ?? '') ?>">
+            <div class="price-details">
+                <div class="price-item">
+                    <span>Service Price:</span>
+                    <span id="service-price">₱0.00</span>
+                </div>
+                <div class="price-item">
+                    <span>Add-on Price:</span>
+                    <span id="addon-price">₱0.00</span>
+                </div>
+                <div class="total-amount text-center">
+                    <span>Total Amount to Pay: ₱<span id="total-payment">0.00</span></span>
+                </div>
+                <div class="payment-amount text-center">
+                    <strong>Payment Amount: ₱<span id="payment-amount">0.00</span></strong>
+                </div>
             </div>
-            <div class="text-center">
-                <small class="text-warning">Note: At least a down payment is required to book an appointment</small>
-            </div>
-        </div>
-    </div>
+
+            <div class="mb-4">
+                    <span style="color: red;">* </span>
+                    <label class="form-label">Attach Payment Screenshot:</label>
+                    <div class="upload-container">
+                        <input type="file" name="paymentProof" class="form-control" accept="image/*">
+                        <small class="text-muted d-block mt-2">Accepted formats: JPG, PNG, JPEG</small>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <span style="color: red;">* </span>
+                    <label class="form-label">Enter GCash Reference Number:</label>
+                    <input type="text" id="gcashRef" name="gcashRef" required class="form-control"
+                        placeholder="XXXX XXX XXXXXX" maxlength="17" 
+                        oninput="formatReferenceNumber(this)" pattern="\d{4} \d{3} \d{6}" 
+                        title="Reference number must be in the format XXXX XXX XXXXXX (13 digits)">
+                </div>
+
+                <!-- Terms and Conditions Checkbox -->
+                <div class="mb-4 text-center">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    <label for="agreeTerms">
+                        I have read and agree to the 
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+                    </label>
+                </div>
 
     <div class="col-12 text-center mt-4 mb-5">
         <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
@@ -660,6 +741,7 @@ $addonsResult = $conn->query($addonsQuery);
         setInputValue("addon-button", "addon");
         setInputValue("time-slot-button", "selectedTimeSlot");
         setInputValue("haircut-button", "haircut");
+        setInputValue("barber-button", "barber");
         setInputValue("payment-button", "paymentOption");
     });
 </script>
@@ -678,9 +760,11 @@ $addonsResult = $conn->query($addonsQuery);
                                 <p><strong>Date:</strong> <span id="confirmDate"></span></p>
                                 <p><strong>Time:</strong> <span id="confirmTimeSlot"></span></p>
                                 <p><strong>Haircut:</strong> <span id="confirmHaircut"></span></p>
+                                <p><strong>Barber:</strong> <span id="confirmBarber"></span></p>
                                 <p><strong>Remarks:</strong> <span id="confirmRemarks"></span></p>
                                 <p><strong>Service:</strong> <span id="confirmService"></span></p>
                                 <p><strong>Add-on:</strong> <span id="confirmAddon"></span></p>
+                                <p><strong>G-Cash Reference Number:</strong> <span id="confirmAddon"></span></p>
                                 <p class="total-price"><strong>Total Price:</strong> <span id="confirmTotalPrice"></span></p>
                             </div>
                             <div class="modal-footer">
@@ -742,11 +826,13 @@ $addonsResult = $conn->query($addonsQuery);
                         const date = dateField.value;
                         const timeSlot = document.getElementById('selectedTimeSlot').value;
                         const haircutButton = document.getElementById('haircut-button');
+                        const barberButton = document.getElementById('barber-button');
                         const serviceButton = document.getElementById('service-button');
                         const addonButton = document.getElementById('addon-button');
 
                         // Ensure default values if dropdowns were not clicked
                         const haircut = (haircutButton && haircutButton.textContent.trim() !== 'Choose Haircut') ? haircutButton.textContent.trim() : 'None';
+                        const barber = (barberButton && barberButton.textContent.trim() !== 'Choose Barber') ? barberButton.textContent.trim() : 'None';
                         const service = (serviceButton && serviceButton.textContent.trim() !== 'Choose Service') ? serviceButton.textContent.trim() : 'None';
                         const addon = (addonButton && addonButton.textContent.trim() !== 'Choose Add-on') ? addonButton.textContent.trim() : 'None';
                         const remarks = document.getElementById('remarks').value || 'None';
@@ -798,6 +884,7 @@ $addonsResult = $conn->query($addonsQuery);
                         document.getElementById('confirmDate').innerText = formattedDate;
                         document.getElementById('confirmTimeSlot').innerText = timeSlot;
                         document.getElementById('confirmHaircut').innerText = haircut;
+                        document.getElementById('confirmBarber').innerText = barber;
                         document.getElementById('confirmRemarks').innerText = remarks;
                         document.getElementById('confirmService').innerText = service;
                         document.getElementById('confirmAddon').innerText = addon;
@@ -947,16 +1034,63 @@ $addonsResult = $conn->query($addonsQuery);
                 </div>
                 <div class="modal-body">
                     <div class="services-list">
+                        <!-- No Haircut option -->
+                        <div class="service-item no-haircut-option"
+                            role="button"
+                            onclick="selectHaircut(null, 'No Haircut')">
+                            <div class="service-name">No Haircut</div>
+                        </div>
+
                         <?php 
                         // Reset the haircuts result pointer
                         $haircutsResult->data_seek(0);
                         while ($haircut = $haircutsResult->fetch_assoc()): 
+                            $hcImageData = base64_encode($haircut['hcImage']);
+                            $hcImageSrc = !empty($hcImageData) ? "data:image/jpeg;base64," . $hcImageData : "placeholder.jpg"; // Use a placeholder if no image is found
                         ?>
                             <div class="service-item" 
-                                 role="button"
-                                 data-haircut-id="<?= $haircut['hcID'] ?>"
-                                 onclick="selectHaircut(<?= $haircut['hcID'] ?>, '<?= addslashes($haircut['hcName']) ?>')">
+                                role="button"
+                                data-haircut-id="<?= $haircut['hcID'] ?>"
+                                data-haircut-image="<?= $hcImageSrc ?>"
+                                onclick="selectHaircut(<?= $haircut['hcID'] ?>, '<?= addslashes($haircut['hcName']) ?>', '<?= $hcImageSrc ?>')">
+                                <img src="<?= $hcImageSrc ?>" alt="<?= $haircut['hcName'] ?>" class="haircut-thumbnail" width="50">
                                 <div class="service-name"><?= $haircut['hcName'] ?></div>
+                            </div>
+                        <?php endwhile; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="barbersModal" tabindex="-1" aria-labelledby="barbersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="barbersModalLabel">Choose Barber</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="services-list">
+                        <!-- No Barber option -->
+                        <div class="service-item no-barber-option"
+                            role="button"
+                            onclick="selectBarber(null, 'No Barber')">
+                            <div class="service-name">No Barber</div>
+                        </div>
+
+                        <?php 
+                        // Fetch barbers from the database
+                        $barbersQuery = "SELECT barberID, firstName, lastName, availability FROM barbers_tbl WHERE availability = 'available'";
+                        $barbersResult = $conn->query($barbersQuery);
+
+                        while ($barber = $barbersResult->fetch_assoc()): 
+                        ?>
+                            <div class="service-item" 
+                                role="button"
+                                data-barber-id="<?= $barber['barberID'] ?>"
+                                onclick="selectBarber(<?= $barber['barberID'] ?>, '<?= addslashes($barber['firstName'] . ' ' . $barber['lastName']) ?>')">
+                                <div class="service-name"><?= $barber['firstName'] . ' ' . $barber['lastName'] ?></div>
                             </div>
                         <?php endwhile; ?>
                     </div>
@@ -1121,44 +1255,99 @@ $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime);
     function selectHaircut(haircutId, haircutName) {
         // Update the hidden input
         document.getElementById('haircut').value = haircutId;
+
+        // Update the button text with the selected haircut name
+        document.getElementById('haircut-button').textContent = haircutName;
+
+        // Remove 'selected' class from all items
+        document.querySelectorAll('#haircutsModal .service-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+
+        // Add 'selected' class to the clicked item
+        const selectedItem = document.querySelector(`#haircutsModal .service-item[data-haircut-id="${haircutId}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+        }
+
+        // Close the modal
+        const haircutsModalElement = document.getElementById('haircutsModal');
+        const haircutsModal = bootstrap.Modal.getInstance(haircutsModalElement);
+
+        if (haircutsModal) {
+            haircutsModal.hide();
+        } else {
+            console.error("Modal instance not found.");
+        }
+    }
+
+    // Initialize the modal when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        const haircutsModalElement = document.getElementById('haircutsModal');
+        if (haircutsModalElement) {
+            const haircutsModal = new bootstrap.Modal(haircutsModalElement);
+
+            // Ensure modal instance is created
+            haircutsModalElement.dataset.bsTarget = "#haircutsModal";
+
+            // Add event listener for the close button
+            const closeButton = document.querySelector('#haircutsModal .btn-close');
+            if (closeButton) {
+                closeButton.addEventListener('click', function() {
+                    haircutsModal.hide();
+                });
+            }
+
+            // Clear selection when modal is closed
+            haircutsModalElement.addEventListener('hidden.bs.modal', function() {
+                if (!document.getElementById('haircut').value) {
+                    document.getElementById('haircut-button').textContent = 'Choose Haircut';
+                }
+            });
+        }
+    });
+    
+    function selectBarber(barberId, barberName) {
+        // Update the hidden input
+        document.getElementById('barber').value = barberId;
         
         // Update the button text
-        document.getElementById('haircut-button').textContent = haircutName;
+        document.getElementById('barber-button').textContent = barberName;
         
         // Remove selected class from all items
-        document.querySelectorAll('#haircutsModal .service-item').forEach(item => {
+        document.querySelectorAll('#barbersModal .service-item').forEach(item => {
             item.classList.remove('selected');
         });
         
         // Add selected class to clicked item
-        const selectedItem = document.querySelector(`#haircutsModal .service-item[data-haircut-id="${haircutId}"]`);
+        const selectedItem = document.querySelector(`#barbersModal .service-item[data-barber-id="${barberId}"]`);
         if (selectedItem) {
             selectedItem.classList.add('selected');
         }
         
         // Close the modal
-        const haircutsModal = bootstrap.Modal.getInstance(document.getElementById('haircutsModal'));
-        haircutsModal.hide();
+        const barbersModal = bootstrap.Modal.getInstance(document.getElementById('barbersModal'));
+        barbersModal.hide();
     }
 
-    // Initialize the haircuts modal when the document is ready
+    // Initialize the barbers modal when the document is ready
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize the modal
-        const haircutsModal = new bootstrap.Modal(document.getElementById('haircutsModal'));
+        const barbersModal = new bootstrap.Modal(document.getElementById('barbersModal'));
         
         // Add click handler for close button
-        const closeButton = document.querySelector('#haircutsModal .btn-close');
+        const closeButton = document.querySelector('#barbersModal .btn-close');
         if (closeButton) {
             closeButton.addEventListener('click', function() {
-                haircutsModal.hide();
+                barbersModal.hide();
             });
         }
     });
 
     // Clear selection when modal is closed
-    document.getElementById('haircutsModal').addEventListener('hidden.bs.modal', function () {
-        if (!document.getElementById('haircut').value) {
-            document.getElementById('haircut-button').textContent = 'Choose Haircut';
+    document.getElementById('barbersModal').addEventListener('hidden.bs.modal', function () {
+        if (!document.getElementById('barber').value) {
+            document.getElementById('barber-button').textContent = 'Choose Barber';
         }
     });
 

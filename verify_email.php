@@ -5,7 +5,7 @@ include 'database.php';
 if (isset($_GET['token']))
 {
     $token = $_GET['token'];
-    $verify_query = "SELECT verify_token, verify_status, temp_email FROM customer_tbl WHERE verify_token='$token'";
+    $verify_query = "SELECT verify_token, verify_status FROM customer_tbl WHERE verify_token='$token'";
     $verify_query_run = mysqli_query($conn, $verify_query);
 
     if(mysqli_num_rows($verify_query_run) > 0)

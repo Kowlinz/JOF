@@ -34,7 +34,7 @@ if (!password_verify($password, $user['password'])) {
 $verificationToken = bin2hex(random_bytes(32));
 
 // Update customer table with new email and token
-$sql = "UPDATE customer_tbl SET temp_email = ?, verify_token = ?, verify_status = 0 WHERE customerID = ?";
+$sql = "UPDATE customer_tbl SET email = ?, verify_token = ?, verify_status = 0 WHERE customerID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ssi", $newEmail, $verificationToken, $customerID);
 

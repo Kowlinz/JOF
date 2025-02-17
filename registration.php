@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="icon" href="css/images/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
@@ -106,10 +107,28 @@
                         if (empty ($FirstName) OR empty ($LastName) OR empty ($email) OR empty ($password) OR empty ($RepeatPassword)) {
                             array_push($errors, "All fields are required except Middle Name"); 
                         }
-                        // validate if the email is not validated 
-                        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                            array_push($errors, "Email is not valid");
+
+                        // Validate names (Only letters and spaces allowed)
+                        if (!preg_match("/^[A-Za-z\s]+$/", $FirstName)) {
+                            array_push($errors, "First name can only contain letters and spaces.");
                         }
+                        if (!empty($MiddleName) && !preg_match("/^[A-Za-z\s]+$/", $MiddleName)) {
+                            array_push($errors, "Middle name can only contain letters and spaces.");
+                        }
+                        if (!preg_match("/^[A-Za-z\s]+$/", $LastName)) {
+                            array_push($errors, "Last name can only contain letters and spaces.");
+                        }
+
+                        // Validate email (must contain ".com" at the end)
+                        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match("/\.com$/", $email)) {
+                            array_push($errors, "Email must be valid");
+                        }
+
+                        // Validate contact number (Must be in the format: +639XXXXXXXXX)
+                        if (!preg_match('/^\+639[0-9]{9}$/', $contactNum)) {
+                            array_push($errors, "Invalid PH number");
+                        }
+                        
                         // password should not be less than 8 
                         if (strlen($password)<8) {
                             array_push($errors, "Password must be at least 8 characters long");
@@ -121,10 +140,6 @@
                         // check if password is the same 
                         if($password !== $RepeatPassword){
                             array_push($errors, "Password does not match");
-                        }
-                        // validate contact number length and numeric value
-                        if (!preg_match('/^[0-9]{11}$/', $contactNum)) {
-                            array_push($errors, "Contact number must be 11 digits and numeric");
                         }
 
                         require_once "database.php"; 
@@ -171,23 +186,26 @@
                     <form action="registration.php" method="post">
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="FirstName" placeholder="First Name" required>
+                            <input type="text" class="form-control" name="FirstName" placeholder="First Name" required 
+                                maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
                         </div> 
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="MiddleName" placeholder="Middle Name">
+                            <input type="text" class="form-control" name="MiddleName" placeholder="Middle Name"
+                                maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
                         </div> 
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="LastName" placeholder="Last Name" required>
-                        </div> 
+                            <input type="text" class="form-control" name="LastName" placeholder="Last Name" required 
+                                maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
+                        </div>
 
                         <div class="form-group">
                             <input type="email" class="form-control" name="Email" placeholder="Email" required>
                         </div>
 
                         <div class="form-group">
-                            <input type="tel" class="form-control" name="contactNum" placeholder="Contact Number" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
+                            <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Contact Number" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
                         </div> 
 
                         <div class="form-group position-relative">
@@ -263,6 +281,8 @@
             transition: color 0.3s ease;
         }
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Password toggle functionality for the first password field
@@ -319,6 +339,26 @@
                 this.classList.toggle('bi-eye-slash');
             });
         }
+    });
+    </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var input = document.querySelector("#contactNum");
+
+        // Initialize the intlTelInput plugin without the flag
+        var iti = window.intlTelInput(input, {
+            initialCountry: "ph", // Set default country to the Philippines
+            separateDialCode: true, // Show the country code separately
+            onlyCountries: ["ph"], // Restrict to the Philippines only
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        });
+
+        // Format input correctly when submitting the form
+        input.addEventListener("blur", function () {
+            var number = iti.getNumber(); // Get the full number with country code
+            input.value = number; // Store formatted number in input
+        });
     });
     </script>
 </body>

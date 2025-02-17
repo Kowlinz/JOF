@@ -308,7 +308,7 @@ $stmt->close();
             <h2 class="text-center mb-4" style="color: #FFDE59;">GCash Payment</h2>
             
             <div class="qr-code-container text-center">
-                <img src="../customer/css/images/shop-qr.jpg" alt="GCash QR Code" class="img-fluid">
+                <img src="../customer/css/images/gcash_qr.jpg" alt="GCash QR Code" class="img-fluid">
                 <div class="mt-3">
                     <small class="text-warning">Note: Downpayment is non-refundable</small>
                 </div>
@@ -352,8 +352,19 @@ $stmt->close();
                 <div class="mb-4">
                     <span style="color: red;">* </span>
                     <label class="form-label">Enter GCash Reference Number:</label>
-                    <input type="text" name="gcashRef" required class="form-control" placeholder="Enter GCash Transaction Reference Number"  maxlength="20" pattern="[0-9]{1,20}" 
-                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <input type="text" id="gcashRef" name="gcashRef" required class="form-control"
+                        placeholder="XXXX XXX XXXXXX" maxlength="17" 
+                        oninput="formatReferenceNumber(this)" pattern="\d{4} \d{3} \d{6}" 
+                        title="Reference number must be in the format XXXX XXX XXXXXX (13 digits)">
+                </div>
+
+                <!-- Terms and Conditions Checkbox -->
+                <div class="mb-4 text-center">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    <label for="agreeTerms">
+                        I have read and agree to the 
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+                    </label>
                 </div>
 
                 <button type="submit" class="btn btn-confirm">Confirm Payment</button>
@@ -361,6 +372,76 @@ $stmt->close();
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Terms and Conditions Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Welcome to Jack of Fades! Please read these terms and conditions carefully before making a payment.</p>
+
+                    <h4>1. Appointment Policy</h4>
+                    <p>All appointments must be booked in advance. Walk-ins are accepted based on availability.</p>
+
+                    <h4>2. Payment Policy</h4>
+                    <p>A downpayment is required to secure your appointment. The remaining balance will be paid upon service completion.</p>
+                    <p><strong>Note:</strong> The downpayment is <span class="text-danger">non-refundable</span>.</p>
+
+                    <h4>3. Rescheduling & Cancellations</h4>
+                    <p>Clients may reschedule their appointment at least 24 hours in advance. Cancellations made less than 24 hours before the appointment are subject to forfeiture of the downpayment.</p>
+
+                    <h4>4. Refund Policy</h4>
+                    <p>Payments are non-refundable except in cases where Jack of Fades is unable to provide the service due to unforeseen circumstances.</p>
+
+                    <h4>5. Proof of Payment</h4>
+                    <p>Clients must upload a valid screenshot of the payment and provide the correct GCash reference number. Failure to do so may result in payment verification delays.</p>
+
+                    <h4>6. Acceptance of Terms</h4>
+                    <p>By proceeding with the payment, you confirm that you have read, understood, and agreed to these terms and conditions.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script>
+        document.getElementById("agreeTerms").addEventListener("change", function () {
+            document.getElementById("confirmPaymentBtn").disabled = !this.checked;
+        });
+    </script>
+
+    <script>
+    function formatReferenceNumber(input) {
+        let value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
+        let formattedValue = '';
+
+        if (value.length > 13) {
+            value = value.substring(0, 13); // Ensure max of 13 digits
+        }
+
+        // Format as XXXX XXX XXXXXX
+        if (value.length > 4) {
+            formattedValue = value.substring(0, 4) + ' ';
+            if (value.length > 7) {
+                formattedValue += value.substring(4, 7) + ' ' + value.substring(7);
+            } else {
+                formattedValue += value.substring(4);
+            }
+        } else {
+            formattedValue = value;
+        }
+
+        input.value = formattedValue;
+    }
+    </script>
 </body>
 </html>

@@ -56,15 +56,11 @@
                                     value="<?php echo isset($_GET['appointment_date']) ? $_GET['appointment_date'] : ''; ?>" 
                                     oninput="filterAppointments()">
                                 </div>
-                                <button type="button" class="btn btn-delete" 
-                                        onclick="confirmDeletion('previous_customer')">
-                                    <i class="fa-solid fa-trash-alt fa-lg"></i>
-                                </button>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="myDataTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
+                                <table id="completedTable" class="table table-hover align-middle mb-0" style="width: 100%;">  
                                     <thead>
                                         <tr>
                                             <td>Name</td>
@@ -109,7 +105,8 @@
                                                 $completedQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
                                             }
 
-                                            $completedQuery .= " ORDER BY a.timeSlot ASC";
+                                            $limit = 5; // Number of records to display initially
+                                            $completedQuery .= " ORDER BY a.timeSlot ASC LIMIT $limit";
 
                                             // Execute the query to get the results
                                             $completedResult = mysqli_query($conn, $completedQuery);
@@ -141,6 +138,7 @@
                                                 echo "<tr><td colspan='5' class='text-center'>No completed appointments found.</td></tr>";
                                             }
                                         ?>
+                                        <button id="loadMoreCompleted" class="btn btn-primary mt-3" onclick="loadMore('completed')">Load More</button>
                                     </tbody>
                                 </table>
                             </div>
@@ -163,15 +161,11 @@
                                     value="<?php echo isset($_GET['cancelled_date']) ? $_GET['cancelled_date'] : ''; ?>"
                                     oninput="filterCancelledAppointments()">
                                 </div>
-                                <button type="button" class="btn btn-delete" 
-                                        onclick="confirmDeletion('cancelled')">
-                                    <i class="fa-solid fa-trash-alt fa-lg"></i>
-                                </button>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle">
+                                <table id="cancelledTable" class="table table-hover align-middle">
                                     <thead>
                                         <tr>
                                             <td>Name</td>
@@ -193,7 +187,8 @@
                                                     $cancelledQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedCancelledDate) . "'";
                                                 }
 
-                                                $cancelledQuery .= " ORDER BY a.timeSlot ASC";
+                                                $limit = 5; // Number of records to display initially
+                                                $cancelledQuery .= " ORDER BY a.timeSlot ASC LIMIT $limit";
 
                                                 $cancelledResult = mysqli_query($conn, $cancelledQuery);
 
@@ -229,6 +224,7 @@
                                                     echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
                                                 }
                                             ?>
+                                            <button id="loadMoreCancelled" class="btn btn-primary mt-3" onclick="loadMore('cancelled')">Load More</button>
                                     </tbody>
                                 </table>
                             </div>
@@ -334,59 +330,6 @@
         });
     </script>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Function to handle deletion confirmation
-        window.confirmDeletion = function(type) {
-            // Store the type in a data attribute on the confirm button
-            document.getElementById('confirmDelete').setAttribute('data-type', type);
-            
-            // Show the modal
-            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-            modal.show();
-        }
-
-        // Update the event listener for the confirm delete button
-        document.getElementById('confirmDelete').addEventListener('click', function() {
-            const type = this.getAttribute('data-type');
-            
-            // Hide the confirmation modal
-            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-            if (confirmModal) {
-                confirmModal.hide();
-            }
-
-            // Make AJAX request to delete_data.php
-            fetch(`delete_data.php?table=${type}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success modal
-                        const successModal = new bootstrap.Modal(document.getElementById('deleteSuccessModal'));
-                        successModal.show();
-
-                        // Add event listener for when success modal is hidden
-                        document.getElementById('deleteSuccessModal').addEventListener('hidden.bs.modal', function () {
-                            window.location.reload();
-                        });
-                    } else {
-                        if (data.message === "No records found to delete.") {
-                            // Show no records modal
-                            const noRecordsModal = new bootstrap.Modal(document.getElementById('noRecordsModal'));
-                            noRecordsModal.show();
-                        } else {
-                            alert('Error deleting data: ' + data.message);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while deleting data');
-                });
-        });
-    });
-    </script>
-
     <!-- Update the Modal for additional details -->
     <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -425,55 +368,40 @@
     }
     </script>
 
-    <!-- Add these confirmation modals -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete all data? This action cannot be undone.</p>
-                    <p class="warning-text">Note: This should be done after the service hours.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border: none;">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script>
+        let completedOffset = 5; // Track offset for completed appointments
+        let cancelledOffset = 5; // Track offset for cancelled appointments
+        const limit = 5; // Number of records per request
 
-    <!-- Update the success modal - remove footer with Close button -->
-    <div class="modal fade" id="deleteSuccessModal" tabindex="-1" aria-labelledby="deleteSuccessModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteSuccessModalLabel">Success</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Data has been successfully deleted!</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        function loadMore(type) {
+        let offset = type === 'completed' ? completedOffset : cancelledOffset;
 
-    <!-- Add this modal for no records message -->
-    <div class="modal fade" id="noRecordsModal" tabindex="-1" aria-labelledby="noRecordsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="noRecordsModalLabel">Notice</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>No records found to delete.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        fetch('load_more.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `offset=${offset}&type=${type}`
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data.trim() !== '') {
+                if (type === 'completed') {
+                    document.querySelector("#completedTable tbody").innerHTML += data;
+                    completedOffset += limit;
+                } else if (type === 'cancelled') {
+                    document.querySelector("#cancelledTable tbody").innerHTML += data;
+                    cancelledOffset += limit;
+                }
+            } else {
+                if (type === 'completed') {
+                    document.querySelector("#loadMoreCompleted").style.display = 'none';
+                } else if (type === 'cancelled') {
+                    document.querySelector("#loadMoreCancelled").style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    </script>
 
     <!-- Add the styles -->
     <style>

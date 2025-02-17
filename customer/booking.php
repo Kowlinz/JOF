@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db_connect.php';
+require_once 'db_connect.php';
 
 // Check if the user is logged in as a customer
 if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "customer") {
@@ -617,7 +617,7 @@ $addonsResult = $conn->query($addonsQuery);
             <!-- Remarks -->
             <div class="mb-3">
                 <label for="remarks" class="form-label text-white">Remarks:</label>
-                <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="ex. I prefer Jonathan as my Barber."><?= htmlspecialchars($_POST['remarks'] ?? '') ?></textarea>
+                <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="ex. Just a simple trim, keep the length"><?= htmlspecialchars($_POST['remarks'] ?? '') ?></textarea>
             </div>
         </div>
     </div>

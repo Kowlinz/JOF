@@ -77,6 +77,36 @@
             </div>
         </div>
 
+        <!-- Pending Customers -->
+        <div class="row ms-5">
+            <div class="col-12">
+                <div class="card border-0 rounded-4">
+                    <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
+                        <h2 class="fw-bold">Pending Customers</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Name</td>
+                                        <td>Date</td>
+                                        <td>Time</td>
+                                        <td>Service</td>
+                                        <td>Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <!-- PHP MO DITO BES-->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Upcoming Customers -->
         <div class="row ms-5">
             <div class="col-12">

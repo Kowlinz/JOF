@@ -69,6 +69,8 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="css/customer.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         body {
             font-family: 'Lexend', sans-serif;
@@ -381,6 +383,19 @@ $result = $stmt->get_result();
             border: none;
             margin-bottom: 15px;
         }
+
+        /* Style for the date input placeholder */
+        #newDate::placeholder {
+            color: #000000 !important;
+            opacity: 1; /* Firefox */
+            text-align: center;
+        }
+
+        /* Style for the actual input text */
+        #newDate {
+            color: #000000;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -546,7 +561,7 @@ $result = $stmt->get_result();
                     </div>
                     <div class="modal-body">
                         <label for="newDate">Select New Date:</label>
-                        <input type="date" class="form-control" id="newDate">
+                        <input type="text" class="form-control text-center" id="newDate" placeholder="Choose Date" data-input readonly>
                         
                         <label for="newTime" class="mt-3">Select New Time:</label>
                         <div class="time-slots-grid">
@@ -849,6 +864,28 @@ $result = $stmt->get_result();
                 alert("An error occurred while submitting feedback");
             });
         });
+    });
+    </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Flatpickr
+        flatpickr("#newDate", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disable: [
+                function(date) {
+                    // Disable Sundays
+                    return date.getDay() === 0;
+                }
+            ],
+            locale: {
+                firstDayOfWeek: 1 // Start week on Monday
+            }
+        });
+
+        // ... rest of your existing DOMContentLoaded code ...
     });
     </script>
 

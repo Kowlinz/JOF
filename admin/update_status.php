@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $response["success"] = true;
-        $response["message"] = "Appointment has been " . strtolower($status) . " successfully.";
+        $response["message"] = "Appointment has been set to " . strtolower($status) . " successfully.";
     } catch (Exception $e) {
         error_log("Transaction failed: " . $e->getMessage());
         $conn->rollback();

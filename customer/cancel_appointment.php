@@ -3,44 +3,58 @@ session_start();
 
 // Check if the user is logged in as a customer
 if (!isset($_SESSION["user"]) || $_SESSION["user"] !== "customer") {
-    header("Location: ../login.php");
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
     exit();
 }
 
 // Include the database connection file
 include 'db_connect.php';
 
-header('Content-Type: application/json');
-
-if (isset($_GET['appointmentID']) && isset($_GET['reason'])) {
-    $appointmentID = mysqli_real_escape_string($conn, $_GET['appointmentID']);
-    $reason = mysqli_real_escape_string($conn, $_GET['reason']);
-    $customerID = $_SESSION["customerID"];
-
-    // Verify the appointment belongs to the customer
-    $checkQuery = "SELECT * FROM appointment_tbl WHERE appointmentID = ? AND customerID = ?";
-    $stmt = mysqli_prepare($conn, $checkQuery);
-    mysqli_stmt_bind_param($stmt, "ii", $appointmentID, $customerID);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
-    if (mysqli_num_rows($result) > 0) {
-        // Update the appointment status
-        $updateQuery = "UPDATE appointment_tbl SET status = 'Cancelled', payment_status = 'Cancelled', reason = ? WHERE appointmentID = ?";
-        $stmt = mysqli_prepare($conn, $updateQuery);
-        mysqli_stmt_bind_param($stmt, "si", $reason, $appointmentID);
-        
-        if (mysqli_stmt_execute($stmt)) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to cancel appointment']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid appointment']);
-    }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
+// Check if it's a POST request
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    exit();
 }
 
-mysqli_close($conn);
+// Get POST data
+$appointmentID = isset($_POST['appointmentID']) ? $_POST['appointmentID'] : null;
+$reason = isset($_POST['reason']) ? $_POST['reason'] : null;
+$customerID = $_SESSION['customerID'];
+
+// Validate required parameters
+if (!$appointmentID || !$reason) {
+    echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
+    exit();
+}
+
+try {
+    // Start transaction
+    $conn->begin_transaction();
+
+    // Update appointment status
+    $updateSql = "UPDATE appointment_tbl SET 
+                  status = 'Cancelled', 
+                  reason = ?,
+                  payment_status = 'cancelled'
+                  WHERE appointmentID = ? AND customerID = ?";
+    
+    $stmt = $conn->prepare($updateSql);
+    $stmt->bind_param("sii", $reason, $appointmentID, $customerID);
+    
+    if ($stmt->execute()) {
+        $conn->commit();
+        echo json_encode(['success' => true, 'message' => 'Appointment cancelled successfully']);
+    } else {
+        throw new Exception("Failed to update appointment");
+    }
+    
+} catch (Exception $e) {
+    $conn->rollback();
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+} finally {
+    if (isset($stmt)) {
+        $stmt->close();
+    }
+    $conn->close();
+}
 ?>

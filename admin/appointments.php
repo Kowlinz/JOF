@@ -418,19 +418,56 @@
 
 <script>
     function updateStatus(appointmentID, status) {
-        if (confirm("Are you sure you want to update this appointment's status?")) {
-            fetch('update_status.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `appointmentID=${appointmentID}&status=${status}`
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert(data);
-                location.reload();
-            });
-        }
+        // Store the appointment details for the confirmation handler
+        window.currentAppointment = {
+            id: appointmentID,
+            status: status
+        };
+        
+        // Show the confirmation modal
+        const updateConfirmModal = new bootstrap.Modal(document.getElementById('updateConfirmModal'));
+        updateConfirmModal.show();
     }
+
+    // Add this after your existing DOMContentLoaded event listener
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle confirm update button click
+        document.getElementById('confirmUpdateBtn').addEventListener('click', function() {
+            const updateConfirmModal = bootstrap.Modal.getInstance(document.getElementById('updateConfirmModal'));
+            
+            if (window.currentAppointment) {
+                fetch('update_status.php', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `appointmentID=${window.currentAppointment.id}&status=${window.currentAppointment.status}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    updateConfirmModal.hide();
+                    
+                    document.getElementById('statusMessage').innerText = data.message;
+                    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                    
+                    document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+                        window.location.reload();
+                    }, { once: true });
+                    
+                    messageModal.show();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    updateConfirmModal.hide();
+                    
+                    document.getElementById('statusMessage').innerText = 'An error occurred while updating the appointment status.';
+                    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                    messageModal.show();
+                });
+            }
+        });
+    });
 
     function deleteAppointment(appointmentID) {
         // Prevent any default behavior
@@ -531,13 +568,6 @@ function filterAppointments() {
             toggleButton.setAttribute('onclick', 'toggleSidebar()');
         }
     });
-    function updateStatus(appointmentID, status) {
-        document.getElementById('updateAppointmentID').value = appointmentID;
-        document.getElementById('updateStatusValue').value = status;
-        var updateModal = new bootstrap.Modal(document.getElementById('updateConfirmModal'));
-        updateModal.show();
-    }
-
     function deleteAppointment(appointmentID) {
         document.getElementById('deleteAppointmentID').value = appointmentID;
         var deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
@@ -559,11 +589,7 @@ function filterAppointments() {
             </div>
             <div class="modal-footer border-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="updateForm" action="update_status.php" method="POST" style="display: inline;">
-                    <input type="hidden" id="updateAppointmentID" name="appointmentID">
-                    <input type="hidden" id="updateStatusValue" name="status">
-                    <button type="submit" class="btn btn-success">Confirm</button>
-                </form>
+                <button type="button" class="btn btn-success" id="confirmUpdateBtn">Confirm</button>
             </div>
         </div>
     </div>

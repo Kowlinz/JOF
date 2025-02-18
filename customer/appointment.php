@@ -533,6 +533,10 @@ $result = $stmt->get_result();
                                 data-date='" . date("F d, Y", strtotime($row['date'])) . "' 
                                 data-time='" . $row['timeSlot'] . "' 
                                 data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button>";
+                        } elseif ($row['status'] === "Cancelled") {
+                            echo "<button class='btn btn-warning btn-sm reschedule-button' 
+                                data-id='" . $row['appointmentID'] . "' 
+                                data-bs-toggle='modal' data-bs-target='#rescheduleModal'>Reschedule</button>";
                         } elseif ($row['status'] === "Completed") {
                             if (empty($row['feedback'])) {
                                 echo "<button class='btn btn-primary btn-sm feedback-button' 
@@ -686,6 +690,38 @@ $result = $stmt->get_result();
             </div>
         </div>
 
+        <!-- Add this new modal after your other modals -->
+        <div class="modal fade" id="dateTimeErrorModal" tabindex="-1" aria-labelledby="dateTimeErrorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: #1f1f1f; color: #ffffff;">
+                    <div class="modal-header border-0 justify-content-center position-relative">
+                        <h5 class="modal-title fs-4 fw-bold" id="dateTimeErrorModalLabel">Error</h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center border-0 py-4">
+                        <i class='bx bx-error-circle text-warning mb-3' style="font-size: 3rem;"></i>
+                        <p class="mb-0 fs-5">Please select both date and time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this new modal for reschedule success -->
+        <div class="modal fade" id="rescheduleSuccessModal" tabindex="-1" aria-labelledby="rescheduleSuccessModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: #1f1f1f; color: #ffffff;">
+                    <div class="modal-header border-0 justify-content-center position-relative">
+                        <h5 class="modal-title fs-4 fw-bold" id="rescheduleSuccessModalLabel">Success</h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center border-0 py-4">
+                        <i class='bx bx-check-circle text-success mb-3' style="font-size: 3rem;"></i>
+                        <p class="mb-0 fs-5">Appointment rescheduled successfully</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 let selectedAppointmentID = null;
@@ -696,13 +732,8 @@ $result = $stmt->get_result();
                         selectedAppointmentID = this.getAttribute("data-id");
                         document.getElementById("appointmentDate").textContent = this.getAttribute("data-date");
                         document.getElementById("appointmentTime").textContent = this.getAttribute("data-time");
-
-                        // Show the corresponding reschedule button in the same row
-                        const row = this.closest("tr");
-                        const rescheduleContainer = row.querySelector(".reschedule-container");
-                        if (rescheduleContainer) {
-                            rescheduleContainer.style.display = "inline-block";
-                        }
+                        // Clear the reason input when opening the modal
+                        document.getElementById("cancelReason").value = "";
                     });
                 });
 
@@ -727,16 +758,24 @@ $result = $stmt->get_result();
                     document.getElementById('newTime').value = time;
                 };
 
-                // Confirm Reschedule
+                // Update the Confirm Reschedule event listener
                 document.getElementById("confirmReschedule").addEventListener("click", function () {
                     const newDate = document.getElementById("newDate").value;
                     const newTime = document.getElementById("newTime").value;
 
                     if (!newDate || !newTime) {
-                        alert("Please select both date and time.");
+                        const dateTimeErrorModal = new bootstrap.Modal(document.getElementById('dateTimeErrorModal'));
+                        dateTimeErrorModal.show();
                         return;
                     }
 
+                    // Close the reschedule modal
+                    const rescheduleModal = bootstrap.Modal.getInstance(document.getElementById('rescheduleModal'));
+                    rescheduleModal.hide();
+
+                    // Get the button that was clicked to open the modal
+                    const rescheduleButton = document.querySelector(`.reschedule-button[data-id="${selectedAppointmentID}"]`);
+                    
                     fetch("reschedule_appointment.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -745,14 +784,78 @@ $result = $stmt->get_result();
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert("Appointment rescheduled successfully.");
-                            window.location.reload();
+                            // Find the table row containing the reschedule button
+                            const tableRow = rescheduleButton.closest('tr');
+                            if (tableRow) {
+                                // Update the date and time cells
+                                tableRow.cells[0].textContent = new Date(newDate).toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                });
+                                tableRow.cells[1].textContent = newTime;
+                                
+                                // Update the status cell
+                                const statusCell = tableRow.cells[3];
+                                statusCell.textContent = 'Pending';
+                                statusCell.className = 'status-pending';
+                                
+                                // Update the actions cell
+                                const actionsCell = tableRow.cells[5];
+                                actionsCell.innerHTML = `
+                                    <span class='reschedule-container' style='display: none;'>
+                                        <button class='btn btn-warning btn-sm reschedule-button' 
+                                        data-id='${selectedAppointmentID}' 
+                                        data-bs-toggle='modal' data-bs-target='#rescheduleModal'>Reschedule</button>
+                                    </span>
+                                    <button class='cancel-button' 
+                                        data-id='${selectedAppointmentID}' 
+                                        data-date='${new Date(newDate).toLocaleDateString('en-US', { 
+                                            year: 'numeric', 
+                                            month: 'long', 
+                                            day: 'numeric' 
+                                        })}' 
+                                        data-time='${newTime}' 
+                                        data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button>`;
+                            }
+
+                            // Show success modal
+                            const successModal = new bootstrap.Modal(document.getElementById('rescheduleSuccessModal'));
+                            successModal.show();
+
+                            // Add event listener to refresh page when success modal is closed
+                            document.getElementById('rescheduleSuccessModal').addEventListener('hidden.bs.modal', function () {
+                                window.location.reload();
+                            }, { once: true });
+
+                            // Reattach event listeners for the new buttons
+                            attachEventListeners();
                         } else {
                             alert("Error: " + data.message);
                         }
                     })
                     .catch(error => alert("Error: " + error));
                 });
+
+                // Function to attach event listeners to buttons
+                function attachEventListeners() {
+                    // Attach cancel button listeners
+                    document.querySelectorAll(".cancel-button").forEach(button => {
+                        button.addEventListener("click", function () {
+                            selectedAppointmentID = this.getAttribute("data-id");
+                            document.getElementById("appointmentDate").textContent = this.getAttribute("data-date");
+                            document.getElementById("appointmentTime").textContent = this.getAttribute("data-time");
+                            document.getElementById("cancelReason").value = "";
+                        });
+                    });
+
+                    // Attach reschedule button listeners
+                    document.querySelectorAll(".reschedule-button").forEach(button => {
+                        button.addEventListener("click", function () {
+                            selectedAppointmentID = this.getAttribute("data-id");
+                        });
+                    });
+                }
             });
         </script>
 
@@ -761,15 +864,18 @@ $result = $stmt->get_result();
             const cancelButtons = document.querySelectorAll(".cancel-button");
             let selectedAppointmentID = null;
 
+            // Handle Cancel Button Click
             cancelButtons.forEach(button => {
                 button.addEventListener("click", function () {
                     selectedAppointmentID = this.getAttribute("data-id");
                     document.getElementById("appointmentDate").textContent = this.getAttribute("data-date");
                     document.getElementById("appointmentTime").textContent = this.getAttribute("data-time");
+                    // Clear the reason input when opening the modal
+                    document.getElementById("cancelReason").value = "";
                 });
             });
 
-            // Update the Confirm Cancel button handler
+            // Handle Confirm Cancel button click
             document.getElementById("confirmCancelButton").addEventListener("click", function () {
                 const reason = document.getElementById("cancelReason").value.trim();
 
@@ -780,32 +886,43 @@ $result = $stmt->get_result();
                     return;
                 }
 
+                // Create FormData object
+                const formData = new URLSearchParams();
+                formData.append('appointmentID', selectedAppointmentID);
+                formData.append('reason', reason);
+                formData.append('action', 'cancel'); // Add action parameter
+
                 // Close the cancel modal
                 const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
                 cancelModal.hide();
 
-                // Make the cancellation request
-                fetch(`cancel_appointment.php?appointmentID=${selectedAppointmentID}&reason=${encodeURIComponent(reason)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Show success modal
-                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                            successModal.show();
+                // Make the cancellation request using fetch
+                fetch("cancel_appointment.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: formData.toString()
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success modal
+                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                        successModal.show();
 
-                            // Reload the page after modal is closed
-                            document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
-                                window.location.reload();
-                            }, { once: true });
-                        } else {
-                            // Handle error if needed
-                            alert('Error cancelling appointment: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while cancelling the appointment');
-                    });
+                        // Reload the page after success modal is closed
+                        document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
+                            window.location.reload();
+                        }, { once: true });
+                    } else {
+                        alert('Error cancelling appointment: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while cancelling the appointment');
+                });
             });
         });
 

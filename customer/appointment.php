@@ -323,6 +323,64 @@ $result = $stmt->get_result();
                 margin-bottom: 30px;
             }
         }
+
+        /* Time slot styles for both booking and reschedule modals */
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .time-slot-btn {
+            background-color: #FFDE59;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .time-slot-btn:hover {
+            background-color: #e6c84f;
+        }
+
+        .time-slot-btn.selected {
+            background-color: black;
+            color: #FFDE59;
+        }
+
+        .time-slot-btn.booked {
+            background-color: #d6d6d6;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .time-slot-btn.booked:hover {
+            background-color: #d6d6d6;
+        }
+
+        /* Modal content styling */
+        .modal-content {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
+
+        /* Style for form labels in modals */
+        .modal-body label {
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        /* Style for form inputs in modals */
+        .modal-body .form-control {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -484,12 +542,32 @@ $result = $stmt->get_result();
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Reschedule Appointment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <label for="newDate">Select New Date:</label>
                         <input type="date" class="form-control" id="newDate">
+                        
                         <label for="newTime" class="mt-3">Select New Time:</label>
-                        <input type="time" class="form-control" id="newTime">
+                        <div class="time-slots-grid">
+                            <?php
+                            $timeSlots = [
+                                '10:00 AM', '10:40 AM', '11:20 AM', '12:00 PM',
+                                '12:40 PM', '1:20 PM', '2:00 PM', '2:40 PM',
+                                '3:20 PM', '4:00 PM', '4:40 PM', '5:20 PM',
+                                '6:00 PM', '6:40 PM', '7:20 PM', '8:00 PM',
+                            ];
+
+                            foreach ($timeSlots as $time): ?>
+                                <button class="time-slot-btn" 
+                                        type="button"
+                                        data-time="<?php echo htmlspecialchars($time); ?>"
+                                        onclick="selectRescheduleTime('<?php echo htmlspecialchars($time); ?>')">
+                                    <?php echo htmlspecialchars($time); ?>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                        <input type="hidden" id="newTime">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
@@ -599,6 +677,22 @@ $result = $stmt->get_result();
                         selectedAppointmentID = this.getAttribute("data-id");
                     });
                 });
+                
+                function selectRescheduleTime(time) {
+                    // Remove selected class from all buttons
+                    document.querySelectorAll('#rescheduleModal .time-slot-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked button
+                    const selectedBtn = document.querySelector(`#rescheduleModal .time-slot-btn[data-time="${time}"]`);
+                    if (selectedBtn) {
+                        selectedBtn.classList.add('selected');
+                    }
+                    
+                    // Update hidden input
+                    document.getElementById('newTime').value = time;
+                }
                 
                 document.getElementById("confirmReschedule").addEventListener("click", function () {
                     const newDate = document.getElementById("newDate").value;

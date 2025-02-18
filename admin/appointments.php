@@ -170,11 +170,11 @@
                                                         <div class='d-flex gap-2'>
                                                             <button type='button' class='btn btn-sm btn-success' 
                                                                 onclick='updateStatus({$row["appointmentID"]}, \"Upcoming\")'>
-                                                                <i class='fas fa-check'></i>
+                                                                Approve <!-- Changed from check icon to \"Approve\" text -->
                                                             </button>
                                                             <button type='button' class='btn btn-sm btn-danger' 
                                                                 onclick='deleteAppointment({$row["appointmentID"]})'>
-                                                                <i class='fas fa-times'></i>
+                                                                Decline <!-- Changed from times icon to \"Decline\" text -->
                                                             </button>
                                                         </div>
                                                     </td>

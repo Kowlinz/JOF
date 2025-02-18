@@ -10,6 +10,20 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $appointmentID = $_POST['appointmentID'];
+    $status = $_POST['status'];
+
+    $updateQuery = "UPDATE appointment_tbl SET status = '$status' WHERE appointmentID = '$appointmentID'";
+    
+    if (mysqli_query($conn, $updateQuery)) {
+        header("Location: ".$_SERVER['HTTP_REFERER']);
+        exit();
+    } else {
+        echo "<script>alert('Error updating status: " . mysqli_error($conn) . "'); window.location.href = document.referrer;</script>";
+    }
+}
+
 $response = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

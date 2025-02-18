@@ -296,6 +296,10 @@ $stmt->close();
             height: auto;
             object-fit: contain;
         }
+
+        .modal-dialog {
+            color: black !important;
+        }
     </style>
 </head>
 <body>

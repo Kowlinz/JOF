@@ -540,6 +540,7 @@ $barbersResult = $conn->query($barbersQuery);
                         </div>
 
                         <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="account.php" class="dropdown-item">Account</a>
                             <a href="../logout.php" class="dropdown-item">Logout</a>
                         </div>
                     </div>

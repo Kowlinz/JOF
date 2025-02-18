@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Default status for the appointment
-    $status = "Pending";
+    $status = "Upcoming";
 
     // Insert the appointment into the database
     $sql_insert = "INSERT INTO appointment_tbl (adminID, date, timeSlot, serviceID, addonID, hcID, remarks, status) 

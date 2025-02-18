@@ -18,6 +18,7 @@ $appointmentID = isset($bookingData['appointmentID']) ? intval($bookingData['app
 $date = isset($bookingData['date']) ? htmlspecialchars($bookingData['date']) : 'Not Set';
 $timeslot = isset($bookingData['timeslot']) ? htmlspecialchars($bookingData['timeslot']) : 'Not Set';
 $serviceID = isset($bookingData['service']) ? intval($bookingData['service']) : 0;
+$barberID = isset($bookingData['barber']) ? intval($bookingData['barber']) : 0;
 $addonID = isset($bookingData['addon']) ? intval($bookingData['addon']) : 0;
 $remarks = isset($bookingData['remarks']) ? htmlspecialchars($bookingData['remarks']) : 'No remarks';
 $paymentOption = isset($bookingData['paymentOption']) ? htmlspecialchars($bookingData['paymentOption']) : 'full';
@@ -339,6 +340,7 @@ $stmt->close();
                 <input type="hidden" name="amount" value="<?php echo $paymentAmount; ?>">
                 <input type="hidden" name="serviceID" value="<?php echo $serviceID; ?>">
                 <input type="hidden" name="addonID" value="<?php echo $addonID; ?>">
+                <input type="hidden" name="barberID" value="<?php echo $barberID; ?>">
                 <input type="hidden" name="date" value="<?php echo $bookingData['date']; ?>">
                 <input type="hidden" name="timeSlot" value="<?php echo $bookingData['timeSlot']; ?>">
                 <input type="hidden" name="remarks" value="<?php echo htmlspecialchars($bookingData['remarks']); ?>">

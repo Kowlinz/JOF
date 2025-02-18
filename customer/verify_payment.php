@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Fetch and sanitize input data
     $serviceID = $_POST['serviceID'] ?? null;
     $addonID = !empty($_POST['addonID']) ? $_POST['addonID'] : NULL;
+    $barberID = !empty($_POST['barberID']) ? $_POST['barberID'] : NULL;
     $date = $_POST['date'] ?? null;
     $timeSlot = $_POST['timeSlot'] ?? null;
     $remarks = !empty($_POST['remarks']) ? $_POST['remarks'] : NULL;
@@ -45,13 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Insert into database
     $stmt = $conn->prepare("INSERT INTO appointment_tbl 
-        (customerID, serviceID, addonID, date, timeSlot, remarks, payment_status, payment_amount, gcash_reference, payment_proof, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        (customerID, serviceID, addonID, barberID,  date, timeSlot, remarks, payment_status, payment_amount, gcash_reference, payment_proof, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     
-    $stmt->bind_param("iiissssdsss", 
+    $stmt->bind_param("iiiissssdsss", 
         $customerID, 
         $serviceID, 
         $addonID,  // Accepts NULL
+        $barberID,  // Accepts NULL
         $date, 
         $timeSlot, 
         $remarks,  // Accepts NULL

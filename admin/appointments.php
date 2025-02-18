@@ -173,11 +173,11 @@
                                                         <div class='d-flex gap-2'>
                                                             <button type='button' class='btn btn-sm btn-success' 
                                                                 onclick='updateStatus({$row["appointmentID"]}, \"Upcoming\")'>
-                                                                <i class='fas fa-check'></i>
+                                                                Approve <!-- Changed from check icon to \"Approve\" text -->
                                                             </button>
                                                             <button type='button' class='btn btn-sm btn-danger' 
                                                                 onclick='deleteAppointment({$row["appointmentID"]})'>
-                                                                <i class='fas fa-times'></i>
+                                                                Decline <!-- Changed from times icon to \"Decline\" text -->
                                                             </button>
                                                         </div>
                                                     </td>
@@ -279,7 +279,7 @@
                                         $upcomingQuery .= " AND ba.barberID = '" . mysqli_real_escape_string($conn, $selectedBarber) . "'";
                                     }
 
-                                    $upcomingQuery .= " ORDER BY a.timeSlot ASC";
+                                    $upcomingQuery .= " ORDER BY a.created_at DESC";
 
                                     $upcomingResult = mysqli_query($conn, $upcomingQuery);
 

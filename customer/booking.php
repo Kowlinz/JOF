@@ -36,6 +36,10 @@ $haircutsResult = $conn->query($haircutsQuery);
 // Fetch add-ons from the database
 $addonsQuery = "SELECT * FROM addon_tbl";
 $addonsResult = $conn->query($addonsQuery);
+
+// Fetch barbers from the database
+$barbersQuery = "SELECT * FROM barbers_tbl";
+$barbersResult = $conn->query($barbersQuery);
 ?>
 
 <!DOCTYPE html>

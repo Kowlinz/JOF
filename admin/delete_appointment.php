@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json');
+
 session_start();
 if (!isset($_SESSION["user"])) {
     header("Location: ../login-staff.php");

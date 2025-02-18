@@ -153,8 +153,8 @@ $addonsResult = $conn->query($addonsQuery);
 
         /* Add specific styling for service items in all modals */
         #servicesModal .service-item,
-        #barbersModal .service-item,
         #haircutsModal .service-item,
+        #barbersModal .service-item,
         #addonsModal .service-item {
             background-color: transparent;
             border: none;
@@ -188,7 +188,7 @@ $addonsResult = $conn->query($addonsQuery);
         }
 
         #servicesModal .service-item:hover,
-        #barbersModal .service-item:hover,
+        #barbersModal .service-item.selected,
         #haircutsModal .service-item:hover,
         #addonsModal .service-item:hover,
         #paymentModal .service-item:hover {
@@ -555,29 +555,6 @@ $addonsResult = $conn->query($addonsQuery);
                                 dropdownMenu.classList.remove('show');
                             }
                         });
-
-                        function formatReferenceNumber(input) {
-                            let value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
-                            let formattedValue = '';
-
-                            if (value.length > 13) {
-                                value = value.substring(0, 13); // Ensure max of 13 digits
-                            }
-
-                            // Format as XXXX XXX XXXXXX
-                            if (value.length > 4) {
-                                formattedValue = value.substring(0, 4) + ' ';
-                                if (value.length > 7) {
-                                    formattedValue += value.substring(4, 7) + ' ' + value.substring(7);
-                                } else {
-                                    formattedValue += value.substring(4);
-                                }
-                            } else {
-                                formattedValue = value;
-                            }
-
-                            input.value = formattedValue;
-                        }
                     </script>
                 </div>
             </div>
@@ -618,7 +595,7 @@ $addonsResult = $conn->query($addonsQuery);
                 </button>
                 <input type="hidden" name="addon" id="addon" value="<?= htmlspecialchars($_POST['addon'] ?? '') ?>">
             </div>
-            
+
             <!-- Payment Option -->
             <div class="mb-3" required>
                 <span style="color: red;">* </span>
@@ -646,7 +623,7 @@ $addonsResult = $conn->query($addonsQuery);
 
             <!-- Haircut Selection -->
             <div class="mb-3">
-                <label for="haircut" class="form-label text-white">Haircut Style:</label>
+                <label for="haircut" class="form-label text-white">Haircut:</label>
                 <button type="button" class="form-control text-center" id="haircut-button" data-bs-toggle="modal" data-bs-target="#haircutsModal">
                     Choose Haircut
                 </button>
@@ -669,57 +646,6 @@ $addonsResult = $conn->query($addonsQuery);
             </div>
         </div>
     </div>
-            <div class="qr-code-container text-center">
-                <img src="../customer/css/images/gcash_qr.jpg" alt="GCash QR Code" class="img-fluid">
-                <div class="mt-3">
-                    <small class="text-warning">Note: Downpayment is non-refundable</small>
-                </div>
-            </div>
-
-            <div class="price-details">
-                <div class="price-item">
-                    <span>Service Price:</span>
-                    <span id="service-price">₱0.00</span>
-                </div>
-                <div class="price-item">
-                    <span>Add-on Price:</span>
-                    <span id="addon-price">₱0.00</span>
-                </div>
-                <div class="total-amount text-center">
-                    <span>Total Amount to Pay: ₱<span id="total-payment">0.00</span></span>
-                </div>
-                <div class="payment-amount text-center">
-                    <strong>Payment Amount: ₱<span id="payment-amount">0.00</span></strong>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                    <span style="color: red;">* </span>
-                    <label class="form-label">Attach Payment Screenshot:</label>
-                    <div class="upload-container">
-                        <input type="file" name="paymentProof" class="form-control" accept="image/*">
-                        <small class="text-muted d-block mt-2">Accepted formats: JPG, PNG, JPEG</small>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <span style="color: red;">* </span>
-                    <label class="form-label">Enter GCash Reference Number:</label>
-                    <input type="text" id="gcashRef" name="gcashRef" required class="form-control"
-                        placeholder="XXXX XXX XXXXXX" maxlength="17" 
-                        oninput="formatReferenceNumber(this)" pattern="\d{4} \d{3} \d{6}" 
-                        title="Reference number must be in the format XXXX XXX XXXXXX (13 digits)">
-                </div>
-
-                <!-- Terms and Conditions Checkbox -->
-                <div class="mb-4 text-center">
-                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-                    <label for="agreeTerms">
-                        I have read and agree to the 
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
-                    </label>
-                </div>
-
     <div class="col-12 text-center mt-4 mb-5">
         <button type="submit" class="btn text-dark fw-bold btn-book-appointment" style="background-color: #F3CD32;">Book Appointment</button>
     </div>
@@ -764,7 +690,6 @@ $addonsResult = $conn->query($addonsQuery);
                                 <p><strong>Remarks:</strong> <span id="confirmRemarks"></span></p>
                                 <p><strong>Service:</strong> <span id="confirmService"></span></p>
                                 <p><strong>Add-on:</strong> <span id="confirmAddon"></span></p>
-                                <p><strong>G-Cash Reference Number:</strong> <span id="confirmAddon"></span></p>
                                 <p class="total-price"><strong>Total Price:</strong> <span id="confirmTotalPrice"></span></p>
                             </div>
                             <div class="modal-footer">
@@ -1255,58 +1180,40 @@ $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime);
     function selectHaircut(haircutId, haircutName) {
         // Update the hidden input
         document.getElementById('haircut').value = haircutId;
-
-        // Update the button text with the selected haircut name
+        
+        // Update the button text
         document.getElementById('haircut-button').textContent = haircutName;
-
-        // Remove 'selected' class from all items
+        
+        // Remove selected class from all items
         document.querySelectorAll('#haircutsModal .service-item').forEach(item => {
             item.classList.remove('selected');
         });
-
-        // Add 'selected' class to the clicked item
+        
+        // Add selected class to clicked item
         const selectedItem = document.querySelector(`#haircutsModal .service-item[data-haircut-id="${haircutId}"]`);
         if (selectedItem) {
             selectedItem.classList.add('selected');
         }
-
+        
         // Close the modal
-        const haircutsModalElement = document.getElementById('haircutsModal');
-        const haircutsModal = bootstrap.Modal.getInstance(haircutsModalElement);
-
-        if (haircutsModal) {
-            haircutsModal.hide();
-        } else {
-            console.error("Modal instance not found.");
-        }
+        const haircutsModal = bootstrap.Modal.getInstance(document.getElementById('haircutsModal'));
+        haircutsModal.hide();
     }
 
-    // Initialize the modal when the document is ready
+    // Initialize the haircuts modal when the document is ready
     document.addEventListener('DOMContentLoaded', function() {
-        const haircutsModalElement = document.getElementById('haircutsModal');
-        if (haircutsModalElement) {
-            const haircutsModal = new bootstrap.Modal(haircutsModalElement);
-
-            // Ensure modal instance is created
-            haircutsModalElement.dataset.bsTarget = "#haircutsModal";
-
-            // Add event listener for the close button
-            const closeButton = document.querySelector('#haircutsModal .btn-close');
-            if (closeButton) {
-                closeButton.addEventListener('click', function() {
-                    haircutsModal.hide();
-                });
-            }
-
-            // Clear selection when modal is closed
-            haircutsModalElement.addEventListener('hidden.bs.modal', function() {
-                if (!document.getElementById('haircut').value) {
-                    document.getElementById('haircut-button').textContent = 'Choose Haircut';
-                }
+        // Initialize the modal
+        const haircutsModal = new bootstrap.Modal(document.getElementById('haircutsModal'));
+        
+        // Add click handler for close button
+        const closeButton = document.querySelector('#haircutsModal .btn-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                haircutsModal.hide();
             });
         }
     });
-    
+
     function selectBarber(barberId, barberName) {
         // Update the hidden input
         document.getElementById('barber').value = barberId;
@@ -1348,6 +1255,13 @@ $isAvailable = ($remainingSlots > 0) && ($slotTime > $currentTime);
     document.getElementById('barbersModal').addEventListener('hidden.bs.modal', function () {
         if (!document.getElementById('barber').value) {
             document.getElementById('barber-button').textContent = 'Choose Barber';
+        }
+    });
+
+    // Clear selection when modal is closed
+    document.getElementById('haircutsModal').addEventListener('hidden.bs.modal', function () {
+        if (!document.getElementById('haircut').value) {
+            document.getElementById('haircut-button').textContent = 'Choose Haircut';
         }
     });
 

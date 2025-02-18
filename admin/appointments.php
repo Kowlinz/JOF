@@ -173,11 +173,11 @@
                                                         <div class='d-flex gap-2'>
                                                             <button type='button' class='btn btn-sm btn-success' 
                                                                 onclick='updateStatus({$row["appointmentID"]}, \"Upcoming\")'>
-                                                                Approve <!-- Changed from check icon to \"Approve\" text -->
+                                                                Approve
                                                             </button>
-                                                            <button type='button' class='btn btn-sm btn-danger' 
-                                                                onclick='deleteAppointment({$row["appointmentID"]})'>
-                                                                Decline <!-- Changed from times icon to \"Decline\" text -->
+                                                            <button type='button' class='btn btn-sm btn-danger delete-appointment' 
+                                                                data-appointment-id='{$row["appointmentID"]}'>
+                                                                Decline
                                                             </button>
                                                         </div>
                                                     </td>
@@ -433,18 +433,41 @@
     }
 
     function deleteAppointment(appointmentID) {
-        if (confirm("Are you sure you want to delete this appointment?")) {
+        // Prevent any default behavior
+        event.preventDefault();
+        
+        if (confirm("Are you sure you want to decline this appointment?")) {
             fetch('delete_appointment.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'  // Add this to indicate AJAX request
+                },
                 body: `appointmentID=${appointmentID}`
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                alert(data);
-                location.reload();
+                // Show message in the status modal
+                document.getElementById('statusMessage').innerText = data.message;
+                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                
+                // Add reload listener
+                document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+                    window.location.reload();
+                }, { once: true });
+                
+                messageModal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('statusMessage').innerText = 'An error occurred while deleting the appointment.';
+                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
             });
+            
+            return false; // Prevent any form submission
         }
+        return false; // Prevent any form submission
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -559,10 +582,7 @@ function filterAppointments() {
             </div>
             <div class="modal-footer border-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteForm" action="delete_appointment.php" method="POST" style="display: inline;">
-                    <input type="hidden" id="deleteAppointmentID" name="appointmentID">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Decline</button>
             </div>
         </div>
     </div>
@@ -638,14 +658,14 @@ function filterAppointments() {
 </div>
 
 <!-- Status Message Modal -->
-<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header border-0 justify-content-center position-relative">
-                <h5 class="modal-title fs-4 fw-bold" id="messageModalLabel">Status</h5>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="messageModalLabel">Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center border-0">
+            <div class="modal-body text-center">
                 <p id="statusMessage" class="mb-0"></p>
             </div>
         </div>
@@ -1026,6 +1046,60 @@ function handleBarberAssignment(form) {
         messageModal.show();
     });
 }
+</script>
+
+<script>
+// Add this code after your existing scripts
+document.addEventListener('DOMContentLoaded', function() {
+    let appointmentToDelete = null;
+    const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    
+    // Add click event listeners to all delete buttons
+    document.querySelectorAll('.delete-appointment').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            appointmentToDelete = this.getAttribute('data-appointment-id');
+            deleteConfirmModal.show();
+        });
+    });
+    
+    // Handle confirm delete button click
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        if (appointmentToDelete) {
+            fetch('delete_appointment.php', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `appointmentID=${appointmentToDelete}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                deleteConfirmModal.hide();
+                
+                document.getElementById('statusMessage').innerText = data.message;
+                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                
+                document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+                    window.location.reload();
+                }, { once: true });
+                
+                messageModal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                deleteConfirmModal.hide();
+                
+                document.getElementById('statusMessage').innerText = 'An error occurred while deleting the appointment.';
+                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
+            });
+        }
+    });
+});
 </script>
 </body>
 </html>

@@ -449,6 +449,9 @@ $result = $stmt->get_result();
                         echo "<td>" . $paymentStatusText . "</td>";
                         echo "<td>";
                         if ($row['status'] === "Pending") {
+                            echo "<button class='btn btn-warning btn-sm reschedule-button' 
+                            data-id='" . $row['appointmentID'] . "' 
+                            data-bs-toggle='modal' data-bs-target='#rescheduleModal'>Reschedule</button> ";
                             echo "<button class='cancel-button' 
                                   data-id='" . $row['appointmentID'] . "' 
                                   data-date='" . date("F d, Y", strtotime($row['date'])) . "' 
@@ -464,6 +467,27 @@ $result = $stmt->get_result();
                 ?>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Reschedule Modal -->
+        <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reschedule Appointment</h5>
+                    </div>
+                    <div class="modal-body">
+                        <label for="newDate">Select New Date:</label>
+                        <input type="date" class="form-control" id="newDate">
+                        <label for="newTime" class="mt-3">Select New Time:</label>
+                        <input type="time" class="form-control" id="newTime">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" id="confirmReschedule">Confirm</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Modal -->
@@ -516,6 +540,43 @@ $result = $stmt->get_result();
                 </div>
             </div>
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let selectedAppointmentID;
+                document.querySelectorAll(".reschedule-button").forEach(button => {
+                    button.addEventListener("click", function () {
+                        selectedAppointmentID = this.getAttribute("data-id");
+                    });
+                });
+                
+                document.getElementById("confirmReschedule").addEventListener("click", function () {
+                    const newDate = document.getElementById("newDate").value;
+                    const newTime = document.getElementById("newTime").value;
+                    
+                    if (!newDate || !newTime) {
+                        alert("Please select both date and time.");
+                        return;
+                    }
+                    
+                    fetch("reschedule_appointment.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `appointmentID=${selectedAppointmentID}&newDate=${newDate}&newTime=${newTime}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Appointment rescheduled successfully.");
+                            window.location.reload();
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    })
+                    .catch(error => alert("Error: " + error));
+                });
+            });
+        </script>
 
         <script>
         document.addEventListener("DOMContentLoaded", function () {

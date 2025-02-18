@@ -98,7 +98,93 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <!-- PHP MO DITO BES-->
+                                <?php
+                                    $selectedDate = isset($_GET['date']) ? $_GET['date'] : null;
+                                    $selectedBarber = isset($_GET['barber']) ? $_GET['barber'] : null;
+
+                                    $upcomingQuery = "
+                                        SELECT 
+                                            a.appointmentID,
+                                            a.date,
+                                            a.timeSlot,
+                                            a.status,
+                                            c.customerID,
+                                            CASE 
+                                                WHEN c.customerID IS NOT NULL THEN CONCAT(c.firstName, ' ', c.lastName)
+                                                ELSE 'Walk In' 
+                                            END AS fullName,
+                                            s.serviceName, 
+                                            ba.barberID
+                                        FROM 
+                                            appointment_tbl a
+                                        LEFT JOIN 
+                                            customer_tbl c ON a.customerID = c.customerID
+                                        LEFT JOIN 
+                                            service_tbl s ON a.serviceID = s.serviceID
+                                        LEFT JOIN 
+                                            barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
+                                        WHERE 
+                                            a.status = 'Pending'";
+
+                                    if (!empty($selectedDate)) {
+                                        $upcomingQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                                    }
+
+                                    if (!empty($selectedBarber)) {
+                                        $upcomingQuery .= " AND ba.barberID = '" . mysqli_real_escape_string($conn, $selectedBarber) . "'";
+                                    }
+
+                                    $upcomingQuery .= " ORDER BY a.timeSlot ASC";
+                                    $upcomingResult = mysqli_query($conn, $upcomingQuery);
+
+                                    if (!$upcomingResult) {
+                                        die("Query Error: " . mysqli_error($conn));
+                                    }
+
+                                    $barbersQuery = "SELECT * FROM barbers_tbl WHERE availability = 'available'";
+                                    $barbersResult = mysqli_query($conn, $barbersQuery);
+                                    $barbers = [];
+                                    if ($barbersResult && mysqli_num_rows($barbersResult) > 0) {
+                                        while ($barberRow = mysqli_fetch_assoc($barbersResult)) {
+                                            $barbers[] = $barberRow;
+                                        }
+                                    }
+
+                                    $counter = 1;
+
+                                    if ($upcomingResult && mysqli_num_rows($upcomingResult) > 0) {
+                                        while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                                            $formattedDate = date("F d, Y", strtotime($row['date']));
+                                            echo "<tr>
+                                                    <td>{$counter}</td>
+                                                    <td>
+                                                        <a href='#' onclick='showAppointmentDetails({$row['appointmentID']}, " . ($row['customerID'] ? "false" : "true") . ")' 
+                                                        data-bs-toggle='modal' data-bs-target='#appointmentModal' style='text-decoration: none; color: inherit;'>
+                                                        " . htmlspecialchars($row['fullName']) . "
+                                                        </a>
+                                                    </td>
+                                                    <td>{$formattedDate}</td>
+                                                    <td>{$row['timeSlot']}</td>
+                                                    <td>{$row['serviceName']}</td>
+                                                    <td>
+                                                        <div class='d-flex gap-2'>
+                                                            <button type='button' class='btn btn-sm btn-success' 
+                                                                onclick='updateStatus({$row["appointmentID"]}, \"Upcoming\")'>
+                                                                <i class='fas fa-check'></i>
+                                                            </button>
+                                                            <button type='button' class='btn btn-sm btn-danger' 
+                                                                onclick='deleteAppointment({$row["appointmentID"]})'>
+                                                                <i class='fas fa-times'></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>";
+                                            $counter++;
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='7' class='text-center'>No upcoming appointments found.</td></tr>";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -178,7 +264,7 @@
                                         LEFT JOIN 
                                             barb_apps_tbl ba ON a.appointmentID = ba.appointmentID
                                         WHERE 
-                                            a.status = 'Pending'";
+                                            a.status = 'Upcoming'";
 
                                     // Add date filtering if a date is selected
                                     if (!empty($selectedDate)) {
@@ -328,6 +414,36 @@
 <script src="js/calendar.js"></script>
 
 <script>
+    function updateStatus(appointmentID, status) {
+        if (confirm("Are you sure you want to update this appointment's status?")) {
+            fetch('update_status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `appointmentID=${appointmentID}&status=${status}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                location.reload();
+            });
+        }
+    }
+
+    function deleteAppointment(appointmentID) {
+        if (confirm("Are you sure you want to delete this appointment?")) {
+            fetch('delete_appointment.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `appointmentID=${appointmentID}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                location.reload();
+            });
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         let appointmentDates = <?php echo json_encode($appointmentDates); ?>;
         
@@ -389,7 +505,65 @@ function filterAppointments() {
             toggleButton.setAttribute('onclick', 'toggleSidebar()');
         }
     });
+    function updateStatus(appointmentID, status) {
+        document.getElementById('updateAppointmentID').value = appointmentID;
+        document.getElementById('updateStatusValue').value = status;
+        var updateModal = new bootstrap.Modal(document.getElementById('updateConfirmModal'));
+        updateModal.show();
+    }
+
+    function deleteAppointment(appointmentID) {
+        document.getElementById('deleteAppointmentID').value = appointmentID;
+        var deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        deleteModal.show();
+    }
+
 </script>
+
+<!-- Update Status Confirmation Modal -->
+<div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Confirm Status Update</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to update this appointment's status?
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="updateForm" action="update_status.php" method="POST" style="display: inline;">
+                    <input type="hidden" id="updateAppointmentID" name="appointmentID">
+                    <input type="hidden" id="updateStatusValue" name="status">
+                    <button type="submit" class="btn btn-success">Confirm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to decline this appointment?
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" action="delete_appointment.php" method="POST" style="display: inline;">
+                    <input type="hidden" id="deleteAppointmentID" name="appointmentID">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal for additional details -->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
@@ -415,6 +589,7 @@ function filterAppointments() {
         </div>
     </div>
 </div>
+
 
 <!-- Complete Confirmation Modal -->
 <div class="modal fade" id="completeConfirmModal" tabindex="-1" aria-hidden="true">

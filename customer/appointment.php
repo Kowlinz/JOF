@@ -522,15 +522,17 @@ $result = $stmt->get_result();
                         echo "<td class='" . $statusClass . "'>" . htmlspecialchars($row['status']) . "</td>";
                         echo "<td>" . $paymentStatusText . "</td>";
                         echo "<td>";
-                        if ($row['status'] === "Pending") {
-                            echo "<button class='btn btn-warning btn-sm reschedule-button' 
-                            data-id='" . $row['appointmentID'] . "' 
-                            data-bs-toggle='modal' data-bs-target='#rescheduleModal'>Reschedule</button> ";
+                        if ($row['status'] === "Upcoming") {
+                            echo "<span class='reschedule-container' style='display: none;'>
+                                    <button class='btn btn-warning btn-sm reschedule-button' 
+                                    data-id='" . $row['appointmentID'] . "' 
+                                    data-bs-toggle='modal' data-bs-target='#rescheduleModal'>Reschedule</button>
+                                </span> ";
                             echo "<button class='cancel-button' 
-                                  data-id='" . $row['appointmentID'] . "' 
-                                  data-date='" . date("F d, Y", strtotime($row['date'])) . "' 
-                                  data-time='" . $row['timeSlot'] . "' 
-                                  data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button>";
+                                data-id='" . $row['appointmentID'] . "' 
+                                data-date='" . date("F d, Y", strtotime($row['date'])) . "' 
+                                data-time='" . $row['timeSlot'] . "' 
+                                data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button>";
                         } elseif ($row['status'] === "Completed") {
                             if (empty($row['feedback'])) {
                                 echo "<button class='btn btn-primary btn-sm feedback-button' 
@@ -686,38 +688,55 @@ $result = $stmt->get_result();
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                let selectedAppointmentID;
+                let selectedAppointmentID = null;
+
+                // Handle Cancel Button Click
+                document.querySelectorAll(".cancel-button").forEach(button => {
+                    button.addEventListener("click", function () {
+                        selectedAppointmentID = this.getAttribute("data-id");
+                        document.getElementById("appointmentDate").textContent = this.getAttribute("data-date");
+                        document.getElementById("appointmentTime").textContent = this.getAttribute("data-time");
+
+                        // Show the corresponding reschedule button in the same row
+                        const row = this.closest("tr");
+                        const rescheduleContainer = row.querySelector(".reschedule-container");
+                        if (rescheduleContainer) {
+                            rescheduleContainer.style.display = "inline-block";
+                        }
+                    });
+                });
+
+                // Handle Reschedule Button Click
                 document.querySelectorAll(".reschedule-button").forEach(button => {
                     button.addEventListener("click", function () {
                         selectedAppointmentID = this.getAttribute("data-id");
                     });
                 });
-                
-                function selectRescheduleTime(time) {
-                    // Remove selected class from all buttons
+
+                // Function to select reschedule time slot
+                window.selectRescheduleTime = function (time) {
                     document.querySelectorAll('#rescheduleModal .time-slot-btn').forEach(btn => {
                         btn.classList.remove('selected');
                     });
-                    
-                    // Add selected class to clicked button
+
                     const selectedBtn = document.querySelector(`#rescheduleModal .time-slot-btn[data-time="${time}"]`);
                     if (selectedBtn) {
                         selectedBtn.classList.add('selected');
                     }
-                    
-                    // Update hidden input
+
                     document.getElementById('newTime').value = time;
-                }
-                
+                };
+
+                // Confirm Reschedule
                 document.getElementById("confirmReschedule").addEventListener("click", function () {
                     const newDate = document.getElementById("newDate").value;
                     const newTime = document.getElementById("newTime").value;
-                    
+
                     if (!newDate || !newTime) {
                         alert("Please select both date and time.");
                         return;
                     }
-                    
+
                     fetch("reschedule_appointment.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/x-www-form-urlencoded" },

@@ -34,6 +34,7 @@ $sql = "
     a.date, 
     a.timeSlot, 
     a.status, 
+    a.feedback,
     IFNULL(s.serviceName, 'No Service') AS serviceName, 
     IFNULL(ad.addonName, 'No Add-on') AS addonName, 
     IFNULL(s.servicePrice, 0) + IFNULL(ad.addonPrice, 0) AS totalPrice,
@@ -457,6 +458,14 @@ $result = $stmt->get_result();
                                   data-date='" . date("F d, Y", strtotime($row['date'])) . "' 
                                   data-time='" . $row['timeSlot'] . "' 
                                   data-bs-toggle='modal' data-bs-target='#cancelModal'>Cancel</button>";
+                        } elseif ($row['status'] === "Completed") {
+                            if (empty($row['feedback'])) {
+                                echo "<button class='btn btn-primary btn-sm feedback-button' 
+                                      data-id='" . $row['appointmentID'] . "' 
+                                      data-bs-toggle='modal' data-bs-target='#feedbackModal'>Give Feedback</button>";
+                            } else {
+                                echo "<span class='text-muted'>Feedback submitted</span>";
+                            }
                         }
                         echo "</td>";
                         echo "</tr>";
@@ -483,7 +492,7 @@ $result = $stmt->get_result();
                         <input type="time" class="form-control" id="newTime">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
                         <button type="button" class="btn btn-success" id="confirmReschedule">Confirm</button>
                     </div>
                 </div>
@@ -537,6 +546,47 @@ $result = $stmt->get_result();
                         Please fill in the reason for cancellation.
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modify the Feedback Modal -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                        <h5 class="modal-title" id="feedbackModalLabel">Service Feedback</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="feedbackForm">
+                            <input type="hidden" id="feedbackAppointmentID">
+                            <div class="mb-3">
+                                <label for="feedbackComment" class="form-label">Comments</label>
+                                <textarea class="form-control" id="feedbackComment" rows="3" required 
+                                    placeholder="Please share your experience with our service..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                        <button type="button" class="btn btn-primary" id="submitFeedback">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modify the Success Feedback Modal -->
+        <div class="modal fade" id="feedbackSuccessModal" tabindex="-1" aria-labelledby="feedbackSuccessModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: #1f1f1f; color: #ffffff;">
+                    <div class="modal-header border-0 justify-content-center position-relative">
+                        <h5 class="modal-title fs-4 fw-bold" id="feedbackSuccessModalLabel">Success</h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center border-0 py-4">
+                        <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+                        <p class="mb-0 fs-5">Thank you for your feedback!</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -648,6 +698,64 @@ $result = $stmt->get_result();
             menuDropdown.classList.remove('show');
         }
         });
+    </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Feedback button click handler
+        document.querySelectorAll(".feedback-button").forEach(button => {
+            button.addEventListener("click", function() {
+                const appointmentId = this.getAttribute("data-id");
+                document.getElementById("feedbackAppointmentID").value = appointmentId;
+            });
+        });
+
+        // Submit feedback handler
+        document.getElementById("submitFeedback").addEventListener("click", function() {
+            const appointmentId = document.getElementById("feedbackAppointmentID").value;
+            const comment = document.getElementById("feedbackComment").value;
+
+            if (!comment) {
+                alert("Please enter your feedback");
+                return;
+            }
+
+            // Send feedback to server
+            fetch("submit_feedback.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    appointmentId: appointmentId,
+                    comment: comment
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the feedback modal
+                    const feedbackModal = bootstrap.Modal.getInstance(document.getElementById('feedbackModal'));
+                    feedbackModal.hide();
+
+                    // Show success modal
+                    const successModal = new bootstrap.Modal(document.getElementById('feedbackSuccessModal'));
+                    successModal.show();
+
+                    // Reload the page after success modal is closed
+                    document.getElementById('feedbackSuccessModal').addEventListener('hidden.bs.modal', function () {
+                        window.location.reload();
+                    }, { once: true });
+                } else {
+                    alert("Error submitting feedback: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while submitting feedback");
+            });
+        });
+    });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

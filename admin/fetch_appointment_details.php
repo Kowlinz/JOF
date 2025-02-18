@@ -20,7 +20,8 @@ try {
     $query = "SELECT 
         a.*,
         s.serviceName as hcName,
-        ad.addonName
+        ad.addonName,
+        a.feedback
     FROM appointment_tbl a
     LEFT JOIN service_tbl s ON a.serviceID = s.serviceID
     LEFT JOIN addon_tbl ad ON a.addonID = ad.addonID
@@ -50,7 +51,8 @@ try {
             'remarks' => $row['remarks'] ?? 'N/A',
             'paymentStatus' => $row['payment_status'] ?? 'Pending',
             'paymentAmount' => $row['payment_amount'] ?? '0.00',
-            'gcashReference' => $row['gcash_reference'] ?? 'N/A'
+            'gcashReference' => $row['gcash_reference'] ?? 'N/A',
+            'feedback' => $row['feedback'] ?? 'No feedback provided'
         );
     } else {
         throw new Exception('No appointment found with ID: ' . $appointmentID);

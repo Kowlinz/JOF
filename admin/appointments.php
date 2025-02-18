@@ -5,6 +5,9 @@
     }
 
     include 'db_connect.php'; // Make sure the database is connected
+    mysqli_query($conn, "SET time_zone = '+08:00'");
+    date_default_timezone_set('Asia/Manila'); 
+
 
     // Fetch all distinct dates that have pending appointments
     $appointmentsQuery = "SELECT DISTINCT date FROM appointment_tbl WHERE status = 'Pending'";
@@ -315,7 +318,7 @@
                                                     <td>
                                                         <form action='assign_barber.php' method='POST' class='assign-barber-form'>
                                                             <input type='hidden' name='appointmentID' value='{$row['appointmentID']}'>
-                                                            <select name='barberID' class='form-select'>
+                                                            <select name='barberID' class='form-select' onchange='handleBarberAssignment(this.form)'>
                                                                 <option value='' disabled selected hidden>Select Barber</option>";
                                                                 // Loop through all barbers to display them in the dropdown
                                                                 foreach ($barbers as $barber) {
@@ -674,7 +677,6 @@ function filterAppointments() {
 
 <script>
 function confirmComplete(appointmentId) {
-    // First check if a barber is assigned
     fetch(`check_barber.php?appointmentID=${appointmentId}`)
     .then(response => response.json())
     .then(data => {
@@ -688,6 +690,12 @@ function confirmComplete(appointmentId) {
         document.getElementById('completeAppointmentID').value = appointmentId;
         const modal = new bootstrap.Modal(document.getElementById('completeConfirmModal'));
         modal.show();
+    })
+    .catch(error => {
+        console.error('Error checking barber:', error);
+        document.getElementById('statusMessage').innerText = 'An error occurred while checking barber assignment.';
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
     });
 }
 
@@ -959,6 +967,63 @@ document.getElementById('cancelForm').addEventListener('submit', function(e) {
 
 // Add hidden input for reminder action
 document.body.insertAdjacentHTML('beforeend', '<input type="hidden" id="appointmentID">');
+</script>
+
+<script>
+// Add this new function to handle barber assignment response
+function handleBarberAssignment(form) {
+    event.preventDefault(); // Prevent any default behavior
+    
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error('Server response: ' + text);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid response format');
+        }
+
+        // Show message modal with response
+        document.getElementById('statusMessage').innerText = data.message || 'Barber assigned successfully.';
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        
+        // Remove any existing event listeners
+        const modalElement = document.getElementById('messageModal');
+        const newModalElement = modalElement.cloneNode(true);
+        modalElement.parentNode.replaceChild(newModalElement, modalElement);
+        
+        // Add new event listener for modal hidden
+        if (data.success) {
+            newModalElement.addEventListener('hidden.bs.modal', function () {
+                window.location.reload();
+            }, { once: true });
+        }
+        
+        // Show the modal
+        const newModal = new bootstrap.Modal(newModalElement);
+        newModal.show();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Show error in modal without page reload
+        document.getElementById('statusMessage').innerText = 'An error occurred while assigning the barber. Please try again.';
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+    });
+}
 </script>
 </body>
 </html>

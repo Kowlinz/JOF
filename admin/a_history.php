@@ -342,6 +342,7 @@
                     <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
                     <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
                     <p><strong>Remarks:</strong> <span id="remarks"></span></p>
+                    <p><strong>Customer Feedback:</strong> <span id="feedback"></span></p>
                 </div>
             </div>
         </div>
@@ -356,12 +357,15 @@
                 if (!isWalkIn) {
                     document.getElementById('hcName').innerText = data.hcName || 'N/A';
                     document.getElementById('remarks').innerText = data.remarks || 'N/A';
+                    document.getElementById('feedback').innerText = data.feedback || 'No feedback provided';
                     document.getElementById('hcName').parentElement.style.display = 'block';
                     document.getElementById('remarks').parentElement.style.display = 'block';
+                    document.getElementById('feedback').parentElement.style.display = 'block';
                 } else {
                     document.getElementById('addonName').innerText = data.addonName || 'N/A';
                     document.getElementById('hcName').parentElement.style.display = 'none';
                     document.getElementById('remarks').parentElement.style.display = 'none';
+                    document.getElementById('feedback').parentElement.style.display = 'none';
                 }
             })
             .catch(error => console.error('Error fetching details:', error));

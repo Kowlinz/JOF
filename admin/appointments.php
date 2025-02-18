@@ -580,6 +580,7 @@ function filterAppointments() {
                 <p><strong>Add-on Name:</strong> <span id="addonName"></span></p>
                 <p><strong>Haircut Name:</strong> <span id="hcName"></span></p>
                 <p><strong>Remarks:</strong> <span id="remarks"></span></p>
+                <p><strong>Preferred Barber:</strong> <span id="barberName">N/A</span></p>
                 <hr>
                 <p><strong>Payment Status:</strong> <span id="paymentStatus"></span></p>
                 <p><strong>Payment Amount:</strong> <span id="paymentAmount"></span></p>
@@ -790,100 +791,101 @@ function openStatusModal(appointmentId, customerId) {
 </script>
 
 <script>
-    function showAppointmentDetails(appointmentID, isWalkIn) {
-        fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("HTTP error " + response.status);
+function showAppointmentDetails(appointmentID, isWalkIn) {
+    fetch('fetch_appointment_details.php?appointmentID=' + appointmentID)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Received data:", data);
+
+            if (data.error) {
+                console.error("Server error:", data.error);
+                console.error("Error details:", data.details);
+                alert("Error: " + data.error);
+                return;
+            }
+
+            document.getElementById('addonName').innerText = data.addonName || 'N/A';
+            document.getElementById('hcName').innerText = data.hcName || 'N/A';
+            document.getElementById('barberName').innerText = data.barberName || 'No Preferred Barber';
+            document.getElementById('remarks').innerText = data.remarks || 'N/A';
+
+            // Get payment details elements
+            const paymentDetailsElements = [
+                document.getElementById('paymentStatus').parentElement,
+                document.getElementById('paymentAmount').parentElement,
+                document.getElementById('gcashReference').parentElement,
+                document.getElementById('paymentProofContainer').previousElementSibling, // "Payment Proof:" label
+                document.getElementById('paymentProofContainer')
+            ];
+
+            // Show/hide payment details based on isWalkIn
+            paymentDetailsElements.forEach(element => {
+                if (element) {
+                    element.style.display = isWalkIn ? 'none' : 'block';
                 }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Received data:", data);
-
-                if (data.error) {
-                    console.error("Server error:", data.error);
-                    console.error("Error details:", data.details);
-                    alert("Error: " + data.error);
-                    return;
-                }
-
-                document.getElementById('addonName').innerText = data.addonName || 'N/A';
-                document.getElementById('hcName').innerText = data.hcName || 'N/A';
-                document.getElementById('remarks').innerText = data.remarks || 'N/A';
-
-                // Get payment details elements
-                const paymentDetailsElements = [
-                    document.getElementById('paymentStatus').parentElement,
-                    document.getElementById('paymentAmount').parentElement,
-                    document.getElementById('gcashReference').parentElement,
-                    document.getElementById('paymentProofContainer').previousElementSibling, // "Payment Proof:" label
-                    document.getElementById('paymentProofContainer')
-                ];
-
-                // Show/hide payment details based on isWalkIn
-                paymentDetailsElements.forEach(element => {
-                    if (element) {
-                        element.style.display = isWalkIn ? 'none' : 'block';
-                    }
-                });
-
-                // Only populate payment details if not a walk-in
-                if (!isWalkIn) {
-                    document.getElementById('paymentStatus').innerText = data.paymentStatus || 'N/A';
-                    document.getElementById('paymentAmount').innerText = "₱" + (data.paymentAmount || "0.00");
-                    document.getElementById('gcashReference').innerText = data.gcashReference || 'N/A';
-
-                    const proofContainer = document.getElementById('paymentProofContainer');
-                    proofContainer.innerHTML = '';
-
-                    // Fetch payment proof image only for non-walk-in appointments
-                    fetch('fetch_payment_proof.php?appointmentID=' + appointmentID)
-                        .then(response => response.json())
-                        .then(imageData => {
-                            if (imageData.success && imageData.image) {
-                                const img = document.createElement('img');
-                                img.style.width = '100%';
-                                img.style.maxHeight = '300px';
-                                img.style.objectFit = 'contain';
-                                img.classList.add('img-fluid', 'mb-3');
-
-                                img.onload = function() {
-                                    console.log("Image loaded successfully");
-                                };
-
-                                img.onerror = function() {
-                                    console.error("Error loading image");
-                                    proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
-                                };
-
-                                img.src = imageData.image;
-                                proofContainer.appendChild(img);
-                            } else {
-                                proofContainer.innerHTML = '<p class="text-muted">No payment proof available</p>';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching payment proof:', error);
-                            proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
-                        });
-                }
-
-                // Show/hide haircut name and remarks based on isWalkIn
-                if (!isWalkIn) {
-                    document.getElementById('hcName').parentElement.style.display = 'block';
-                    document.getElementById('remarks').parentElement.style.display = 'block';
-                } else {
-                    document.getElementById('hcName').parentElement.style.display = 'none';
-                    document.getElementById('remarks').parentElement.style.display = 'none';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching details:', error);
-                console.error('Error stack:', error.stack);
-                alert('Error fetching appointment details. Please check the console for more information.');
             });
-    }
+
+            // Only populate payment details if not a walk-in
+            if (!isWalkIn) {
+                document.getElementById('paymentStatus').innerText = data.paymentStatus || 'N/A';
+                document.getElementById('paymentAmount').innerText = "₱" + (data.paymentAmount || "0.00");
+                document.getElementById('gcashReference').innerText = data.gcashReference || 'N/A';
+
+                const proofContainer = document.getElementById('paymentProofContainer');
+                proofContainer.innerHTML = '';
+
+                // Fetch payment proof image only for non-walk-in appointments
+                fetch('fetch_payment_proof.php?appointmentID=' + appointmentID)
+                    .then(response => response.json())
+                    .then(imageData => {
+                        if (imageData.success && imageData.image) {
+                            const img = document.createElement('img');
+                            img.style.width = '100%';
+                            img.style.maxHeight = '300px';
+                            img.style.objectFit = 'contain';
+                            img.classList.add('img-fluid', 'mb-3');
+
+                            img.onload = function() {
+                                console.log("Image loaded successfully");
+                            };
+
+                            img.onerror = function() {
+                                console.error("Error loading image");
+                                proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
+                            };
+
+                            img.src = imageData.image;
+                            proofContainer.appendChild(img);
+                        } else {
+                            proofContainer.innerHTML = '<p class="text-muted">No payment proof available</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching payment proof:', error);
+                        proofContainer.innerHTML = '<p class="text-danger">Error loading payment proof image</p>';
+                    });
+            }
+
+            // Show/hide haircut name and remarks based on isWalkIn
+            if (!isWalkIn) {
+                document.getElementById('hcName').parentElement.style.display = 'block';
+                document.getElementById('remarks').parentElement.style.display = 'block';
+            } else {
+                document.getElementById('hcName').parentElement.style.display = 'none';
+                document.getElementById('remarks').parentElement.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching details:', error);
+            console.error('Error stack:', error.stack);
+            alert('Error fetching appointment details. Please check the console for more information.');
+        });
+}
 </script>
 
 <script>

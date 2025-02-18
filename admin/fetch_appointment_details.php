@@ -21,11 +21,14 @@ try {
         a.*,
         s.serviceName as hcName,
         ad.addonName,
+        CONCAT(b.firstName, ' ', b.lastName) AS barberName,  -- Concatenating barber's full name
         a.feedback
     FROM appointment_tbl a
     LEFT JOIN service_tbl s ON a.serviceID = s.serviceID
     LEFT JOIN addon_tbl ad ON a.addonID = ad.addonID
+    LEFT JOIN barbers_tbl b ON a.barberID = b.barberID  -- Joining barber table
     WHERE a.appointmentID = ?";
+
 
     if (!$stmt = mysqli_prepare($conn, $query)) {
         throw new Exception('Failed to prepare statement: ' . mysqli_error($conn));
@@ -48,6 +51,7 @@ try {
         $response = array(
             'addonName' => $row['addonName'] ?? 'N/A',
             'hcName' => $row['hcName'] ?? 'N/A',
+            'barberName' => $row['barberName'] ?? 'No Preferred Barber',
             'remarks' => $row['remarks'] ?? 'N/A',
             'paymentStatus' => $row['payment_status'] ?? 'Pending',
             'paymentAmount' => $row['payment_amount'] ?? '0.00',

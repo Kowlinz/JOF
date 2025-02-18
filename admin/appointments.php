@@ -276,7 +276,7 @@
                                         $upcomingQuery .= " AND ba.barberID = '" . mysqli_real_escape_string($conn, $selectedBarber) . "'";
                                     }
 
-                                    $upcomingQuery .= " ORDER BY a.timeSlot ASC";
+                                    $upcomingQuery .= " ORDER BY a.created_at DESC";
 
                                     $upcomingResult = mysqli_query($conn, $upcomingQuery);
 

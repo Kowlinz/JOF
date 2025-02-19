@@ -772,7 +772,7 @@ function sendReminder() {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: `appointmentID=${appointmentID}&status=Reminder`
+        body: `appointmentID=${appointmentID}&status=Upcoming`
     })
     .then(response => response.json())
     .then(data => {

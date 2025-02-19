@@ -42,10 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appointmentID']) && i
     if (mysqli_num_rows($checkBarberResult) > 0) {
         echo json_encode([
             'success' => false,
-            'message' => 'Error: The selected barber is already booked for this timeslot.'
+            'message' => 'The selected barber is already booked for this timeslot.',
+            'reset' => true // Add a flag to indicate resetting
         ]);
         exit();
     }
+    
 
     // Step 3: Check if there's an existing assignment
     $checkQuery = "SELECT * FROM barb_apps_tbl WHERE appointmentID = '$appointmentID'";

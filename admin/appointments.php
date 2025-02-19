@@ -1018,7 +1018,6 @@ document.body.insertAdjacentHTML('beforeend', '<input type="hidden" id="appointm
 </script>
 
 <script>
-// Add this new function to handle barber assignment response
 function handleBarberAssignment(form) {
     event.preventDefault(); // Prevent any default behavior
     
@@ -1047,19 +1046,24 @@ function handleBarberAssignment(form) {
         // Show message modal with response
         document.getElementById('statusMessage').innerText = data.message || 'Barber assigned successfully.';
         const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-        
+
         // Remove any existing event listeners
         const modalElement = document.getElementById('messageModal');
         const newModalElement = modalElement.cloneNode(true);
         modalElement.parentNode.replaceChild(newModalElement, modalElement);
-        
+
+        // If the barber is already booked, reset the select dropdown
+        if (!data.success && data.reset) {
+            form.querySelector("select[name='barberID']").value = ""; // Reset to default option
+        }
+
         // Add new event listener for modal hidden
         if (data.success) {
             newModalElement.addEventListener('hidden.bs.modal', function () {
                 window.location.reload();
             }, { once: true });
         }
-        
+
         // Show the modal
         const newModal = new bootstrap.Modal(newModalElement);
         newModal.show();

@@ -536,6 +536,8 @@ $result = $stmt->get_result();
                             echo "<span class='reschedule-container' style='display: none;'>
                                     <button class='btn btn-warning btn-sm reschedule-button' 
                                     data-id='" . $row['appointmentID'] . "' 
+                                    data-original-date='" . $row['date'] . "'
+                                    data-original-time='" . $row['timeSlot'] . "'
                                     data-bs-toggle='modal' data-bs-target='#rescheduleModal' $disableReschedule>Reschedule</button>
                                 </span> ";
                             echo "<button class='cancel-button' 
@@ -546,6 +548,8 @@ $result = $stmt->get_result();
                         } elseif ($row['status'] === "Cancelled") {
                             echo "<button class='btn btn-warning btn-sm reschedule-button' 
                                 data-id='" . $row['appointmentID'] . "' 
+                                data-original-date='" . $row['date'] . "'
+                                data-original-time='" . $row['timeSlot'] . "'
                                 data-bs-toggle='modal' data-bs-target='#rescheduleModal' $disableReschedule>Reschedule</button>";
                         } elseif ($row['status'] === "Completed") {
                             if (empty($row['feedback'])) {
@@ -732,9 +736,27 @@ $result = $stmt->get_result();
             </div>
         </div>
 
+        <!-- Add this new modal after your other modals -->
+        <div class="modal fade" id="timeSlotErrorModal" tabindex="-1" aria-labelledby="timeSlotErrorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: #1f1f1f; color: #ffffff;">
+                    <div class="modal-header border-0 justify-content-center position-relative">
+                        <h5 class="modal-title fs-4 fw-bold" id="timeSlotErrorModalLabel">Time Slot Not Available</h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center border-0 py-4">
+                        <i class='bx bx-time-five text-warning mb-3' style="font-size: 3rem;"></i>
+                        <p class="mb-0 fs-5">Selected time slot is already booked.<br>Please choose another time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 let selectedAppointmentID = null;
+                let originalDate = null;
+                let originalTime = null;
 
                 // Handle Cancel Button Click
                 document.querySelectorAll(".cancel-button").forEach(button => {
@@ -751,24 +773,60 @@ $result = $stmt->get_result();
                 document.querySelectorAll(".reschedule-button").forEach(button => {
                     button.addEventListener("click", function () {
                         selectedAppointmentID = this.getAttribute("data-id");
+                        originalDate = this.getAttribute("data-original-date");
+                        originalTime = this.getAttribute("data-original-time");
+                        
+                        // Reset any previously selected time slots
+                        document.querySelectorAll('#rescheduleModal .time-slot-btn').forEach(btn => {
+                            btn.classList.remove('selected', 'booked');
+                            btn.disabled = false;
+                        });
+
+                        // Clear the date input when opening the modal
+                        document.getElementById("newDate").value = "";
+                        
+                        // Initialize or reinitialize flatpickr with the original date disabled
+                        flatpickr("#newDate", {
+                            enableTime: false,
+                            dateFormat: "Y-m-d",
+                            minDate: "today",
+                            disable: [
+                                function(date) {
+                                    // Disable Sundays
+                                    if (date.getDay() === 0) return true;
+                                    
+                                    // Disable the original date
+                                    const dateString = date.toISOString().split('T')[0];
+                                    return dateString === originalDate;
+                                }
+                            ],
+                            locale: {
+                                firstDayOfWeek: 1 // Start week on Monday
+                            }
+                        });
                     });
                 });
 
-                // Function to select reschedule time slot
+                // Update the time slot selection function
                 window.selectRescheduleTime = function (time) {
+                    // Don't allow selection if the slot is booked
+                    const timeBtn = document.querySelector(`#rescheduleModal .time-slot-btn[data-time="${time}"]`);
+                    if (timeBtn && timeBtn.classList.contains('booked')) {
+                        return;
+                    }
+
                     document.querySelectorAll('#rescheduleModal .time-slot-btn').forEach(btn => {
                         btn.classList.remove('selected');
                     });
 
-                    const selectedBtn = document.querySelector(`#rescheduleModal .time-slot-btn[data-time="${time}"]`);
-                    if (selectedBtn) {
-                        selectedBtn.classList.add('selected');
+                    if (timeBtn) {
+                        timeBtn.classList.add('selected');
                     }
 
                     document.getElementById('newTime').value = time;
                 };
 
-                // Update the Confirm Reschedule event listener
+                // Update the confirm reschedule validation
                 document.getElementById("confirmReschedule").addEventListener("click", function () {
                     const newDate = document.getElementById("newDate").value;
                     const newTime = document.getElementById("newTime").value;
@@ -776,6 +834,13 @@ $result = $stmt->get_result();
                     if (!newDate || !newTime) {
                         const dateTimeErrorModal = new bootstrap.Modal(document.getElementById('dateTimeErrorModal'));
                         dateTimeErrorModal.show();
+                        return;
+                    }
+
+                    // Check if trying to reschedule to same date and time
+                    if (newDate === originalDate && newTime === originalTime) {
+                        const timeSlotErrorModal = new bootstrap.Modal(document.getElementById('timeSlotErrorModal'));
+                        timeSlotErrorModal.show();
                         return;
                     }
 
@@ -841,7 +906,19 @@ $result = $stmt->get_result();
                             // Reattach event listeners for the new buttons
                             attachEventListeners();
                         } else {
-                            alert("Error: " + data.message);
+                            // Show the time slot error modal if the slot is already booked
+                            if (data.message.includes("already booked")) {
+                                const timeSlotErrorModal = new bootstrap.Modal(document.getElementById('timeSlotErrorModal'));
+                                timeSlotErrorModal.show();
+                                
+                                // Reopen the reschedule modal when the error modal is closed
+                                document.getElementById('timeSlotErrorModal').addEventListener('hidden.bs.modal', function () {
+                                    const rescheduleModal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
+                                    rescheduleModal.show();
+                                }, { once: true });
+                            } else {
+                                alert("Error: " + data.message);
+                            }
                         }
                     })
                     .catch(error => alert("Error: " + error));
@@ -1010,28 +1087,6 @@ $result = $stmt->get_result();
                 alert("An error occurred while submitting feedback");
             });
         });
-    });
-    </script>
-
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Flatpickr
-        flatpickr("#newDate", {
-            enableTime: false,
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            disable: [
-                function(date) {
-                    // Disable Sundays
-                    return date.getDay() === 0;
-                }
-            ],
-            locale: {
-                firstDayOfWeek: 1 // Start week on Monday
-            }
-        });
-
-        // ... rest of your existing DOMContentLoaded code ...
     });
     </script>
 

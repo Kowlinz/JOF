@@ -485,6 +485,7 @@ $result = $stmt->get_result();
                 </thead>
                 <tbody>
                 <?php
+                date_default_timezone_set('Asia/Manila'); // Ensure the correct timezone is set
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $statusClass = '';
@@ -514,6 +515,14 @@ $result = $stmt->get_result();
                         } else {
                             $paymentStatusText = "<span class='text-success'>Paid</span>";
                         }
+
+                        // Calculate time difference in hours
+                        $appointmentDateTime = strtotime($row['date'] . ' ' . $row['timeSlot']);
+                        $currentDateTime = time();
+                        $timeDifference = ($appointmentDateTime - $currentDateTime) / 3600; // Convert seconds to hours
+
+                        // Disable reschedule button if within 24 hours
+                        $disableReschedule = $timeDifference < 24 ? "disabled" : "";
                 
                         echo "<tr>";
                         echo "<td>" . date("F d, Y", strtotime($row['date'])) . "</td>";
@@ -522,11 +531,12 @@ $result = $stmt->get_result();
                         echo "<td class='" . $statusClass . "'>" . htmlspecialchars($row['status']) . "</td>";
                         echo "<td>" . $paymentStatusText . "</td>";
                         echo "<td>";
+
                         if ($row['status'] === "Upcoming") {
                             echo "<span class='reschedule-container' style='display: none;'>
                                     <button class='btn btn-warning btn-sm reschedule-button' 
                                     data-id='" . $row['appointmentID'] . "' 
-                                    data-bs-toggle='modal' data-bs-target='#rescheduleModal'>Reschedule</button>
+                                    data-bs-toggle='modal' data-bs-target='#rescheduleModal' $disableReschedule>Reschedule</button>
                                 </span> ";
                             echo "<button class='cancel-button' 
                                 data-id='" . $row['appointmentID'] . "' 
@@ -536,7 +546,7 @@ $result = $stmt->get_result();
                         } elseif ($row['status'] === "Cancelled") {
                             echo "<button class='btn btn-warning btn-sm reschedule-button' 
                                 data-id='" . $row['appointmentID'] . "' 
-                                data-bs-toggle='modal' data-bs-target='#rescheduleModal'>Reschedule</button>";
+                                data-bs-toggle='modal' data-bs-target='#rescheduleModal' $disableReschedule>Reschedule</button>";
                         } elseif ($row['status'] === "Completed") {
                             if (empty($row['feedback'])) {
                                 echo "<button class='btn btn-primary btn-sm feedback-button' 

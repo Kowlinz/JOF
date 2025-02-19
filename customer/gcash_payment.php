@@ -400,13 +400,13 @@ $stmt->close();
                     <p><strong>Note:</strong> The downpayment is <span class="text-danger">non-refundable</span>.</p>
 
                     <h4>3. Rescheduling & Cancellations</h4>
-                    <p>Clients may reschedule their appointment at least 24 hours in advance. Cancellations made less than 24 hours before the appointment are subject to forfeiture of the downpayment.</p>
+                    <p>Customer may reschedule their appointment at least 24 hours in advance. Cancellations made less than 24 hours before the appointment are subject to forfeiture of the downpayment.</p>
 
                     <h4>4. Refund Policy</h4>
                     <p>Payments are non-refundable except in cases where Jack of Fades is unable to provide the service due to unforeseen circumstances.</p>
 
                     <h4>5. Proof of Payment</h4>
-                    <p>Clients must upload a valid screenshot of the payment and provide the correct GCash reference number. Failure to do so may result in payment verification delays.</p>
+                    <p>Customer must upload a valid screenshot of the payment and provide the correct GCash reference number. Failure to do so may require the customer to book again and attach a valid screenshot with valid GCash Reference number.</p>
 
                     <h4>6. Acceptance of Terms</h4>
                     <p>By proceeding with the payment, you confirm that you have read, understood, and agreed to these terms and conditions.</p>

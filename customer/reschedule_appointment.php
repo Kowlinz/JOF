@@ -27,6 +27,21 @@ if (!$appointmentID || !$newDate || !$newTime) {
 }
 
 try {
+    // Check if the new date and time are already booked
+    $checkSql = "SELECT COUNT(*) AS count FROM appointment_tbl 
+                 WHERE date = ? AND timeSlot = ? AND appointmentID != ?";
+    
+    $checkStmt = $conn->prepare($checkSql);
+    $checkStmt->bind_param("ssi", $newDate, $newTime, $appointmentID);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+    $row = $checkResult->fetch_assoc();
+
+    if ($row['count'] > 0) {
+        echo json_encode(['success' => false, 'message' => 'Selected time slot is already booked. Please choose another time.']);
+        exit();
+    }
+
     // Start transaction
     $conn->begin_transaction();
 
@@ -51,6 +66,9 @@ try {
     $conn->rollback();
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 } finally {
+    if (isset($checkStmt)) {
+        $checkStmt->close();
+    }
     if (isset($stmt)) {
         $stmt->close();
     }

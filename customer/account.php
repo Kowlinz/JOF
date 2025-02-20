@@ -231,6 +231,10 @@ $stmt->close();
                         <td><?php echo htmlspecialchars($user['firstName']); ?></td>
                     </tr>
                     <tr>
+                        <th>Middle Name</th>
+                        <td><?php echo empty($user['middleName']) ? 'N/A' : htmlspecialchars($user['middleName']); ?></td>
+                    </tr>
+                    <tr>
                         <th>Last Name</th>
                         <td><?php echo htmlspecialchars($user['lastName']); ?></td>
                     </tr>

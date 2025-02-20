@@ -78,7 +78,7 @@ $stmt->close();
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -241,6 +241,7 @@ $stmt->close();
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
+                max-width: 100%;
             }
 
             .payment-container {
@@ -277,80 +278,120 @@ $stmt->close();
         .modal-dialog {
             color: black !important;
         }
+
+        /* Add these new styles for two-column layout */
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .qr-section {
+            background-color: #2d2d2d;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .form-section {
+            background-color: #2d2d2d;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        /* Update responsive styles */
+        @media (max-width: 768px) {
+            .payment-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .qr-section, .form-section {
+                padding: 1rem;
+            }
+        }
+
+        /* Adjust QR code container for new layout */
+        .qr-code-container {
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .qr-code-container img {
+            max-width: 80%;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="text-center mb-4 fade-in logo">
-            <img src="../css/images/jof_logo_yellow.png" alt="Jack of Fades Logo" width="90" height="90">
-        </div>
-        
-        <div class="payment-container fade-in">
-            <h2 class="text-center mb-4" style="color: #FFDE59;">GCash Payment</h2>
-            
-            <div class="qr-code-container text-center">
-                <img src="../customer/css/images/gcash_qr.jpg" alt="GCash QR Code" class="img-fluid">
-                <div class="mt-3">
-                    <small class="text-warning">Note: Downpayment is non-refundable</small>
-                </div>
-            </div>
 
-            <div class="price-details">
-                <div class="price-item">
-                    <span>Service Price:</span>
-                    <span>₱<?php echo number_format($servicePrice, 2); ?></span>
-                </div>
-                <div class="price-item">
-                    <span>Addon Price:</span>
-                    <span>₱<?php echo number_format($addonPrice, 2); ?></span>
-                </div>
-                <div class="total-amount text-center">
-                <span>Total Amount to Pay: ₱<?php echo number_format($paymentAmount, 2); ?></span>
-            </div>
-        </div>
-
-
-            <div class="form-container fade-in">
-            <form action="verify_payment.php" method="POST" class="text-center" enctype="multipart/form-data">
-                <input type="hidden" name="appointmentID" value="<?php echo $appointmentID; ?>">
-                <input type="hidden" name="amount" value="<?php echo $paymentAmount; ?>">
-                <input type="hidden" name="serviceID" value="<?php echo $serviceID; ?>">
-                <input type="hidden" name="addonID" value="<?php echo $addonID; ?>">
-                <input type="hidden" name="barberID" value="<?php echo $barberID; ?>">
-                <input type="hidden" name="date" value="<?php echo $bookingData['date']; ?>">
-                <input type="hidden" name="timeSlot" value="<?php echo $bookingData['timeSlot']; ?>">
-                <input type="hidden" name="remarks" value="<?php echo htmlspecialchars($bookingData['remarks']); ?>">
-                <input type="hidden" name="paymentOption" value="<?php echo htmlspecialchars($bookingData['paymentOption']); ?>">
-
-                <div class="mb-4">
-                    <span style="color: red;">* </span>
-                    <label class="form-label">Attach Payment Screenshot:</label>
-                    <div class="upload-container">
-                        <input type="file" name="paymentProof" class="form-control" accept="image/*">
-                        <small class="text-muted d-block mt-2">Accepted formats: JPG, PNG, JPEG</small>
+        <div class="payment-grid fade-in">
+            <!-- Left Column - QR Code and Price Details -->
+            <div class="qr-section">
+                <div class="qr-code-container text-center">
+                    <img src="../customer/css/images/gcash_qr.jpg" alt="GCash QR Code" class="img-fluid">
+                    <div class="mt-3">
+                        <small class="text-warning">Note: Downpayment is non-refundable</small>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <span style="color: red;">* </span>
-                    <label class="form-label">Enter GCash Reference Number:</label>
-                    <input type="text" id="gcashRef" name="gcashRef" required class="form-control"
-                        placeholder="XXXX XXX XXXXXX" maxlength="17" 
-                        oninput="formatReferenceNumber(this)" pattern="\d{4} \d{3} \d{6}" 
-                        title="Reference number must be in the format XXXX XXX XXXXXX (13 digits)">
+                <div class="price-details">
+                    <div class="price-item">
+                        <span>Service Price:</span>
+                        <span>₱<?php echo number_format($servicePrice, 2); ?></span>
+                    </div>
+                    <div class="price-item">
+                        <span>Addon Price:</span>
+                        <span>₱<?php echo number_format($addonPrice, 2); ?></span>
+                    </div>
+                    <div class="total-amount text-center">
+                        <span>Total Amount to Pay: ₱<?php echo number_format($paymentAmount, 2); ?></span>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Terms and Conditions Checkbox -->
-                <div class="mb-4 text-center">
-                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-                    <label for="agreeTerms">
-                        I have read and agree to the 
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
-                    </label>
-                </div>
+            <!-- Right Column - Payment Form -->
+            <div class="form-section">
+                <form action="verify_payment.php" method="POST" class="text-center" enctype="multipart/form-data">
+                    <!-- Hidden inputs remain the same -->
+                    <input type="hidden" name="appointmentID" value="<?php echo $appointmentID; ?>">
+                    <input type="hidden" name="amount" value="<?php echo $paymentAmount; ?>">
+                    <input type="hidden" name="serviceID" value="<?php echo $serviceID; ?>">
+                    <input type="hidden" name="addonID" value="<?php echo $addonID; ?>">
+                    <input type="hidden" name="barberID" value="<?php echo $barberID; ?>">
+                    <input type="hidden" name="date" value="<?php echo $bookingData['date']; ?>">
+                    <input type="hidden" name="timeSlot" value="<?php echo $bookingData['timeSlot']; ?>">
+                    <input type="hidden" name="remarks" value="<?php echo htmlspecialchars($bookingData['remarks']); ?>">
+                    <input type="hidden" name="paymentOption" value="<?php echo htmlspecialchars($bookingData['paymentOption']); ?>">
 
-                <button type="submit" class="btn btn-confirm">Confirm Payment</button>
-            </form>
+                    <div class="mb-4">
+                        <span style="color: red;">* </span>
+                        <label class="form-label">Attach Payment Screenshot:</label>
+                        <div class="upload-container">
+                            <input type="file" name="paymentProof" class="form-control" accept="image/*">
+                            <small class="text-muted d-block mt-2">Accepted formats: JPG, PNG, JPEG</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span style="color: red;">* </span>
+                        <label class="form-label">Enter GCash Reference Number:</label>
+                        <input type="text" id="gcashRef" name="gcashRef" required class="form-control"
+                            placeholder="XXXX XXX XXXXXX" maxlength="17" 
+                            oninput="formatReferenceNumber(this)" pattern="\d{4} \d{3} \d{6}" 
+                            title="Reference number must be in the format XXXX XXX XXXXXX (13 digits)">
+                    </div>
+
+                    <div class="mb-4 text-center">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                        <label for="agreeTerms">
+                            I have read and agree to the 
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-confirm">Confirm Payment</button>
+                </form>
             </div>
         </div>
     </div>

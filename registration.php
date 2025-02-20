@@ -186,7 +186,7 @@
                     <form action="registration.php" method="post">
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="FirstName" placeholder="First Name" required 
+                            <input type="text" class="form-control" name="FirstName" placeholder="First Name *" required 
                                 maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
                         </div> 
 
@@ -196,20 +196,20 @@
                         </div> 
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="LastName" placeholder="Last Name" required 
+                            <input type="text" class="form-control" name="LastName" placeholder="Last Name *" required 
                                 maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
                         </div>
 
                         <div class="form-group">
-                            <input type="email" class="form-control" name="Email" placeholder="Email" required>
+                            <input type="email" class="form-control" name="Email" placeholder="Email *" required>
                         </div>
 
                         <div class="form-group">
-                            <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Contact Number" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
+                            <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Contact Number *" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
                         </div> 
 
                         <div class="form-group position-relative">
-                            <input type="password" class="form-control" name="password" placeholder="Password" required maxlength="20" oninput="limitPasswordLength(this)">
+                            <input type="password" class="form-control" name="password" placeholder="Password *" required maxlength="20" oninput="limitPasswordLength(this)">
                             <i class="bi bi-eye-slash password-toggle" id="togglePassword1"></i>
                         </div> 
                         
@@ -220,9 +220,13 @@
                         </div>
 
                         <div class="form-group position-relative">
-                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password" required maxlength="20" oninput="limitPasswordLength(this)">
+                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password *" required maxlength="20" oninput="limitPasswordLength(this)">
                             <i class="bi bi-eye-slash password-toggle" id="togglePassword2"></i>
                         </div> 
+
+                        <div class="form-text text-muted mb-2">
+                            <small>Fields marked with an asterisk (*) are required</small>
+                        </div>
 
                         <div class="form-btn">
                             <input type="submit" class="btn btn-primary" value="Register" name="Register">

@@ -93,16 +93,20 @@ $stmt->close();
 
         .qr-code-container {
             background-color: #ffffff;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 10px;
-            margin: 2rem 0;
+            margin: 1rem auto;
+            width: 100%; /* Increase the width */
+            max-width: 1000px; /* Set a max width */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .qr-code-container img {
-            max-width: 70%;
+            max-width: 40%; /* Keep the QR code small */
             height: auto;
-            margin: 0 auto;
-            display: block;
         }
 
         .price-details {
@@ -244,18 +248,6 @@ $stmt->close();
                 margin-top: 1rem;
             }
 
-            .qr-code-container {
-                padding: 1rem;
-                margin: 1rem 0;
-            }
-
-            .qr-code-container img {
-                max-width: 100%;
-                width: auto;
-                height: auto;
-                object-fit: contain;
-            }
-
             /* Adjust other elements for mobile */
             .price-details {
                 padding: 1rem;
@@ -280,22 +272,6 @@ $stmt->close();
                 width: 100%;
                 padding: 0.8rem;
             }
-        }
-
-        /* Add this to ensure the QR code image stays within its container */
-        .qr-code-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .qr-code-container img {
-            max-width: 100%;
-            height: auto;
-            object-fit: contain;
         }
 
         .modal-dialog {

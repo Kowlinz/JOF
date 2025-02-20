@@ -176,8 +176,9 @@
                                                                 Approve
                                                             </button>
                                                             <button type='button' class='btn btn-sm btn-danger delete-appointment' 
-                                                                data-appointment-id='{$row["appointmentID"]}'>
-                                                                Decline
+                                                                    data-appointment-id='{$row["appointmentID"]}' 
+                                                                    onclick='confirmCancel({$row["appointmentID"]})'>
+                                                                Cancel
                                                             </button>
                                                         </div>
                                                     </td>
@@ -1083,17 +1084,6 @@ function handleBarberAssignment(form) {
 document.addEventListener('DOMContentLoaded', function() {
     let appointmentToDelete = null;
     const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-    
-    // Add click event listeners to all delete buttons
-    document.querySelectorAll('.delete-appointment').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            appointmentToDelete = this.getAttribute('data-appointment-id');
-            deleteConfirmModal.show();
-        });
-    });
     
     // Handle confirm delete button click
     document.getElementById('confirmDeleteBtn').addEventListener('click', function() {

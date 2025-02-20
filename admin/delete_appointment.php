@@ -37,9 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $appointmentDate = $customer['date'];
     $appointmentTime = $customer['timeSlot'];
 
-    // Delete appointment
-    $deleteQuery = "DELETE FROM appointment_tbl WHERE appointmentID = ?";
-    $stmt = $conn->prepare($deleteQuery);
+    // Update appointment status to 'Cancelled'
+    $updateQuery = "UPDATE appointment_tbl SET status = 'Cancelled' WHERE appointmentID = ?";
+    $stmt = $conn->prepare($updateQuery);
     $stmt->bind_param("i", $appointmentID);
 
     if ($stmt->execute()) {
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                            Jack of Fades Team";
 
             $mail->send();
-            echo json_encode(["success" => true, "message" => "Appointment deleted. Email notification sent."]);
+            echo json_encode(["success" => true, "message" => "Appointment declined. Email notification sent."]);
         } catch (Exception $e) {
             echo json_encode(["success" => false, "message" => "Appointment deleted, but email could not be sent."]);
         }

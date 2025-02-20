@@ -54,9 +54,9 @@ body {
     right: 0;
     top: 50%;
     transform: translateY(-45%);
-    width: 650px;
+    width: 580px;
     padding: 20px;
-    padding-right: 80px;
+    padding-right: 100px;
     opacity: 0;
     animation: carouselFadeIn 1s ease forwards;
     animation-delay: 0.5s;

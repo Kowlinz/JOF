@@ -151,9 +151,12 @@ date_default_timezone_set('Asia/Manila');
                             </table>
 
                             <div class="d-flex justify-content-end mb-3">
-                                <a href="export_earnings.php?date=<?= $selectedDate ?>" class="btn btn-success">
-                                    <i class="fa fa-file-excel"></i> Download Excel
-                                </a>
+                                <button class="btn btn-success me-2" onclick="downloadPDF_DayEarnings()">
+                                    <i class="fa fa-download"></i> Day Earnings
+                                </button>
+                                <button class="btn btn-warning" onclick="downloadPDF_MonthlyEarnings()">
+                                    <i class="fa fa-download"></i> Monthly Earnings
+                                </button>
                             </div>
 
                         </div>
@@ -236,5 +239,24 @@ date_default_timezone_set('Asia/Manila');
         });
     </script>
 
+<script>
+    function downloadPDF_DayEarnings() {
+        // Get the selected date
+        const selectedDate = document.getElementById("earningsDate").value || "<?= $selectedDate ?>";
+        
+        // Redirect to generate_earnings.php with the selected date
+        window.open("generate_day_earnings.php?date=" + selectedDate, "_blank");
+    }
+</script>
+
+<script>
+    function downloadPDF_MonthlyEarnings() {
+        // Get the selected date
+        const selectedDate = document.getElementById("earningsDate").value || "<?= $selectedDate ?>";
+        
+        // Redirect to generate_earnings.php with the selected date
+        window.open("generate_monthly_earnings.php?date=" + selectedDate, "_blank");
+    }
+</script>
 </body>
 </html>

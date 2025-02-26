@@ -73,6 +73,18 @@
                                     <tbody>
                                         <?php
                                             $selectedDate = isset($_GET['appointment_date']) ? $_GET['appointment_date'] : null;
+                                            $limit = 5; // Number of records per page
+                                            $page = isset($_GET['page_completed']) ? (int)$_GET['page_completed'] : 1;
+                                            $offset = ($page - 1) * $limit;
+
+                                            // Get total count
+                                            $totalQuery = "SELECT COUNT(*) as total FROM appointment_tbl WHERE status = 'Completed'";
+                                            if (!empty($selectedDate)) {
+                                                $totalQuery .= " AND date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                                            }
+                                            $totalResult = mysqli_query($conn, $totalQuery);
+                                            $totalRow = mysqli_fetch_assoc($totalResult);
+                                            $totalPages = ceil($totalRow['total'] / $limit);
 
                                             // Default query to fetch previous completed appointments
                                             $completedQuery = "SELECT 
@@ -105,8 +117,7 @@
                                                 $completedQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
                                             }
 
-                                            $limit = 5; // Number of records to display initially
-                                            $completedQuery .= " ORDER BY a.timeSlot ASC LIMIT $limit";
+                                            $completedQuery .= " ORDER BY a.timeSlot ASC LIMIT $limit OFFSET $offset";
 
                                             // Execute the query to get the results
                                             $completedResult = mysqli_query($conn, $completedQuery);
@@ -138,9 +149,31 @@
                                                 echo "<tr><td colspan='5' class='text-center'>No completed appointments found.</td></tr>";
                                             }
                                         ?>
-                                        <button id="loadMoreCompleted" class="btn btn-primary mt-3" onclick="loadMore('completed')">Load More</button>
                                     </tbody>
                                 </table>
+
+                                <nav>
+                                    <ul class="pagination">
+                                        <?php if ($page > 1): ?>
+                                            <li class="page-item">
+                                                <a class="page-link bg-dark text-white" href="?page_completed=<?php echo $page - 1; ?>"><</a>
+                                            </li>
+                                        <?php endif; ?>
+
+                                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                                <a class="page-link bg-dark text-white" href="?page_completed=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+
+                                        <?php if ($page < $totalPages): ?>
+                                            <li class="page-item">
+                                                <a class="page-link bg-dark text-white" href="?page_completed=<?php echo $page + 1; ?>">></a>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </nav>
+
                             </div>
                         </div>
                     </div>
@@ -177,6 +210,19 @@
                                     <tbody>
                                             <?php
                                                 $selectedCancelledDate = isset($_GET['cancelled_date']) ? $_GET['cancelled_date'] : null;
+                                                $limit = 5; // Number of records per page
+                                                $page = isset($_GET['page_cancelled']) ? (int)$_GET['page_cancelled'] : 1;
+                                                $offset = ($page - 1) * $limit;
+    
+                                                // Get total count
+                                                $totalQuery = "SELECT COUNT(*) as total FROM appointment_tbl WHERE status = 'Cancelled'";
+                                                if (!empty($selectedDate)) {
+                                                    $totalQuery .= " AND date = '" . mysqli_real_escape_string($conn, $selectedDate) . "'";
+                                                }
+                                                $totalResult = mysqli_query($conn, $totalQuery);
+                                                $totalRow = mysqli_fetch_assoc($totalResult);
+                                                $totalPages = ceil($totalRow['total'] / $limit);
+                                                
                                                 // Modify the query to select only cancelled appointments for the current date
                                                 $cancelledQuery = "SELECT a.*, c.firstName, c.lastName 
                                                 FROM appointment_tbl a
@@ -187,8 +233,7 @@
                                                     $cancelledQuery .= " AND a.date = '" . mysqli_real_escape_string($conn, $selectedCancelledDate) . "'";
                                                 }
 
-                                                $limit = 5; // Number of records to display initially
-                                                $cancelledQuery .= " ORDER BY a.timeSlot ASC LIMIT $limit";
+                                                $cancelledQuery .= " ORDER BY a.timeSlot ASC LIMIT $limit OFFSET $offset";
 
                                                 $cancelledResult = mysqli_query($conn, $cancelledQuery);
 
@@ -224,9 +269,29 @@
                                                     echo "<tr><td colspan='4' class='text-center'>No cancelled appointments found for today.</td></tr>";
                                                 }
                                             ?>
-                                            <button id="loadMoreCancelled" class="btn btn-primary mt-3" onclick="loadMore('cancelled')">Load More</button>
                                     </tbody>
                                 </table>
+                                <nav>
+                                    <ul class="pagination">
+                                        <?php if ($page > 1): ?>
+                                            <li class="page-item">
+                                                <a class="page-link bg-dark text-white" href="?page_cancelled=<?php echo $page - 1; ?>"><</a>
+                                            </li>
+                                        <?php endif; ?>
+
+                                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                                <a class="page-link bg-dark text-white" href="?page_cancelled=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+
+                                        <?php if ($page < $totalPages): ?>
+                                            <li class="page-item">
+                                                <a class="page-link bg-dark text-white" href="?page_cancelled=<?php echo $page + 1; ?>">></a>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -369,41 +434,6 @@
                 }
             })
             .catch(error => console.error('Error fetching details:', error));
-    }
-    </script>
-
-    <script>
-        let completedOffset = 5; // Track offset for completed appointments
-        let cancelledOffset = 5; // Track offset for cancelled appointments
-        const limit = 5; // Number of records per request
-
-        function loadMore(type) {
-        let offset = type === 'completed' ? completedOffset : cancelledOffset;
-
-        fetch('load_more.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `offset=${offset}&type=${type}`
-        })
-        .then(response => response.text())
-        .then(data => {
-            if (data.trim() !== '') {
-                if (type === 'completed') {
-                    document.querySelector("#completedTable tbody").innerHTML += data;
-                    completedOffset += limit;
-                } else if (type === 'cancelled') {
-                    document.querySelector("#cancelledTable tbody").innerHTML += data;
-                    cancelledOffset += limit;
-                }
-            } else {
-                if (type === 'completed') {
-                    document.querySelector("#loadMoreCompleted").style.display = 'none';
-                } else if (type === 'cancelled') {
-                    document.querySelector("#loadMoreCancelled").style.display = 'none';
-                }
-            }
-        })
-        .catch(error => console.error('Error:', error));
     }
     </script>
 

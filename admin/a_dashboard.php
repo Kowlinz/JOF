@@ -193,7 +193,7 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
             <div class="col-12">
                 <div class="card border-0 rounded-4">
                     <div class="card-header py-3 bg-white">
-                        <h2 class="fw-bold">Upcoming Customers Today</h2>
+                        <h2 class="fw-bold">Pending Customers Today</h2>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -219,7 +219,7 @@ $cancelledResult = mysqli_query($conn, $cancelledQuery);
                                                 $counter++;
                                             }
                                         } else {
-                                            echo "<tr><td colspan='3' class='text-center'>No upcoming appointments found.</td></tr>";
+                                            echo "<tr><td colspan='3' class='text-center'>No pending appointments found.</td></tr>";
                                         }
                                     ?>
                                 </tbody>

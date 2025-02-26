@@ -34,7 +34,7 @@
                     //Load Composer's autoloader
                     require 'vendor/autoload.php';
 
-                    function sendemail_verify($FirstName, $LastName, $email, $verify_token) {
+                    function sendemail_verify($firstName, $lastName, $email, $verify_token) {
                         $mail = new PHPMailer(true);
                     
                         try {
@@ -59,7 +59,7 @@
                                     <img src='cid:jof_logo' alt='Jack of Fades Logo' 
                                     style='max-width: 90px; display: block; margin: 20px auto;'>
 
-                                    <h2 style='color: #F3CD32; text-align: center;'>Welcome to Jack of Fades, $FirstName!</h2>
+                                    <h2 style='color: #F3CD32; text-align: center;'>Welcome to Jack of Fades, $firstName!</h2>
                                     <p style='font-size: 16px; color: #fff; text-align: center;'>
                                         Thank you for signing up. To complete your registration, please verify your email address by clicking the button below:
                                     </p>
@@ -89,127 +89,125 @@
                     }
                 }
 
-                    // validate the submit button
-                    if (isset($_POST["Register"])){
-                        $FirstName = $_POST["FirstName"];
-                        $MiddleName = $_POST["MiddleName"];
-                        $LastName = $_POST["LastName"];
-                        $email = $_POST["Email"];
-                        $contactNum = $_POST["contactNum"];
+                    if (isset($_POST["Register"])) {
+                        $firstName = ucwords(strtolower(trim($_POST["firstName"])));
+                        $middleName = ucwords(strtolower(trim($_POST["middleName"])));
+                        $lastName = ucwords(strtolower(trim($_POST["lastName"])));
+                        $email = trim($_POST["Email"]);
+                        $contactNum = trim($_POST["contactNum"]);
                         $password = $_POST["password"];
                         $RepeatPassword = $_POST["repeat_password"];
                         $verify_token = md5(rand());
                         
                         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
+                    
                         $errors = array();
-                        // validate if all fields are empty
-                        if (empty ($FirstName) OR empty ($LastName) OR empty ($email) OR empty ($password) OR empty ($RepeatPassword)) {
-                            array_push($errors, "All fields are required except Middle Name"); 
+                    
+                        // Validate if all fields are empty
+                        if (empty($firstName) || empty($lastName) || empty($email) || empty($password) || empty($RepeatPassword)) {
+                            array_push($errors, "All fields are required except Middle Name");
                         }
-
+                    
                         // Validate names (Only letters and spaces allowed)
-                        if (!preg_match("/^[A-Za-z\s]+$/", $FirstName)) {
+                        if (!preg_match("/^[A-Za-z\s]+$/", $firstName)) {
                             array_push($errors, "First name can only contain letters and spaces.");
                         }
-                        if (!empty($MiddleName) && !preg_match("/^[A-Za-z\s]+$/", $MiddleName)) {
+                        if (!empty($middleName) && !preg_match("/^[A-Za-z\s]+$/", $middleName)) {
                             array_push($errors, "Middle name can only contain letters and spaces.");
                         }
-                        if (!preg_match("/^[A-Za-z\s]+$/", $LastName)) {
+                        if (!preg_match("/^[A-Za-z\s]+$/", $lastName)) {
                             array_push($errors, "Last name can only contain letters and spaces.");
                         }
-
-                        // Validate email (must contain ".com" at the end)
+                    
+                        // Validate email
                         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match("/\.com$/", $email)) {
                             array_push($errors, "Email must be valid");
                         }
-
-                        // Validate contact number (Must be in the format: +639XXXXXXXXX)
+                    
+                        // Validate contact number
                         if (!preg_match('/^\+639[0-9]{9}$/', $contactNum)) {
                             array_push($errors, "Invalid PH number");
                         }
-                        
-                        // password should not be less than 8 
-                        if (strlen($password)<8) {
+                    
+                        // Password validation
+                        if (strlen($password) < 8) {
                             array_push($errors, "Password must be at least 8 characters long");
                         }
-                        // check if password contains uppercase and number
                         if (!preg_match('/^(?=.*[A-Z])(?=.*\d).+$/', $password)) {
                             array_push($errors, "Password must contain at least one uppercase letter and one number");
                         }
-                        // check if password is the same 
-                        if($password !== $RepeatPassword){
+                        if ($password !== $RepeatPassword) {
                             array_push($errors, "Password does not match");
                         }
-
-                        require_once "database.php"; 
-
-                        // email validation
+                    
+                        require_once "database.php";
+                    
+                        // Check if email already exists
                         $sql = "SELECT * FROM customer_tbl WHERE email = '$email'";
                         $result = mysqli_query($conn, $sql);
                         $rowCount = mysqli_num_rows($result);
-                        if ($rowCount>0) {
-                            array_push($errors, "Email Already Exist!");
+                        if ($rowCount > 0) {
+                            array_push($errors, "Email Already Exists!");
                         }
-
-                        if (count($errors)>0){
-                            foreach($errors as $error) {
+                    
+                        if (count($errors) > 0) {
+                            foreach ($errors as $error) {
                                 echo "<div class='alert alert-danger'>$error</div>";
                             }
                         } else {
                             require_once "database.php";
-                            $sql = "INSERT INTO customer_tbl (firstName, middleName, lastName, email, contactNum, password, verify_token) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                            $sql = "INSERT INTO customer_tbl (firstName, middleName, lastName, email, contactNum, password, verify_token) 
+                                    VALUES (?, ?, ?, ?, ?, ?, ?)";
                             
-                            // initializes a statement and returns an object suitable for mysqli_stmt_prepare()
                             $stmt = mysqli_stmt_init($conn); 
                             $preparestmt = mysqli_stmt_prepare($stmt, $sql);
                             
                             if ($preparestmt) {
-                                sendemail_verify("$FirstName", "$LastName", "$email", "$verify_token");
-
-                                mysqli_stmt_bind_param($stmt, "sssssss", $FirstName, $MiddleName, $LastName, $email, $contactNum, $passwordHash, $verify_token);
+                                sendemail_verify("$firstName", "$lastName", "$email", "$verify_token");
+                    
+                                mysqli_stmt_bind_param($stmt, "sssssss", $firstName, $middleName, $lastName, $email, $contactNum, $passwordHash, $verify_token);
                                 mysqli_stmt_execute($stmt);
-                                    // Store success message in session
-                                    $_SESSION['status'] = "You are registered successfully! Please check your email for verification. (If not in inbox check on spam)";
-                                    $_SESSION['status_type'] = "success"; // Set alert type to success
-
-                                    // Redirect to login page
-                                    header("location: login.php");
-                                    exit(0);
+                    
+                                $_SESSION['status'] = "You are registered successfully! Please check your email for verification. (If not in inbox, check spam)";
+                                $_SESSION['status_type'] = "success";
+                    
+                                header("location: login.php");
+                                exit(0);
                             } else {
                                 die("Something went wrong!");
                             }
                         }
                     }
+
                     ?>
                     <h2 class="login-header">Register</h2>
                     <form action="registration.php" method="post">
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="FirstName" placeholder="First Name" required 
+                            <input type="text" class="form-control" name="FirstName" placeholder="First Name *" required 
                                 maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
                         </div> 
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="MiddleName" placeholder="Middle Name"
+                            <input type="text" class="form-control" name="middleName" placeholder="Middle Name"
                                 maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
                         </div> 
 
                         <div class="form-group">
-                            <input type="text" class="form-control" name="LastName" placeholder="Last Name" required 
+                            <input type="text" class="form-control" name="LastName" placeholder="Last Name *" required 
                                 maxlength="20" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
                         </div>
 
                         <div class="form-group">
-                            <input type="email" class="form-control" name="Email" placeholder="Email" required>
+                            <input type="email" class="form-control" name="Email" placeholder="Email *" required>
                         </div>
 
                         <div class="form-group">
-                            <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Contact Number" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
+                            <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Contact Number *" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" title="Contact number must be 11 digits">
                         </div> 
 
                         <div class="form-group position-relative">
-                            <input type="password" class="form-control" name="password" placeholder="Password" required maxlength="20" oninput="limitPasswordLength(this)">
+                            <input type="password" class="form-control" name="password" placeholder="Password *" required maxlength="20" oninput="limitPasswordLength(this)">
                             <i class="bi bi-eye-slash password-toggle" id="togglePassword1"></i>
                         </div> 
                         
@@ -220,9 +218,13 @@
                         </div>
 
                         <div class="form-group position-relative">
-                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password" required maxlength="20" oninput="limitPasswordLength(this)">
+                            <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password *" required maxlength="20" oninput="limitPasswordLength(this)">
                             <i class="bi bi-eye-slash password-toggle" id="togglePassword2"></i>
                         </div> 
+
+                        <div class="form-text text-muted mb-2">
+                            <small>Fields marked with an asterisk (*) are required</small>
+                        </div>
 
                         <div class="form-btn">
                             <input type="submit" class="btn btn-primary" value="Register" name="Register">

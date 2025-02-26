@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Update appointment status
         $updateQuery = "UPDATE appointment_tbl SET status = ?, payment_status = ?, reason = ? WHERE appointmentID = ?";
-        $paymentStatus = ($status === 'Completed') ? 'paid' : (($status === 'Cancelled') ? 'cancelled' : NULL);
+        $paymentStatus = ($status === 'Completed') ? 'paid' : (($status === 'Cancelled') ? 'paid' : 'partial');
         $stmt = $conn->prepare($updateQuery);
         $stmt->bind_param("sssi", $status, $paymentStatus, $reason, $appointmentID);
         $stmt->execute();

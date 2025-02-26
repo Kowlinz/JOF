@@ -164,32 +164,34 @@ $result = $stmt->get_result();
             overflow-x: auto;
             padding: 0 20px 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            background-color: #1f1f1f; /* Dark background */
         }
 
         .appointments-table {
             width: 100%;
             border-collapse: collapse;
             margin: 0;
+            color: #ffffff; /* Light text for dark background */
         }
 
         .appointments-table th,
         .appointments-table td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #333333; /* Darker border */
             white-space: nowrap;
         }
 
         .appointments-table th {
-            color: #333333;
+            color: #FFDE59; /* Yellow headers to match theme */
             font-weight: 600;
             padding: 15px 12px;
-            border-bottom: 2px solid #dee2e6;
+            border-bottom: 2px solid #333333;
         }
 
         .appointments-table tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.02);
+            background-color: #2a2a2a; /* Darker hover effect */
         }
 
         .appointments-table td .btn {
@@ -197,7 +199,7 @@ $result = $stmt->get_result();
         }
 
         .cancel-button {
-            background-color: #dc3545;
+            background-color: #ff4444;
             color: white;
             border: none;
             padding: 0.25rem 0.5rem;
@@ -211,7 +213,7 @@ $result = $stmt->get_result();
         }
 
         .cancel-button:hover {
-            background-color: #c82333;
+            background-color: #cc0000;
         }
 
         /* Make Pay button consistent with Cancel button */
@@ -225,17 +227,17 @@ $result = $stmt->get_result();
 
         /* Status colors */
         .status-completed {
-            color: #198754;
+            color: #4CAF50; /* Brighter green */
             font-weight: 500;
         }
 
         .status-cancelled {
-            color: #dc3545;
+            color: #ff4444; /* Brighter red */
             font-weight: 500;
         }
 
         .status-pending {
-            color: #ffc107;
+            color: #FFDE59; /* Yellow to match theme */
             font-weight: 500;
         }
 
@@ -395,6 +397,76 @@ $result = $stmt->get_result();
         #newDate {
             color: #000000;
             text-align: center;
+        }
+
+        /* Update the appointments header color */
+        .appointments-header {
+            color: #FFDE59; /* Yellow to match theme */
+        }
+
+        /* Update the "No appointments found" message color */
+        .appointments-table tr td.text-center {
+            color: #ffffff;
+        }
+
+        /* Update text colors in the table */
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            color: #ffffff; /* Light text for dark background */
+        }
+
+        /* Update dropdown menu text color */
+        .dropdown-menu {
+            background-color: #1f1f1f;
+        }
+
+        .dropdown-menu .dropdown-item {
+            color: #ffffff;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #2a2a2a;
+            color: #FFDE59;
+        }
+
+        /* Update payment status text colors */
+        .text-danger {
+            color: #ff4444 !important; /* Brighter red */
+        }
+
+        .text-warning {
+            color: #FFDE59 !important; /* Yellow to match theme */
+        }
+
+        .text-success {
+            color: #4CAF50 !important; /* Brighter green */
+        }
+
+        .text-muted {
+            color: #aaaaaa !important; /* Light gray */
+        }
+
+        /* Update any remaining black text */
+        .appointments-table td,
+        .appointments-table th,
+        .appointments-table tr {
+            color: #ffffff;
+        }
+
+        /* Make sure modal text is visible */
+        .modal-body {
+            color: #ffffff;
+        }
+
+        .modal-header {
+            color: #ffffff;
+            border-bottom: 1px solid #333333;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #333333;
         }
     </style>
 </head>

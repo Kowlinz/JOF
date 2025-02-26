@@ -522,7 +522,7 @@ $result = $stmt->get_result();
                         $timeDifference = ($appointmentDateTime - $currentDateTime) / 3600; // Convert seconds to hours
 
                         // Disable reschedule button if within 24 hours
-                        $disableReschedule = $timeDifference < 24 ? "disabled" : "";
+                        $disableReschedule = ($row['status'] !== "Cancelled" && $timeDifference < 24) ? "disabled" : "";
                 
                         echo "<tr>";
                         echo "<td>" . date("F d, Y", strtotime($row['date'])) . "</td>";
